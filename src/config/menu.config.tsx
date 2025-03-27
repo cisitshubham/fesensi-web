@@ -1,37 +1,18 @@
-import { KeenIcon } from '@/components';
+/* eslint-disable prettier/prettier */
 import { type TMenuConfig } from '@/components/menu';
 
 export const MENU_SIDEBAR: TMenuConfig = [
   {
     title: 'Dashboard',
-    icon: 'element-11'
+    icon: 'element-11',
+	path: '/'
   },
   {
-    title: 'My tickets',
+    title: 'Tickets',
     icon: 'document',
     path: '/public-profile/projects/3-columns'
   },
-  {
-    title: 'Activity',
-    icon: 'message-notify',
-    path: '/public-profile/activity'
-  },
-  {
-    title: 'Profile',
-    icon: 'profile-circle',
-    path: '/public-profile/profiles/default'
-  },
-  {
-    heading: 'Projects'
-  },
-  {
-    title: 'Project 1',
-    icon: 'devices'
-  },
-  {
-    title: 'Project 2',
-    icon: 'devices'
-  }
+
 ];
 
 export const MENU_MEGA: TMenuConfig = [

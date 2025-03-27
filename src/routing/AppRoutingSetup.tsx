@@ -20,7 +20,10 @@ import {
   ProfileNFTPage,
   ProfilePlainPage,
   ProfileTeamsPage,
-  ProfileWorksPage
+  ProfileWorksPage,
+  CreateTicketForm,
+  UpdateTicketForm,
+  ViewTicket
 } from '@/pages/public-profile';
 import {
   AccountActivityPage,
@@ -180,11 +183,17 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/network/user-table/store-clients" element={<NetworkStoreClientsPage />} />
           <Route path="/network/user-table/visitors" element={<NetworkVisitorsPage />} />
           <Route path="/auth/welcome-message" element={<AuthenticationWelcomeMessagePage />} />
-          <Route
-            path="/auth/account-deactivated"
-            element={<AuthenticationAccountDeactivatedPage />}
-          />
+          <Route path="/auth/account-deactivated" element={<AuthenticationAccountDeactivatedPage />}/>
           <Route path="/authentication/get-started" element={<AuthenticationGetStartedPage />} />
+         
+		 {/* My Routings */}
+	      
+		  <Route path="/public-profile/projects/createTickets" element={< CreateTicketForm />} />
+		  <Route path="/public-profile/projects/UpdateTicketForm/:id" element={< UpdateTicketForm />} />
+				  <Route path="/public-profile/projects/ticket/view/:id" element={< ViewTicket />} />
+
+
+
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

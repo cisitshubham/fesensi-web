@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { KeenIcon } from '@/components/keenicons';
 import { toAbsoluteUrl } from '@/utils';
 import { Menu, MenuItem, MenuToggle } from '@/components';
@@ -8,6 +8,7 @@ import { DropdownApps } from '@/partials/dropdowns/apps';
 import { DropdownChat } from '@/partials/dropdowns/chat';
 import { ModalSearch } from '@/partials/modals/search/ModalSearch';
 import { useLanguage } from '@/i18n';
+import { fetchUser } from '../../../api/api';
 
 const HeaderTopbar = () => {
   const { isRTL } = useLanguage();
@@ -25,6 +26,21 @@ const HeaderTopbar = () => {
   const handleClose = () => {
     setSearchModalOpen(false);
   };
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const userData = await fetchUser();
+        console.log('Fetched User:', userData);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
 
   return (
     <div className="flex items-center gap-2 lg:gap-3.5">
@@ -32,7 +48,7 @@ const HeaderTopbar = () => {
         onClick={handleOpen}
         className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"
       >
-        <KeenIcon icon="magnifier" />
+    <KeenIcon icon="magnifier" />
       </button>
       <ModalSearch open={searchModalOpen} onOpenChange={handleClose} />
 
@@ -82,7 +98,6 @@ const HeaderTopbar = () => {
           <MenuToggle className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary dropdown-open:bg-primary-light dropdown-open:text-primary text-gray-500">
             <KeenIcon icon="element-11" />
           </MenuToggle>
-
           {DropdownApps()}
         </MenuItem>
       </Menu>
@@ -131,11 +146,14 @@ const HeaderTopbar = () => {
           <MenuToggle className="btn btn-icon rounded-full">
             <img
               className="size-9 rounded-full border-2 border-success shrink-0"
-              src={toAbsoluteUrl('/media/avatars/300-2.png')}
-              alt=""
+              src={toAbsoluteUrl(user?.data?.profile_img || '/media/avatars/300-2.png')}
+              alt="User Avatar"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = toAbsoluteUrl('/media/avatars/300-2.png');
+              }}
             />
           </MenuToggle>
-          {DropdownUser({ menuItemRef: itemUserRef })}
+          {DropdownUser({ menuItemRef: itemUserRef},user)}
         </MenuItem>
       </Menu>
     </div>

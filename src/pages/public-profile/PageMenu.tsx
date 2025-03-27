@@ -9,7 +9,7 @@ const PageMenu = () => {
   if (accountMenuConfig) {
     return <NavbarMenu items={accountMenuConfig} />;
   } else {
-    return <>test</>;
+    return <>Tickets List</>;
   }
 };
 

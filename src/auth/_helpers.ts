@@ -10,7 +10,6 @@ const AUTH_LOCAL_STORAGE_KEY = `${import.meta.env.VITE_APP_NAME}-auth-v${
 const getAuth = (): AuthModel | undefined => {
   try {
     const auth = getData(AUTH_LOCAL_STORAGE_KEY) as AuthModel | undefined;
-
     if (auth) {
       return auth;
     } else {

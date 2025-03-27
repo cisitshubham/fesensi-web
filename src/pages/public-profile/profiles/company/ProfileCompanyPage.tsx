@@ -8,7 +8,7 @@ import { UserProfileHero } from '@/partials/heros';
 import { Navbar, NavbarActions, NavbarDropdown } from '@/partials/navbar';
 import { PageMenu } from '@/pages/public-profile';
 
-import { ProfileCompanyContent } from './';
+import { ProfileCompanyContent } from '.';
 
 const ProfileCompanyPage = () => {
   const image = (

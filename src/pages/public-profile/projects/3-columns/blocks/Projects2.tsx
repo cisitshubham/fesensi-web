@@ -1,410 +1,138 @@
-import { useState } from 'react';
-
+/* eslint-disable prettier/prettier */
+import { useState, useEffect } from 'react';
 import { KeenIcon } from '@/components';
-
+import { getAllTicket } from '@/api/api';
 import { CardProject, CardProjectRow } from '@/partials/cards';
 
 interface IProjects2Item {
-  logo: string;
-  name: string;
-  description: string;
-  startDate?: string;
-  endDate?: string;
-  status: {
-    variant: string;
-    label: string;
-  };
-  progress: {
-    variant: string;
-    value: number;
-  };
-  team: {
-    size?: string;
-    group: Array<{ filename?: string; variant?: string; fallback?: string }>;
-    more?: {
-      variant?: string;
-      number?: number;
-    };
-  };
+	ticket_id: string;
+	logo: string;
+	name: string;
+	description: string;
+	startDate?: string;
+	endDate?: string;
+	status: {
+		variant: string;
+		label: string;
+	};
+	category: string
 }
 
-interface IProjects2Items extends Array<IProjects2Item> {}
-
 const Projects2 = () => {
-  const [activeView, setActiveView] = useState('cards');
+	const [activeView, setActiveView] = useState('cards');
+	const [projects, setProjects] = useState<IProjects2Item[]>([]);
+	const [loading, setLoading] = useState(true);
+	useEffect(() => {
+		const fetchProjects = async () => {
+			try {
+				const response = await getAllTicket();
+				const formattedProjects = response.data.map((ticket: any) => ({
+					ticket_id: ticket._id,
+					logo: ticket.icon || 'default.svg', 
+					name: ticket.title,
+					description: ticket.description,
+					startDate: ticket.due_date||'N/A',
+					status: {
+						label: ticket.status,
+						variant: mapStatusVariant(ticket.status), 
+					},
+					category: ticket.category,
+				
+				}));
+				setProjects(formattedProjects); 
+			} catch (error) {
+				console.error('Error fetching tickets:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-  const projects: IProjects2Items = [
-    {
-      logo: 'plurk.svg',
-      name: 'Phoenix SaaS',
-      description: 'Real-time photo sharing app',
-      startDate: 'Mar 06',
-      endDate: 'Dec 21',
-      status: {
-        label: 'In Progress',
-        variant: 'badge-primary'
-      },
-      progress: {
-        variant: 'progress-primary',
-        value: 55
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [
-          { filename: '300-4.png' },
-          { filename: '300-2.png' },
-          {
-            fallback: 'S',
-            variant: 'text-primary-inverse ring-primary-light bg-primary'
-          }
-        ]
-      }
-    },
-    {
-      logo: 'telegram.svg',
-      name: 'Radiant Wave',
-      description: 'Short-term accommodation marketplace',
-      startDate: 'Mar 09',
-      endDate: 'Dec 23',
-      status: {
-        label: 'Completed',
-        variant: 'badge-success'
-      },
-      progress: {
-        variant: 'progress-success',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-24.png' }, { filename: '300-7.png' }]
-      }
-    },
-    {
-      logo: 'kickstarter.svg',
-      name: 'Dreamweaver',
-      description: 'Social media photo sharing',
-      startDate: 'Mar 05',
-      endDate: 'Dec 12',
-      status: {
-        label: 'Upcoming',
-        variant: ''
-      },
-      progress: {
-        variant: 'progress-gray-300',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-21.png' }, { filename: '300-1.png' }, { filename: '300-2.png' }],
-        more: {
-          number: 10,
-          variant: 'text-success-inverse ring-success-light bg-success'
-        }
-      }
-    },
-    {
-      logo: 'quickbooks.svg',
-      name: 'Horizon Quest',
-      description: 'Team communication and collaboration',
-      startDate: 'Mar 03',
-      endDate: 'Dec 11',
-      status: {
-        label: 'In Progress',
-        variant: 'badge-primary'
-      },
-      progress: {
-        variant: 'progress-primary',
-        value: 19
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [
-          { filename: '300-1.png' },
-          { filename: '300-2.png' },
-          {
-            fallback: 'M',
-            variant: 'text-danger-inverse ring-danger-light bg-danger'
-          }
-        ]
-      }
-    },
-    {
-      logo: 'google-analytics.svg',
-      name: 'Golden Gate Analytics',
-      description: 'Note-taking and organization app',
-      startDate: 'Mar 22',
-      endDate: 'Dec 14',
-      status: {
-        label: 'Upcoming',
-        variant: ''
-      },
-      progress: {
-        variant: 'progress-gray-300',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-5.png' }, { filename: '300-17.png' }, { filename: '300-16.png' }]
-      }
-    },
-    {
-      logo: 'google-webdev.svg',
-      name: 'Celestial SaaS',
-      description: 'CRM App application to HR efficienty',
-      startDate: 'Mar 14',
-      endDate: 'Dec 25',
-      status: {
-        label: 'Completed',
-        variant: 'badge-success'
-      },
-      progress: {
-        variant: 'progress-success',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-6.png' }, { filename: '300-23.png' }, { filename: '300-12.png' }],
-        more: {
-          number: 10,
-          variant: 'text-primary-inverse ring-primary-light bg-primary'
-        }
-      }
-    },
-    {
-      logo: 'figma.svg',
-      name: 'Nexus Design System',
-      description: 'Online discussion and forum platform',
-      startDate: 'Mar 17',
-      endDate: 'Dec 08',
-      status: {
-        label: 'Upcoming',
-        variant: ''
-      },
-      progress: {
-        variant: 'progress-gray-300',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [
-          { filename: '300-14.png' },
-          { filename: '300-3.png' },
-          { filename: '300-19.png' },
-          { filename: '300-9.png' }
-        ]
-      }
-    },
-    {
-      logo: 'btcchina.svg',
-      name: 'Neptune App',
-      description: 'Team messaging and collaboration',
-      startDate: 'Mar 09',
-      endDate: 'Dec 23',
-      status: {
-        label: 'In Progress',
-        variant: 'badge-primary'
-      },
-      progress: {
-        variant: 'progress-primary',
-        value: 35
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-21.png' }, { filename: '300-32.png' }, { filename: '300-2.png' }],
-        more: {
-          number: 1,
-          variant: 'text-success-inverse ring-success-light bg-success'
-        }
-      }
-    },
-    {
-      logo: 'patientory.svg',
-      name: 'SparkleTech',
-      description: 'Meditation and relaxation app',
-      startDate: 'Mar 14',
-      endDate: 'Dec 21',
-      status: {
-        label: 'Upcoming',
-        variant: ''
-      },
-      progress: {
-        variant: 'progress-gray-300',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [
-          { filename: '300-4.png' },
-          { filename: '300-2.png' },
-          {
-            fallback: 'K',
-            variant: 'text-success-inverse ring-success-light bg-success'
-          }
-        ]
-      }
-    },
-    {
-      logo: 'jira.svg',
-      name: 'EmberX CRM',
-      description: 'Commission-free stock trading',
-      startDate: 'Mar 01',
-      endDate: 'Dec 13',
-      status: {
-        label: 'Completed',
-        variant: 'badge-success'
-      },
-      progress: {
-        variant: 'progress-success',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-12.png' }, { filename: '300-20.png' }, { filename: '300-3.png' }],
-        more: {
-          number: 5,
-          variant: 'text-success-inverse ring-success-light bg-success'
-        }
-      }
-    },
-    {
-      logo: 'plastic-scm.svg',
-      name: 'LunaLink',
-      description: 'Meditation and relaxation app',
-      startDate: 'Mar 14',
-      endDate: 'Dec 21',
-      status: {
-        label: 'Upcoming',
-        variant: ''
-      },
-      progress: {
-        variant: 'progress-gray-300',
-        value: 100
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [{ filename: '300-16.png' }]
-      }
-    },
-    {
-      logo: 'perrier.svg',
-      name: 'TerraCrest App',
-      description: 'Video conferencing software',
-      startDate: 'Mar 22',
-      endDate: 'Dec 28',
-      status: {
-        label: 'In Progress',
-        variant: 'badge-primary'
-      },
-      progress: {
-        variant: 'progress-primary',
-        value: 55
-      },
-      team: {
-        size: 'size-[30px]',
-        group: [
-          { filename: '300-4.png' },
-          { filename: '300-9.png' },
-          {
-            fallback: 'F',
-            variant: 'text-primary-inverse ring-primary-light bg-primary'
-          }
-        ]
-      }
-    }
-  ];
+		fetchProjects();		
+	}, []);
 
-  const renderProject = (project: IProjects2Item, index: number) => {
-    return (
-      <CardProject
-        logo={project.logo}
-        name={project.name}
-        description={project.description}
-        startDate={project.startDate}
-        endDate={project.endDate}
-        status={project.status}
-        progress={project.progress}
-        team={project.team}
-        key={index}
-      />
-    );
-  };
+	const renderProject = (project: IProjects2Item, index: number) => (
+		<CardProject
+			ticket_id={project.ticket_id}
+			logo={(project as any).logo}
+			name={(project as any).name}
+			description={project.description}
+			startDate={(project as any).startDate}
+			status={project.status}
+			category={project.category}
+			key={index}
+		/>
+	);
 
-  const renderItem = (item: IProjects2Item, index: number) => {
-    return (
-      <CardProjectRow
-        logo={item.logo}
-        name={item.name}
-        description={item.description}
-        status={item.status}
-        progress={item.progress}
-        team={item.team}
-        key={index}
-      />
-    );
-  };
+	const renderItem = (item: IProjects2Item, index: number) => (
+		<CardProjectRow
+			ticketId={item.ticket_id}
+			category={item.category}
+			logo={item.logo}
+			name={item.name}
+			description={item.description}
+			closedDate={item.startDate ?? ''}
+			endDate={item.endDate ?? ''}
+			status={item.status}
+			key={index} priority={''} 		/>
+	);
 
-  return (
-    <div className="flex flex-col items-stretch gap-5 lg:gap-7.5">
-      <div className="flex flex-wrap items-center gap-5 justify-between">
-        <h3 className="text-lg text-gray-900 font-semibold">{projects.length} Projects</h3>
+	return (
+		<div className="flex flex-col items-stretch gap-5 lg:gap-7.5">
+			<div className="flex flex-wrap items-center gap-5 justify-between">
+				<h3 className="text-lg text-gray-900 font-semibold">
+					{loading ? 'Loading...' : `${projects.length} Tickets`}
+				</h3>
+				<div className="btn-tabs" data-tabs="true">
+					<a
+						href="#"
+						className={`btn btn-icon btn-sm ${activeView === 'cards' ? 'active' : ''}`}
+						onClick={() => setActiveView('cards')}>
+						<KeenIcon icon="category" />
+					</a>
+					<a
+						href="#"
+						className={`btn btn-icon btn-sm ${activeView === 'list' ? 'active' : ''}`}
+						onClick={() => setActiveView('list')}>
+						<KeenIcon icon="row-horizontal" />
+					</a>
+				</div>
+			</div>
 
-        <div className="btn-tabs" data-tabs="true">
-          <a
-            href="#"
-            className={`btn btn-icon btn-sm ${activeView === 'cards' ? 'active' : ''}`}
-            data-tab-toggle="#projects_cards"
-            onClick={() => {
-              setActiveView('cards');
-            }}
-          >
-            <KeenIcon icon="category" />
-          </a>
-          <a
-            href="#"
-            className={`btn btn-icon btn-sm ${activeView === 'list' ? 'active' : ''}`}
-            data-tab-toggle="#projects_list"
-            onClick={() => {
-              setActiveView('list');
-            }}
-          >
-            <KeenIcon icon="row-horizontal" />
-          </a>
-        </div>
-      </div>
+			{loading ? (
+				<p>Loading tickets...</p>
+			) : (
+				<>
+					{activeView === 'cards' && (
+						<div id="projects_cards" className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7.5">
+							{projects.map(renderProject)}
+						</div>
+					)}
 
-      {activeView === 'cards' && (
-        <div id="projects_cards">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7.5">
-            {projects.map((project, index) => {
-              return renderProject(project, index);
-            })}
-          </div>
-
-          <div className="flex grow justify-center pt-5 lg:pt-7.5">
-            <a href="#" className="btn btn-link">
-              Show more projects
-            </a>
-          </div>
-        </div>
-      )}
-
-      {activeView === 'list' && (
-        <div id="projects_list">
-          <div className="flex flex-col gap-5 lg:gap-7.5">
-            {projects.map((item, index) => {
-              return renderItem(item, index);
-            })}
-          </div>
-
-          <div className="flex grow justify-center pt-5 lg:pt-7.5">
-            <a href="#" className="btn btn-link">
-              Show more projects
-            </a>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+					{activeView === 'list' && (
+						<div id="projects_list" className="flex flex-col gap-5 lg:gap-7.5">
+							{projects.map(renderItem)}
+						</div>
+					)}
+				</>
+			)}
+		</div>
+	);
 };
 
-export { Projects2, type IProjects2Item, type IProjects2Items };
+function mapStatusVariant(status: string): string {
+	switch (status.toLowerCase()) {
+		case 'OPEN':
+			return 'badge-primary';
+		case 'IN-PROGRESS':
+			return 'badge-success';
+		case 'RESOLVED':
+			return 'badge-success';
+		case 'CLOSED':
+			return 'badge-Warning';
+		default:
+			return 'badge-primary';
+	}
+}
+
+export { Projects2, type IProjects2Item };
+

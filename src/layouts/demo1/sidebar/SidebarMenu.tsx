@@ -53,6 +53,7 @@ const SidebarMenu = () => {
   ];
 
   const buildMenu = (items: TMenuConfig) => {
+	
     return items.map((item, index) => {
       if (item.heading) {
         return buildMenuHeading(item, index);

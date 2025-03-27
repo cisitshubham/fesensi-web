@@ -1,23 +1,51 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 import { KeenIcon } from '@/components';
 import { toAbsoluteUrl } from '@/utils/Assets';
 import { ImageInput } from '@/components/image-input';
 import type { IImageInputFile } from '@/components/image-input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchUser,updateProfile } from '../../api/api';
 
 const CrudAvatarUpload = () => {
   const [avatar, setAvatar] = useState<IImageInputFile[]>([
     { dataURL: toAbsoluteUrl(`/media/avatars/300-2.png`) }
   ]);
+  useEffect(() => {
+    const getUserAvatar = async () => {
+      try {
+        const userData = await fetchUser();
+        if (userData?.data?.profile_img) {
+          setAvatar([{ dataURL: toAbsoluteUrl(userData.data.profile_img) }]);
+        }
+      } catch (error) {
+        console.error('Error fetching user avatar:', error);
+      }
+    };
+    getUserAvatar();
+  }, []);
+
+	const handleImageChange = async (selectedAvatar: IImageInputFile[]) => {
+		setAvatar(selectedAvatar);		
+		if (selectedAvatar.length > 0 && selectedAvatar[0].file) {
+			try {
+				await updateProfile(selectedAvatar[0].file); 
+				console.log('Profile image updated successfully');
+			} catch (error) {
+				console.error('Error uploading image:', error);
+			}
+		}
+	};
 
   return (
-    <ImageInput value={avatar} onChange={(selectedAvatar) => setAvatar(selectedAvatar)}>
+	  <ImageInput value={avatar}  onChange={handleImageChange}>
       {({ onImageUpload }) => (
         <div className="image-input size-16" onClick={onImageUpload}>
           <div
             className="btn btn-icon btn-icon-xs btn-light shadow-default absolute z-1 size-5 -top-0.5 -end-0.5 rounded-full"
             onClick={(e) => {
               e.stopPropagation();
-              setAvatar([]);
+               setAvatar([]);
             }}
           >
             <KeenIcon icon="cross" />

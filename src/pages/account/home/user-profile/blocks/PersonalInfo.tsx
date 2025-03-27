@@ -1,8 +1,25 @@
+/* eslint-disable prettier/prettier */
+import { useEffect, useState } from 'react';
+import { fetchUser } from '../../../../../api/api'; // Ensure correct import
+import { toAbsoluteUrl } from '@/utils';
 import { KeenIcon } from '@/components';
-
 import { CrudAvatarUpload } from '@/partials/crud';
 
 const PersonalInfo = () => {
+  const [user, setUser] = useState<any>(null);
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const userData = await fetchUser();
+        setUser(userData?.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    getUserData();
+  }, []);
+
   return (
     <div className="card min-w-full">
       <div className="card-header">
@@ -24,51 +41,21 @@ const PersonalInfo = () => {
             </tr>
             <tr>
               <td className="py-2 text-gray-600 font-normal">Name</td>
-              <td className="py-2 text-gray-800 font-normaltext-sm">Jason Tatum</td>
+              <td className="py-2 text-gray-800 font-normaltext-sm">{user?.first_name || 'N/A'}</td>
               <td className="py-2 text-center">
-                <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
+                {/* <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
                   <KeenIcon icon="notepad-edit" />
-                </a>
+                </a> */}
               </td>
             </tr>
+
             <tr>
-              <td className="py-3 text-gray-600 font-normal">Availability</td>
-              <td className="py-3 text-gray-800 font-normal">
-                <span className="badge badge-sm badge-outline badge-success">Available now</span>
-              </td>
+              <td className="py-3 text-gray-600 font-normal">Email</td>
+              <td className="py-3 text-gray-700 text-sm font-normal">{user?.email || 'N/A'}</td>
               <td className="py-3 text-center">
-                <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
+                {/* <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
                   <KeenIcon icon="notepad-edit" />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 text-gray-600 font-normal">Birthday</td>
-              <td className="py-3 text-gray-700 text-sm font-normal">28 May 1996</td>
-              <td className="py-3 text-center">
-                <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
-                  <KeenIcon icon="notepad-edit" />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 text-gray-600 font-normal">Gender</td>
-              <td className="py-3 text-gray-700 text-sm font-normal">Male</td>
-              <td className="py-3 text-center">
-                <a href="#" className="btn btn-sm btn-icon btn-clear btn-primary">
-                  <KeenIcon icon="notepad-edit" />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3">Address</td>
-              <td className="py-3 text-gray-700 text-2sm font-normal">
-                You have no an address yet
-              </td>
-              <td className="py-3 text-center">
-                <a href="#" className="btn btn-link btn-sm">
-                  Add
-                </a>
+                </a> */}
               </td>
             </tr>
           </tbody>

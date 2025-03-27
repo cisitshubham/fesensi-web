@@ -18,7 +18,6 @@ export const REGISTER_URL = `${API_URL}/users/signup`;
 export const FORGOT_PASSWORD_URL = `${API_URL}/users/forget-password`;
 export const RESET_PASSWORD_URL = `${API_URL}/users/reset-password`;
 export const GET_USER_URL = `${API_URL}/users/user`;
-
 interface AuthContextProps {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
@@ -76,15 +75,43 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  //   const login = async (email: string, password: string) => {
+  //     try {
+  //       const { data } = await axios.post(LOGIN_URL, {
+  //         email,
+  //         password
+  //       });
+  //       if (data?.token) {
+  //         localStorage.setItem('token', data.token);
+  //       }
+  //       saveAuth(data.data.tokens);
+  //       setCurrentUser(data.data.user);
+  //     } catch (error) {
+  //       saveAuth(undefined);
+  //       throw new Error(`Error ${error}`);
+  //     }
+  //   };
+
   const login = async (email: string, password: string) => {
     try {
+      console.log('Attempting to login...');
+
       const { data } = await axios.post(LOGIN_URL, {
         email,
         password
       });
+
+      if (data?.data?.tokens?.access) {
+        localStorage.setItem('token', data.data.tokens.access);
+        console.log('Token saved to localStorage:', localStorage.getItem('token'));
+      } else {
+        console.error('No access token found in response.');
+      }
+
       saveAuth(data.data.tokens);
       setCurrentUser(data.data.user);
     } catch (error) {
+      console.error('Login error:', error);
       saveAuth(undefined);
       throw new Error(`Error ${error}`);
     }
@@ -103,7 +130,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         email,
         password
       });
-      console.log('auth', auth);
     } catch (error) {
       saveAuth(undefined);
       throw new Error(`Error ${error}`);
@@ -128,14 +154,12 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       password,
       password_confirmation
     });
-    console.log(email, password, otp);
   };
 
   const getUser = async () => {
-    console.log('auth', auth);
     return await axios.get<UserModel>(GET_USER_URL, {
       headers: {
-        Authorization: `Bearer ${auth?.access_token}`
+        Authorization: ` ${auth?.access_token}`
       }
     });
   };
