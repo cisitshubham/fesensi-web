@@ -6,6 +6,9 @@ import { CardProject, CardProjectRow } from '@/partials/cards';
 
 interface IProjects2Item {
 	ticket_id: string;
+	ticket_no: string;
+	assigned: boolean;
+	assigned_to: string;
 	logo: string;
 	name: string;
 	description: string;
@@ -27,7 +30,10 @@ const Projects2 = () => {
 			try {
 				const response = await getAllTicket();
 				const formattedProjects = response.data.map((ticket: any) => ({
+					ticket_no: ticket.ticket_number,
 					ticket_id: ticket._id,
+					assigned: ticket.assigned,
+					assigned_to: ticket.assigned_to,
 					logo: ticket.icon || 'default.svg', 
 					name: ticket.title,
 					description: ticket.description,
@@ -52,8 +58,10 @@ const Projects2 = () => {
 
 	const renderProject = (project: IProjects2Item, index: number) => (
 		<CardProject
+			ticket_no={project.ticket_no}
 			ticket_id={project.ticket_id}
 			logo={(project as any).logo}
+			assigned_to={project.assigned_to}
 			name={(project as any).name}
 			description={project.description}
 			startDate={(project as any).startDate}
@@ -65,6 +73,8 @@ const Projects2 = () => {
 
 	const renderItem = (item: IProjects2Item, index: number) => (
 		<CardProjectRow
+			ticket_no={item.ticket_no}
+			assigned_to={item.assigned_to}
 			ticketId={item.ticket_id}
 			category={item.category}
 			logo={item.logo}
@@ -120,11 +130,11 @@ const Projects2 = () => {
 };
 
 function mapStatusVariant(status: string): string {
-	switch (status.toLowerCase()) {
+	switch (status) {
 		case 'OPEN':
 			return 'badge-primary';
 		case 'IN-PROGRESS':
-			return 'badge-success';
+			return 'badge-info';
 		case 'RESOLVED':
 			return 'badge-success';
 		case 'CLOSED':

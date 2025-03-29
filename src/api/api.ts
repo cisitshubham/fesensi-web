@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import axiosInstance from '../api/axiosInstance';
-
 export const fetchUser = async () => {
   try {
     const response = await axiosInstance.get('/users/me');
@@ -40,3 +39,29 @@ export const getAllTicket = async () => {
 		console.error('Error fetching all tickets:', error);
   }
 };
+
+export const getDropdown = async () => {
+	try {
+		const response = await axiosInstance.get('/tickets/ticket-dropdown');
+		return response.data;
+  } catch (error) {
+		console.error('Error fetching dropdown:', error);
+  }
+}
+
+export const getTicketByStatus = async () => {
+	try {
+		const response = await axiosInstance.get('/admin//tickets/dashboard/tickets/progression');
+		return response.data;
+  } catch (error) {
+		console.error('Error fetching ticket by status:', error);
+  }
+}
+export const getTicketByCategory = async () => {
+	try {
+		const response = await axiosInstance.get('/admin/tickets/dashboard/tickets/categories');
+		return response.data;
+  } catch (error) {
+		console.error('Error fetching ticket by category:', error);
+  }
+}

@@ -3,7 +3,7 @@ import { KeenIcon, MenuIcon, MenuItem, MenuLink, MenuSub, MenuTitle } from '@/co
 import { Link } from 'react-router-dom'; // Assuming Link is from react-router-dom
 import { toAbsoluteUrl } from '@/utils/Assets';
 
-const DropdownCard2 = (ticketId:string) => {
+const DropdownCard2 = (ticketId?:string) => {
 	return (
 		<MenuSub className="menu-default" rootClassName="w-full max-w-[200px]">
 			<MenuItem path="/account/home/settings-enterprise">

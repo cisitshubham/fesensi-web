@@ -5,7 +5,9 @@ import { DropdownCard2 } from '../dropdowns/general';
 import { Link } from 'react-router-dom';
 
 interface IProjectProps {
+	ticket_no: string; 
 	ticket_id: string;
+	assigned_to: string;
 	logo: string;
 	name: string;
 	description: string;
@@ -20,9 +22,11 @@ interface IProjectProps {
 }
 
 const CardProject = ({
+	ticket_no,
 	ticket_id,
 	logo,
 	name,
+	assigned_to,
 	description,
 	startDate,
 	status,
@@ -30,11 +34,8 @@ const CardProject = ({
 }: IProjectProps) => {
 	return (
 		<div className="card p-7.5">
-			<div className='flex items-center gap-5 mb-2'>
-				<h3 className='text-m  text-gray-700 '>Ticket No:&nbsp;{ticket_id}</h3>
-			</div>
+
 			<div className="flex items-center justify-between mb-3 lg:mb-6">
-				
 				<div className="flex items-center justify-center size-[50px] rounded-lg ">
 					<img src={toAbsoluteUrl(`${logo}`)} className="" alt="" />
 				</div>
@@ -42,43 +43,45 @@ const CardProject = ({
 			</div>
 
 			<div className="flex flex-col mb-3 lg:mb-6">
-				<Link to={`/public-profile/projects/UpdateTicketForm/${ticket_id}`} className='text-lg font-media/brand text-gray-900 hover:text-primary-active mb-px'>{name}</Link>
-				<span className="text-sm text-gray-700">{description}</span>
-				<span className="text-sm text-gray-800">{category}</span>
+				<Link to={`/public-profile/projects/UpdateTicketForm/${ticket_id}`} className='text-lg font-media/brand text-gray-900 hover:text-primary-active mb-px'><span>{ticket_no}</span>:&nbsp;{name}</Link>
+				<span className="text-sm text-gray-700 break-words whitespace-normal"> {description} </span>
+				
+			</div>
+			<div className="flex justify-between items-start">
+                <span className="text-sm font-medium text-gray-800 py-2">Category:&nbsp;</span>
+				<span className={`badge badge-md text-inherit bg-inherit badge-pill badge-outline text-end w-1/2 font-normal`}>{category}</span>
+			</div>
+			<div className="flex justify-between items-start">
+                <span className="text-sm font-medium text-gray-800 py-2">Assigned To:&nbsp;</span>
+				<span className={`badge badge-md text-inherit bg-inherit badge-pill badge-outline text-end w-1/2 font-normal`}>{assigned_to}</span>
 			</div>
 
-			<div className="flex items-center gap-5 ">
-				<span className="text-sm text-gray-600">
-					Due Date:&nbsp;
-					<span className="text-sm font-medium text-gray-800">{startDate}</span>
-				</span>
-			</div>
-
-
-			<div className="flex items-end justify-end gap-5">
-					<Menu className="items-end">
-						<MenuItem
-							toggle="dropdown"
-							trigger="click"
-							dropdownProps={{
-								placement: 'bottom-end',
-								modifiers: [
-									{
-										name: 'offset',
-										options: {
-											offset: [0, 10]
-										}
+			<div className="flex justify-between items-start">
+				<span className="text-sm font-medium text-gray-800 py-2">Due Date:&nbsp;{startDate}</span>
+				<Menu className="flex items-end">
+					<MenuItem
+						toggle="dropdown"
+						trigger="click"
+						dropdownProps={{
+							placement: 'bottom-end',
+							modifiers: [
+								{
+									name: 'offset',
+									options: {
+										offset: [0, 10]
 									}
-								]
-							}}
-						>
-							<MenuToggle className="btn btn-sm btn-icon btn-light btn-clear">
-								<KeenIcon icon="dots-vertical" />
-							</MenuToggle>
-							{DropdownCard2(ticket_id)}
-						</MenuItem>
-					</Menu>
-				</div>
+								}
+							]
+						}}
+					>
+						<MenuToggle className="btn btn-sm btn-icon btn-light btn-clear">
+							<KeenIcon icon="dots-vertical" />
+						</MenuToggle>
+						{DropdownCard2(ticket_id)}
+					</MenuItem>
+				</Menu>
+			</div>
+
 			</div>
 
 

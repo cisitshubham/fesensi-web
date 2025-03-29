@@ -5,6 +5,9 @@ import { useLanguage } from '@/i18n';
 import { DropdownCard2 } from '../dropdowns/general';
 
 interface IProjectRowProps {
+	ticket_no: string;
+   assigned_to: string;
+  assigned?: boolean;
   ticketId: string;		
   logo: string;
   name: string;
@@ -21,7 +24,7 @@ interface IProjectRowProps {
   
 }
 
-const CardProjectRow = ({ ticketId, logo, name, description, status, closedDate, category }: IProjectRowProps) => {
+const CardProjectRow = ({ ticketId,assigned_to ,ticket_no, logo, name, description, status, closedDate, category }: IProjectRowProps) => {
   const { isRTL } = useLanguage();
   return (
     <div className="card p-7">
@@ -31,14 +34,25 @@ const CardProjectRow = ({ ticketId, logo, name, description, status, closedDate,
             <img src={toAbsoluteUrl(`${logo}`)} className="" alt="" />
           </div>
 
-          <div className="flex flex-col">
-			<a href={toAbsoluteUrl(`/public-profile/projects/UpdateTicketForm/${ticketId}`)} className="text-lg text-gray-900 hover:text-primary-active mb-px">
-			Ticket No:&nbsp;{ticketId}  
-            </a>
-			<span className="text-sm text-gray-700"> {name}</span>
-            <span className="text-sm text-gray-700">{description}</span>
-			<span className="text-sm text-gray-800">{category}</span>
-          </div>
+				  <div className="flex flex-col">
+					  <a href={toAbsoluteUrl(`/public-profile/projects/UpdateTicketForm/${ticketId}`)}
+						  className="text-lg text-gray-900 hover:text-primary-active mb-px gap-3">
+						  <span className="text-gray-900 break-words whitespace-normal font-sans">{ticket_no}</span>:&nbsp;{name}
+					  </a>
+					  <span className="text-sm text-gray-700 break-words whitespace-normal font-sans">{description}</span>
+
+					  <div className="grid grid-cols-2 gap-4">
+						  <div className="flex justify-start">
+							  <span className="text-sm text-gray-800 py-2">Category: &nbsp;</span>
+							  <span className="badge badge-md text-inherit bg-inherit badge-pill badge-outline text-end w-2/2 font-normal">{category}</span>
+						  </div>
+						  <div className="flex justify-start">
+							  <span className="text-sm text-gray-800 py-2">Assigned To: &nbsp;</span>
+							  <span className="badge badge-md text-inherit bg-inherit badge-pill badge-outline text-end w-2/2 font-normal">{assigned_to}</span>
+						  </div>
+					  </div>
+				  </div>
+
         </div>
 
         <div className="flex items-center flex-wrap gap-5 lg:gap-20">
