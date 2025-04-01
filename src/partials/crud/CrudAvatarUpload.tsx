@@ -38,9 +38,9 @@ const CrudAvatarUpload = () => {
 	};
 
   return (
-	  <ImageInput value={avatar}  onChange={handleImageChange}>
+	  <ImageInput value={avatar}  onChange={handleImageChange} >
       {({ onImageUpload }) => (
-        <div className="image-input size-16" onClick={onImageUpload}>
+        <div className="image-input size-20" onClick={onImageUpload}>
           <div
             className="btn btn-icon btn-icon-xs btn-light shadow-default absolute z-1 size-5 -top-0.5 -end-0.5 rounded-full"
             onClick={(e) => {

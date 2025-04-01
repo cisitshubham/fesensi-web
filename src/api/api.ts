@@ -9,12 +9,14 @@ export const fetchUser = async () => {
   }
 };
 
+
+
 export const updateProfile = async (imageFile: File) => {
   try {
     const formData = new FormData();
     formData.append('image', imageFile); 
     const response = await axiosInstance.post('/users/update-profile', formData,);
-    console.log('User profile updated:', response.data);
+
   } catch (error) {
     console.error('Error updating user profile:', error);
   }
@@ -42,7 +44,7 @@ export const getAllTicket = async () => {
 
 export const getDropdown = async () => {
 	try {
-		const response = await axiosInstance.get('/tickets/ticket-dropdown');
+		const response = await axiosInstance.get('/tickets/ticket-dropdowns');
 		return response.data;
   } catch (error) {
 		console.error('Error fetching dropdown:', error);
@@ -65,3 +67,47 @@ export const getTicketByCategory = async () => {
 		console.error('Error fetching ticket by category:', error);
   }
 }
+
+export const createTicket = async (formData: FormData) => {
+	try {
+		const response = await axiosInstance.post('/tickets/raise-ticket', formData)
+		return response;
+	} catch (error: any) {
+
+		if (error.response) {
+			console.error("🚨 Server Error Response:", error.response.data); 
+		} else {
+			console.error("🚨 No Response from Server");
+		}
+	}
+};
+export const updateTicket = async (formData: FormData) => {
+	for (let pair of formData.entries()) {
+		console.log(pair[0], pair[1]);
+	}
+	console.log(formData);
+	
+
+	try {
+		// const response = await axiosInstance.post('/tickets/raise-ticket', formData)
+		// return response;
+	} catch (error: any) {
+
+		if (error.response) {
+			console.error("🚨 Server Error Response:", error.response.data); 
+		} else {
+			console.error("🚨 No Response from Server");
+		}
+	}
+};
+
+
+
+export const getTicketById = async (ticketId: any) => {
+	try {
+		const response = await axiosInstance.get(`/tickets/ticket/${ticketId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching ticket by ID:', error);
+    }
+};

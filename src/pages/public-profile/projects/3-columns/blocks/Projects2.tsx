@@ -90,7 +90,7 @@ const Projects2 = () => {
 		<div className="flex flex-col items-stretch gap-5 lg:gap-7.5">
 			<div className="flex flex-wrap items-center gap-5 justify-between">
 				<h3 className="text-lg text-gray-900 font-semibold">
-					{loading ? 'Loading...' : `${projects.length} Tickets`}
+					{loading ? 'Loading...' : `HelpDesk Inbox: ${projects.length} `}
 				</h3>
 				<div className="btn-tabs" data-tabs="true">
 					<a

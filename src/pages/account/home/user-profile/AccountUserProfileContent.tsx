@@ -7,7 +7,7 @@ const AccountUserProfileContent = () => {
       <div className="col-span-2">
         <div className="grid gap-5 lg:gap-7.5">
           <PersonalInfo />
-          <CalendarAccounts />
+          {/* <CalendarAccounts /> */}
         </div>
       </div>
     </div>
