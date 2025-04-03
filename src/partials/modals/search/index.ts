@@ -7,3 +7,4 @@ export * from './ModalSearchEmpty';
 export * from './ModalSearchUsers';
 export * from './ModalSearchNoResults';
 export * from './types';
+export * from './ModalTicketFileter';

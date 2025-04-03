@@ -1,6 +1,8 @@
 import { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { DefaultPage, Demo1DarkSidebarPage } from '@/pages/dashboards';
+
+
 import {
   ProfileActivityPage,
   ProfileBloggerPage,
@@ -86,6 +88,7 @@ import {
   AuthenticationGetStartedPage
 } from '@/pages/authentication';
 
+import { Filter } from '@/pages/TicketFiter';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -190,7 +193,8 @@ const AppRoutingSetup = (): ReactElement => {
 	      
 		  <Route path="/public-profile/projects/createTickets" element={< CreateTicketForm />} />
 		  <Route path="/public-profile/projects/UpdateTicketForm/:id" element={< UpdateTicketForm />} />
-				  <Route path="/public-profile/projects/ticket/view/:id" element={< ViewTicket />} />
+		   <Route path="/public-profile/projects/ticket/view/:id" element={< ViewTicket />} />
+		  <Route path="/TicketFilter/:id?" element={<Filter />} />
 
 
 

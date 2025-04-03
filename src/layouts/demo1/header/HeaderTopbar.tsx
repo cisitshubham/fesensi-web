@@ -32,7 +32,6 @@ const HeaderTopbar = () => {
     const getUser = async () => {
       try {
         const userData = await fetchUser();
-        console.log('Fetched User:', userData);
         setUser(userData);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -48,7 +47,7 @@ const HeaderTopbar = () => {
         onClick={handleOpen}
         className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"
       >
-    <KeenIcon icon="magnifier" />
+   		 <KeenIcon icon="magnifier" />
       </button>
       <ModalSearch open={searchModalOpen} onOpenChange={handleClose} />
 

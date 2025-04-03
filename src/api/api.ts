@@ -31,6 +31,18 @@ export const dashaboardTicket = async () => {
   }
 };
 
+export const getTicketFromStatus = async (categoryId: any) => {
+	try {
+		console.log("categoryId:", categoryId);
+		
+		const response = await axiosInstance.get(`/tickets/ticket-status/${categoryId}`);
+		return response.data;
+	} catch (error) {
+		console.error("Error fetching tickets by status:", error);
+		return null;  // Handle errors properly
+	}
+};
+
 
 export const getAllTicket = async () => {
 	try {
@@ -82,15 +94,10 @@ export const createTicket = async (formData: FormData) => {
 	}
 };
 export const updateTicket = async (formData: FormData) => {
-	for (let pair of formData.entries()) {
-		console.log(pair[0], pair[1]);
-	}
-	console.log(formData);
-	
-
+	let ticketID= formData.get('ticketId')
 	try {
-		// const response = await axiosInstance.post('/tickets/raise-ticket', formData)
-		// return response;
+		const response = await axiosInstance.post(`/admin/tickets/update/${ticketID}`, formData)
+		return response;
 	} catch (error: any) {
 
 		if (error.response) {
@@ -111,3 +118,23 @@ export const getTicketById = async (ticketId: any) => {
         console.error('Error fetching ticket by ID:', error);
     }
 };
+
+export const TicketFilter = async (formData: any) => {
+	try {
+	
+		const cleanData = {
+			...formData,
+			priority: formData.priority || null,
+			status: formData.status || null,
+		};		
+		const response = await axiosInstance.post('/admin/tickets/filter', cleanData);
+		let responseData = response as any;
+		if (responseData?.success==false) {
+			throw new Error(responseData?.message);
+		}	
+		return response.data;
+	} catch (error) {
+        console.error('Error fetching ticket by ID:', error);
+    }
+};
+

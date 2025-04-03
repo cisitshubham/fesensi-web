@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { KeenIcon } from '@/components';
 import { getAllTicket } from '@/api/api';
 import { CardProject, CardProjectRow } from '@/partials/cards';
+import { ModalTicketFilter } from '@/partials/modals/search/ModalTicketFileter';
+import { Link } from 'react-router-dom'
+
 
 interface IProjects2Item {
 	ticket_id: string;
@@ -21,15 +24,27 @@ interface IProjects2Item {
 	category: string
 }
 
-const Projects2 = () => {
+const Projects2 = () => {	
+	const handleShow = () => {window.dispatchEvent(new Event('resize'))};
+	const [searchModalOpen, setSearchModalOpen] = useState(false);
+	const handleOpen = () => setSearchModalOpen(true);
+	const handleClose = () => {setSearchModalOpen(false);};
 	const [activeView, setActiveView] = useState('cards');
 	const [projects, setProjects] = useState<IProjects2Item[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [filteredData, setFilteredData] = useState(null);
+	
+
 	useEffect(() => {
 		const fetchProjects = async () => {
 			try {
-				const response = await getAllTicket();
+				setLoading(true);
+				if(filteredData) {
+					setProjects(filteredData);
+                }
+				const response = await getAllTicket();				
 				const formattedProjects = response.data.map((ticket: any) => ({
+					
 					ticket_no: ticket.ticket_number,
 					ticket_id: ticket._id,
 					assigned: ticket.assigned,
@@ -47,7 +62,7 @@ const Projects2 = () => {
 				}));
 				setProjects(formattedProjects); 
 			} catch (error) {
-				console.error('Error fetching tickets:', error);
+				alert(`Error fetching projects:${error}`);
 			} finally {
 				setLoading(false);
 			}
@@ -83,7 +98,8 @@ const Projects2 = () => {
 			closedDate={item.startDate ?? ''}
 			endDate={item.endDate ?? ''}
 			status={item.status}
-			key={index} priority={''} 		/>
+			key={index} priority={''} 
+		/>
 	);
 
 	return (
@@ -93,8 +109,10 @@ const Projects2 = () => {
 					{loading ? 'Loading...' : `HelpDesk Inbox: ${projects.length} `}
 				</h3>
 				<div className="btn-tabs" data-tabs="true">
-					<a
-						href="#"
+					<Link to="/TicketFilter/" className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500">
+						<KeenIcon icon="filter" />
+					</Link>
+					<a href="#"
 						className={`btn btn-icon btn-sm ${activeView === 'cards' ? 'active' : ''}`}
 						onClick={() => setActiveView('cards')}>
 						<KeenIcon icon="category" />
@@ -136,9 +154,9 @@ function mapStatusVariant(status: string): string {
 		case 'IN-PROGRESS':
 			return 'badge-info';
 		case 'RESOLVED':
-			return 'badge-success';
+			return 'badge-warning';
 		case 'CLOSED':
-			return 'badge-Warning';
+			return 'badge-success';
 		default:
 			return 'badge-primary';
 	}

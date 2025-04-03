@@ -16,9 +16,9 @@ const ProjectColumn3Page = () => {
     <Fragment>
       <Container>
         <Navbar>
-          <PageMenu />
+          <PageMenu  />
           <NavbarActions>
-			<Link to="/public-profile/projects/createTickets" className="btn btn-sm btn-primary">Create Ticket</Link>
+			<Link to="/public-profile/projects/createTickets" className="btn btn-sm py-0 btn-primary">Create Ticket</Link>
           </NavbarActions>
         </Navbar>
       </Container>

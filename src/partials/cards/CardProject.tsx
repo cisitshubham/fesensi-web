@@ -44,8 +44,7 @@ const CardProject = ({
 
 			<div className="flex flex-col mb-3 lg:mb-6">
 				<Link to={`/public-profile/projects/UpdateTicketForm/${ticket_id}`} className='text-lg font-media/brand text-gray-900 hover:text-primary-active mb-px'><span>{ticket_no}</span>:&nbsp;{name}</Link>
-				<span className="text-sm text-gray-700 break-words whitespace-normal"> {description} </span>
-				
+				<span className="text-sm text-gray-700 break-words whitespace-normal"> {description} </span>	
 			</div>
 			<div className="flex justify-between items-start">
                 <span className="text-sm font-medium text-gray-800 py-2">Category:&nbsp;</span>

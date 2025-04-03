@@ -67,7 +67,6 @@ const Highlights = ({ limit }: IHighlightsProps) => {
 		const fetchData = async () => {
 			try {
 				const response = await getTicketByStatus();
-
 				const categories = response.data.counts;
 				const statusColors: Record<string, string> = {
 					RESOLVED: 'badge-success',
@@ -94,27 +93,39 @@ const Highlights = ({ limit }: IHighlightsProps) => {
 	}, []);
 
 
+
+	const categoryIcons: Record<string, string> = {
+		'Hardware': "setting-2", 
+		'Internet/Network': "data", 
+		'Cloud Technologies': "cloud-change", 
+		'Software': "soft", 
+		'Others': "technology-4", 
+	};
+
 	const renderRow = (row: IHighlightsRow, index: number) => {
 		return (
 			<div key={index} className="flex items-center justify-between flex-wrap gap-2">
 				<div className="flex items-center gap-1.5">
-					<KeenIcon icon={row.icon} className="text-base text-gray-500" />
+					<KeenIcon icon={categoryIcons[row.text] || "clipboard-list"}className="text-base text-gray-500"/>
 					<span className="text-sm font-normal text-gray-900">{row.text}</span>
 				</div>
+
 				<div className="flex items-center text-sm font-medium text-gray-800 gap-6">
 					<span className="lg:text-right">{row.total}</span>
-					<span className="lg:text-right">
+
+					<span className="lg:text-right flex items-center gap-1 w-[60px] justify-end">
 						{row.increase ? (
-							<KeenIcon icon="arrow-up" className="text-success" />
+							<KeenIcon icon="arrow-up" className="text-success flex-shrink-0" />
 						) : (
-							<KeenIcon icon="arrow-down" className="text-danger" />
+							<KeenIcon icon="arrow-down" className="text-danger flex-shrink-0" />
 						)}
-						&nbsp;{row.stats}%
+						{row.stats}%
 					</span>
 				</div>
 			</div>
 		);
 	};
+
 
 	const [ticketCounts, setTicketCounts] = useState({
 		resolved: 0,

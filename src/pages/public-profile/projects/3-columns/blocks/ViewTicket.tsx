@@ -29,48 +29,49 @@ const ViewTicket = () => {
 			<Navbar>
 				<MenuLabel className='cursor-default'>Ticket Details</MenuLabel>
 				<NavbarActions>
-					<Link to="/public-profile/projects/createTickets" className="btn btn-sm btn-light">Create New Ticket</Link>
-					<Link to={`/public-profile/projects/UpdateTicketForm/${id}`} className="btn btn-sm btn-light">Update Ticket</Link>
+					<Link to="/public-profile/projects/createTickets" className="btn btn-sm btn-primary btn-outline text-blue-800">Create New Ticket</Link>
+					<Link to={`/public-profile/projects/UpdateTicketForm/${id}`} className="btn btn-sm btn-primary btn-outline">Update Ticket</Link>
 				</NavbarActions>
+
 			</Navbar>
 			<div className="border rounded-lg shadow-sm p-6 space-y-6">
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Ticket ID</h4>
+							<h4 className="text-gray-600 text-xs ">Ticket ID</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.ticket_number}</p>
 						</div>
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Title</h4>
+							<h4 className="text-gray-600 text-xs ">Title</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.title}</p>
 						</div>
 						<div className="col-span-1 md:col-span-2 border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Description</h4>
+							<h4 className="text-gray-600 text-xs ">Description</h4>
 							<p className="text-gray-800 text-sm leading-relaxed">{(ticket as any)?.description}</p>
 						</div>
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Category</h4>
+							<h4 className="text-gray-600 text-xs ">Category</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.category}</p>
 						</div>
 
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Priority</h4>
+							<h4 className="text-gray-600 text-xs ">Priority</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.priority}</p>
 						</div>
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Due Date</h4>
+							<h4 className="text-gray-600 text-xs ">Due Date</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.due_date}</p>
 						</div>
 						<div className="border p-3 rounded-lg shadow-sm">
-							<h4 className="text-gray-600 text-xs uppercase">Assigned To</h4>
+							<h4 className="text-gray-600 text-xs ">Assigned To</h4>
 							<p className="text-gray-800 text-sm">{(ticket as any)?.assigned_to}</p>
 						</div>
 					</div>
 
 				</div>
 
-				<div>
-					<h3 className="text-gray-500 text-xs uppercase font-semibold">Attachments</h3>
+				<div className='border rounded-lg p-4 space-y-4'>
+					<h3 className="text-gray-500 text-xs  font-semibold">Attachments</h3>
 					<div className="flex gap-4 flex-wrap">
 						{(ticket as any)?.attachments?.length ? (
 							(ticket as any).attachments.map((file:any) => (
@@ -85,21 +86,12 @@ const ViewTicket = () => {
 				</div>
 
 				<div>
-					<h3 className="text-gray-500 text-xs uppercase font-semibold">Comments</h3>
+					<h3 className="text-gray-500 text-xs  font-semibold">Comments</h3>
 					<div className="border rounded-lg p-4 space-y-4">
 						{(ticket as any)?.comments?.length ? (
 							(ticket as any).comments.map((comment:any) => (
-								<div key={comment._id} className="p-3 rounded-lg shadow-sm border mb-3">
+								<div key={comment._id} className="p-3 rounded-lg border mb-3">
 									<p className="text-sm text-gray-800">{comment.comment_text}</p>
-									{comment.attachments?.length > 0 && (
-										<div className="mt-2 flex gap-2 py-3 mb-2">
-											{comment.attachments.map((file:any) => (
-												<a key={file._id} href={file.file_url} target="_blank" rel="noopener noreferrer" className="block">
-													<img src={file.file_url} alt="Attachment" className="w-12 h-12 object-cover rounded-lg border hover:opacity-80 transition" />
-												</a>
-											))}
-										</div>
-									)}
 									<div className="text-xs text-gray-500 mt-2">Comment #{comment.sr_no}</div>
 								</div>
 							))
@@ -110,7 +102,7 @@ const ViewTicket = () => {
 				</div>
 				{/* Escalation Section */}
 				<div>
-					<h3 className="text-gray-500 text-xs uppercase font-semibold">Escalation</h3>
+					<h3 className="text-gray-500 text-xs  font-semibold">Escalation</h3>
 					<div className="border rounded-lg p-4">
 						<p className="text-gray-900 font-medium">{(ticket as any)?.escalation || "No escalation details available"}</p>
 					</div>
@@ -118,14 +110,14 @@ const ViewTicket = () => {
 
 				{/* Audit Log Section */}
 				<div>
-					<h3 className="text-gray-500 text-xs uppercase font-semibold">Audit Log</h3>
-					<div className="overflow-x-auto rounded-sm">
+					<h3 className="text-gray-500 text-xs  font-semibold">Audit Log</h3>
+					<div className="overflow-x-auto rounded-lg">
 						<table className="min-w-full border-collapse border border-gray-200 rounded-lg">
 							<thead className="bg-gray-100">
 								<tr>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Action</th>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">User Name</th>
+									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Date</th>
+									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Action</th>
+									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">User Name</th>
 								</tr>
 							</thead>
 							<tbody>

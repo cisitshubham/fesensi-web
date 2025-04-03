@@ -23,6 +23,9 @@ const Footer = () => {
             <a href="https://devs.keenthemes.com" target="_blank" className="hover:text-primary">
               Support
             </a>
+            <a href="https://devs.keenthemes.com" target="_blank" className="hover:text-primary">
+              FAQ
+            </a>
           </nav>
         </div>
       </Container>

@@ -12,7 +12,7 @@ const Demo1LightSidebarContent = () => {
         </div>
 
         <div className="lg:col-span-2">
-				  <Highlights  />
+		   <Highlights  />
         </div>
       </div>
 
