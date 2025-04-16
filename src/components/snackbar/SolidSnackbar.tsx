@@ -44,7 +44,6 @@ const SolidSnackbar = forwardRef<HTMLDivElement, ISolidSnackbarProps>((props, re
   // Get the icon and styles based on the state
   const iconName = icon || 'information-2';
   const rootClass = rootStyles[state] || rootStyles['primary'];
-
   return (
     <SnackbarContent ref={ref} role="alert">
       <div

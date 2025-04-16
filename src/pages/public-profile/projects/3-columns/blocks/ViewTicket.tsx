@@ -1,7 +1,8 @@
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { Tooltip ,TooltipContent,TooltipProvider,TooltipTrigger } from '@/components/ui/tooltip';
 import { Container, MenuLabel } from '@/components';
+import { Accordion,AccordionItem } from '@/components/accordion';
 import { Link } from 'react-router-dom';
 import { Navbar, NavbarActions, NavbarDropdown } from '@/partials/navbar';
 import { KeenIcon } from '@/components';
@@ -27,13 +28,41 @@ const ViewTicket = () => {
 	return (
 		<Container>
 			<Navbar>
-				<MenuLabel className='cursor-default'>Ticket Details</MenuLabel>
-				<NavbarActions>
-					<Link to="/public-profile/projects/createTickets" className="btn btn-sm btn-primary btn-outline text-blue-800">Create New Ticket</Link>
-					<Link to={`/public-profile/projects/UpdateTicketForm/${id}`} className="btn btn-sm btn-primary btn-outline">Update Ticket</Link>
-				</NavbarActions>
+				<MenuLabel className="cursor-default mb-3">Ticket Details</MenuLabel>
 
+				<NavbarActions>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Link
+									to="/public-profile/projects/createTickets"
+									className="btn btn-sm btn-primary btn-outline text-blue-800"
+								>
+									Create New Ticket
+								</Link>
+							</TooltipTrigger>
+							<TooltipContent side="bottom" align="center">
+								<p>Click to create a new ticket</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Link
+									to={`/public-profile/projects/UpdateTicketForm/${id}`}
+									className="btn btn-sm btn-primary btn-outline"
+								>
+									Update Ticket
+								</Link>
+							</TooltipTrigger>
+							<TooltipContent side="bottom" align="center">
+								<p>Click to update this ticket</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				</NavbarActions>
 			</Navbar>
+
 			<div className="border rounded-lg shadow-sm p-6 space-y-6">
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,61 +114,67 @@ const ViewTicket = () => {
 					</div>
 				</div>
 
-				<div>
-					<h3 className="text-gray-500 text-xs  font-semibold">Comments</h3>
-					<div className="border rounded-lg p-4 space-y-4">
-						{(ticket as any)?.comments?.length ? (
-							(ticket as any).comments.map((comment:any) => (
-								<div key={comment._id} className="p-3 rounded-lg border mb-3">
-									<p className="text-sm text-gray-800">{comment.comment_text}</p>
-									<div className="text-xs text-gray-500 mt-2">Comment #{comment.sr_no}</div>
-								</div>
-							))
-						) : (
-							<p className="text-gray-500 text-sm">No comments available</p>
-						)}
-					</div>
-				</div>
-				{/* Escalation Section */}
-				<div>
-					<h3 className="text-gray-500 text-xs  font-semibold">Escalation</h3>
-					<div className="border rounded-lg p-4">
-						<p className="text-gray-900 font-medium">{(ticket as any)?.escalation || "No escalation details available"}</p>
-					</div>
-				</div>
-
-				{/* Audit Log Section */}
-				<div>
-					<h3 className="text-gray-500 text-xs  font-semibold">Audit Log</h3>
-					<div className="overflow-x-auto rounded-lg">
-						<table className="min-w-full border-collapse border border-gray-200 rounded-lg">
-							<thead className="bg-gray-100">
-								<tr>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Date</th>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Action</th>
-									<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">User Name</th>
-								</tr>
-							</thead>
-							<tbody>
-								{(ticket as any)?.audit_log?.length ? (
-									(ticket as any)?.audit_log.map((log: any, index: number) => (
-										<tr key={index} className="hover:bg-gray-50">
-											<td className="border border-gray-200 px-4 py-2 text-sm">
-												{format(new Date(log.createdAt), "dd-MM-yyy HH:mm:ss")}
-											</td>
-											<td className="border border-gray-200 px-4 py-2 text-sm">{log.action}</td>
-											<td className="border border-gray-200 px-4 py-2 text-sm">{log.creator}</td>
-										</tr>
+				<Accordion>
+					<AccordionItem title="Comments">
+						<div>
+							<div className="border rounded-lg p-4 space-y-4">
+								{(ticket as any)?.comments?.length ? (
+									(ticket as any).comments.map((comment: any) => (
+										<div key={comment._id} className="p-3 rounded-lg border mb-3">
+											<p className="text-sm text-gray-800">{comment.comment_text}</p>
+											<div className="text-xs text-gray-500 mt-2">Comment #{comment.sr_no}</div>
+										</div>
 									))
 								) : (
-									<tr>
-										<td colSpan={3} className="border border-gray-200 px-4 py-2 text-center text-gray-500 text-sm">No audit logs available</td>
-									</tr>
+									<p className="text-gray-500 text-sm">No comments available</p>
 								)}
-							</tbody>
-						</table>
-					</div>
-				</div>
+							</div>
+						</div>
+					</AccordionItem>
+				</Accordion>
+				{/* Escalation Section */}
+				<Accordion className='text-gray-700'>
+				<AccordionItem title="Escalated to Developer"   >
+						<div className="border rounded-lg p-4">
+							<p className="text-gray-900 font-medium">{(ticket as any)?.escalation || "No escalation details available"}</p>
+						</div>
+				</AccordionItem>		
+				</Accordion>
+				
+
+				{/* Audit Log Section */}
+			  <Accordion className='text-gray-700'>
+				<AccordionItem title="Activity Log"   >	
+							<div className="overflow-x-auto rounded-lg">
+								<table className="min-w-full border-collapse border border-gray-200 rounded-lg">
+									<thead className="bg-gray-100">
+										<tr>
+											<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Date</th>
+											<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">Action</th>
+											<th className="border border-gray-200 px-4 py-2 text-left text-xs font-semibold text-gray-600 ">User Name</th>
+										</tr>
+									</thead>
+									<tbody>
+										{(ticket as any)?.audit_log?.length ? (
+											(ticket as any)?.audit_log.map((log: any, index: number) => (
+												<tr key={index} className="hover:bg-gray-100">
+													<td className="border border-gray-200 px-4 py-2 text-sm">
+														{format(new Date(log.createdAt), "dd-MM-yyy HH:mm:ss")}
+													</td>
+													<td className="border border-gray-200 px-4 py-2 text-sm">{log.action}</td>
+													<td className="border border-gray-200 px-4 py-2 text-sm">{log.creator}</td>
+												</tr>
+											))
+										) : (
+											<tr>
+												<td colSpan={3} className="border border-gray-200 px-4 py-2 text-center text-gray-500 text-sm">No audit logs available</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+							</div>
+				</AccordionItem>
+			  </Accordion>
 			</div>
 		</Container>
 	);

@@ -17,7 +17,7 @@ const statusMapping: Record<string, string> = {
 	CLOSED: 'CLOSED',
 };
 
-const ChannelStats = () => {
+const ChannelStats = (date?:any) => {
 	const [items, setItems] = useState<IChannelStatsItem[]>([]);
 	const navigate = useNavigate();
 
@@ -50,12 +50,9 @@ const ChannelStats = () => {
 			) : (
 				items.map((item, index) => (
 					item.info === "0" ? (
-						<div
-							key={index}
-							className="card flex-col justify-between gap-5 h-full bg-cover bg-no-repeat channel-stats-bg transition hover:shadow-lg active:scale-95 cursor-default"
-						>
+						<div key={index} className="card flex-col justify-between gap-5 h-full bg-cover bg-no-repeat channel-stats-bg transition hover:shadow-lg active:scale-95 cursor-default" >
 							<div className="flex flex-col items-center text-center p-4">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-10">
 									<img src={item.logo} className="w-10 h-10" alt={item.desc} />
 									<span className="text-sm font-medium text-gray-700">{item.desc}</span>
 								</div>
@@ -70,9 +67,9 @@ const ChannelStats = () => {
 						>
 							<button
 								className="card flex-col justify-between gap-5 h-full bg-cover bg-no-repeat channel-stats-bg transition hover:shadow-lg active:scale-95 w-full"
-							>
+								>
 								<div className="flex flex-col items-center text-center p-4">
-									<div className="flex items-center gap-2">
+									<div className="flex items-center gap-10">
 										<img src={item.logo} className="w-10 h-10" alt={item.desc} />
 										<span className="text-sm font-medium text-gray-700">{item.desc}</span>
 									</div>

@@ -174,7 +174,7 @@ const ModalTicketFilter: React.FC<IModalSearchProps> = ({ open, onOpenChange, on
 										onClick={() => toggleSelection(setState, index)}
 										className={`px-3 py-2 text-sm font-medium rounded-lg border ${item.selected
 												? 'bg-primary text-white'
-												: 'bg-white text-gray-700 border-gray-300'
+												: ' text-gray-700 border-gray-300'
 											}`}
 									>
 										{(item as any).name || item.title}
@@ -185,7 +185,7 @@ const ModalTicketFilter: React.FC<IModalSearchProps> = ({ open, onOpenChange, on
 					))}
 				</div>
 
-				<div className="p-4 border-t bg-white sticky bottom-0 left-0 w-full">
+				<div className="p-4 border-t  sticky bottom-0 left-0 w-full">
 					<button
 						onClick={sendFilterQuery}
 						className="w-full px-4 py-2 text-lg  text-white bg-primary rounded-lg hover:bg-primary-dark transition"

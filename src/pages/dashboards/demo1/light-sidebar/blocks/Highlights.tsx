@@ -21,13 +21,16 @@ interface IHighlightsItems extends Array<IHighlightsItem> { }
 
 interface IHighlightsProps {
 	limit?: number;
+	date?: any
 }
 
-const Highlights = ({ limit }: IHighlightsProps) => {
+const Highlights = ({ limit ,date }: IHighlightsProps, ) => {
 	const { isRTL } = useLanguage();
 	const [rows, setRows] = useState<IHighlightsRow[]>([]);
 	const [totalTickets, setTotalTickets] = useState(0);
 	const [percentageChange, setPercentageChange] = useState(0);
+	
+	
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -35,10 +38,9 @@ const Highlights = ({ limit }: IHighlightsProps) => {
 				const categories = response.data.counts;
 				let total = response.data.totalCurrentMonthCount || 0;
 				let prevTotal = response.data.totalLastMonthCount || 0;
-
 				const formattedRows: IHighlightsRow[] = categories.map((category: any) => {
 					const previousCount = category.lastMonthCount || 0;
-					const currentCount = category.currentMonthCount || 0;
+					const currentCount = category.ticketCount || 0;
 					const increase = currentCount >= previousCount;
 					const stats = parseFloat(category.percentageChange.replace('%', '')) || 0;
 					return {
@@ -103,6 +105,7 @@ const Highlights = ({ limit }: IHighlightsProps) => {
 	};
 
 	const renderRow = (row: IHighlightsRow, index: number) => {
+		
 		return (
 			<div key={index} className="flex items-center justify-between flex-wrap gap-2">
 				<div className="flex items-center gap-1.5">

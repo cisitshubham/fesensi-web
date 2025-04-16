@@ -9,6 +9,7 @@ import { Navbar } from '@/partials/navbar';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { KeenIcon } from '@/components'
+import { toast } from 'sonner';
 
 const UpdateTicketForm = () => {
 	const { id } = useParams<{ id: string }>();
@@ -55,7 +56,6 @@ const UpdateTicketForm = () => {
 		const fetchCategories = async () => {
 			try {
 				const response = await getDropdown();
-
 				setStatus(response.data.status || [])
 				setPriorities(response.data.priorities || []);
 				setCategories(response.data.categories || []);
@@ -63,8 +63,8 @@ const UpdateTicketForm = () => {
 					setAdminUsers(response.data.AdminUsers);
 				}
 
-			} catch {
-				setError('Failed to load categories and priorities.');
+			} catch(error:any) {
+				toast.error(error || 'Failed to load categories and priorities. Please try again.', { position: 'top-right', cancel: true });
 			}
 		};
 		fetchCategories();
@@ -75,6 +75,9 @@ const UpdateTicketForm = () => {
 			const fetchTicket = async () => {
 				try {
 					const response = await getTicketById(id);
+					if (!response ) {
+						toast.error('Failed to load ticket.', { position: 'top-right', cancel: true });
+					}
 					if (response.data) {
 						setTicket(response.data);
 						setTitle(response.data.title || '');
@@ -86,7 +89,7 @@ const UpdateTicketForm = () => {
 
 					}
 				} catch {
-					setError('Failed to load ticket.');
+					toast.error('Failed to load ticket.', { position: 'top-right', action: 'updateTicket', cancel: true });
 				}
 			};
 			fetchTicket();
@@ -100,8 +103,6 @@ const UpdateTicketForm = () => {
 
 		try {
 			const formData = new FormData();
-
-
 			formData.append('title', title);
 			formData.append('description', description);
 
@@ -136,13 +137,18 @@ const UpdateTicketForm = () => {
 			}
 
 
-			await updateTicket(formData);
-			alert('Ticket updated successfully.');
-			showToast('Ticket updated successfully.', 'success');
+			let result =	await updateTicket(formData);
+			if (!result || !result.data) {
+				throw new Error('Invalid response from server.');
+			}
+			if (result.data.success) {
+				toast.success('Ticket updated successfully', { position: 'top-right',action: 'updateTicket' ,cancel: true});
+			}
 		} catch {
-			setError('Failed to update ticket.');
+			toast.error('Failed to update ticket. Please try again.', {position: 'top-right', action: 'updateTicket', cancel: true});
 		} finally {
 			setLoading(false);
+			setError(null);	
 		}
 	};
 
@@ -227,7 +233,7 @@ const UpdateTicketForm = () => {
 
 					<div className="flex flex-col gap-4">
 						<MenuLabel>Upload Files</MenuLabel>
-						<div className="flex flex-row justify-between items-start gap-4 border rounded-lg bg-gray-50 p-4">
+						<div className="flex flex-row justify-between items-start gap-4 border rounded-lg p-4 bg-light-light  ">
 							{/* Left: Existing Attachments */}
 							<div className="flex flex-wrap gap-2">
 								{(ticket as any)?.attachments?.length ? (
@@ -243,7 +249,7 @@ const UpdateTicketForm = () => {
 
 							{/* Right: Upload Box */}
 							<div
-								className={`border-2 border-dashed p-2 flex flex-col items-center justify-center text-center rounded-lg transition-all duration-300 cursor-pointer ${dragging ? "border-blue-500 bg-blue-100" : "border-gray-300 bg-gray-50"}`}
+								className={`border-2 border-dashed p-2 flex flex-col items-center justify-center text-center rounded-lg transition-all duration-300 cursor-pointer ${dragging ? "border-blue-500 bg-blue-100" : "border-gray-300"}`}
 								onDragOver={handleDragOver}
 								onDragLeave={handleDragLeave}
 								onDrop={handleDrop}

@@ -52,12 +52,11 @@ const AuthContext = createContext<AuthContextProps | null>(null);
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth());
-  const [currentUser, setCurrentUser] = useState<UserModel | undefined>(undefined);
-
+  const [currentUser, setCurrentUser] = useState<UserModel | undefined>(undefined);	
   const verify = async () => {
     if (auth) {
       try {
-        const { data: user } = await getUser();
+        const { data: user } = await getUser();		
         setCurrentUser(user);
       } catch {
         saveAuth(undefined);
@@ -75,47 +74,44 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  //   const login = async (email: string, password: string) => {
-  //     try {
-  //       const { data } = await axios.post(LOGIN_URL, {
-  //         email,
-  //         password
-  //       });
-  //       if (data?.token) {
-  //         localStorage.setItem('token', data.token);
-  //       }
-  //       saveAuth(data.data.tokens);
-  //       setCurrentUser(data.data.user);
-  //     } catch (error) {
-  //       saveAuth(undefined);
-  //       throw new Error(`Error ${error}`);
-  //     }
-  //   };
-
-  const login = async (email: string, password: string) => {
-    try {
-      console.log('Attempting to login...');
-
-      const { data } = await axios.post(LOGIN_URL, {
-        email,
-        password
-      });
-
-      if (data?.data?.tokens?.access) {
-        localStorage.setItem('token', data.data.tokens.access);
-        console.log('Token saved to localStorage:', localStorage.getItem('token'));
-      } else {
-        console.error('No access token found in response.');
+    const login = async (email: string, password: string) => {
+      try {
+        const { data } = await axios.post(LOGIN_URL, {
+          email,
+          password
+        });
+        if (data?.token) {
+          localStorage.setItem('token', data.token);
+        }
+        saveAuth(data.data.tokens);
+        setCurrentUser(data.data.user);
+      } catch (error) {
+        saveAuth(undefined);
+        throw new Error(`Error ${error}`);
       }
+    };
 
-      saveAuth(data.data.tokens);
-      setCurrentUser(data.data.user);
-    } catch (error) {
-      console.error('Login error:', error);
-      saveAuth(undefined);
-      throw new Error(`Error ${error}`);
-    }
-  };
+//   const login = async (email: string, password: string) => {
+//     try {
+//       const { data } = await axios.post(LOGIN_URL, {
+//         email,
+//         password
+//       });	  
+//       if (data?.data?.tokens?.access) {
+//         localStorage.setItem('token', data.data.tokens.access);
+//       } else {
+//         console.error('No access token found in response.');
+//       }
+
+//       saveAuth(data.data.tokens);
+	  
+//       setCurrentUser(data.data.user);  
+//     } catch (error) {
+//       console.error('Login error:', error);
+//       saveAuth(undefined);
+//       throw new Error(`Error ${error}`);
+//     }
+//   };
 
   const register = async (
     first_name: string,

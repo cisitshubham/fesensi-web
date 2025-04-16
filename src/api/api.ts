@@ -2,11 +2,20 @@
 import axiosInstance from '../api/axiosInstance';
 export const fetchUser = async () => {
   try {
-    const response = await axiosInstance.get('/users/me');
+    const response = await axiosInstance.get('/users/me');	
     return response.data;
   } catch (error) {
     console.error('Error fetching user:', error);
   }
+};
+
+export const verifyRole = async () => {
+	try {
+		const response = await axiosInstance.get('/users/veryfiy/role');
+		return response.data;
+	} catch (error: any) {
+		console.error('Error fetching user role:', error?.response?.data || error.message);
+	}
 };
 
 
@@ -32,9 +41,7 @@ export const dashaboardTicket = async () => {
 };
 
 export const getTicketFromStatus = async (categoryId: any) => {
-	try {
-		console.log("categoryId:", categoryId);
-		
+	try {		
 		const response = await axiosInstance.get(`/tickets/ticket-status/${categoryId}`);
 		return response.data;
 	} catch (error) {
@@ -65,7 +72,7 @@ export const getDropdown = async () => {
 
 export const getTicketByStatus = async () => {
 	try {
-		const response = await axiosInstance.get('/admin//tickets/dashboard/tickets/progression');
+		const response = await axiosInstance.post('/admin//tickets/dashboard/tickets/progression');
 		return response.data;
   } catch (error) {
 		console.error('Error fetching ticket by status:', error);
@@ -73,7 +80,7 @@ export const getTicketByStatus = async () => {
 }
 export const getTicketByCategory = async () => {
 	try {
-		const response = await axiosInstance.get('/admin/tickets/dashboard/tickets/categories');
+		const response = await axiosInstance.post('/admin/tickets/dashboard/tickets/categories');
 		return response.data;
   } catch (error) {
 		console.error('Error fetching ticket by category:', error);

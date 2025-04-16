@@ -1,11 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import { KeenIcon } from '@/components';
-import { getAllTicket } from '@/api/api';
+import { getAllTicket,verifyRole } from '@/api/api';
 import { CardProject, CardProjectRow } from '@/partials/cards';
-import { ModalTicketFilter } from '@/partials/modals/search/ModalTicketFileter';
 import { Link } from 'react-router-dom'
-
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface IProjects2Item {
 	ticket_id: string;
@@ -35,7 +39,10 @@ const Projects2 = () => {
 	const [filteredData, setFilteredData] = useState(null);
 	
 
+
 	useEffect(() => {
+
+		
 		const fetchProjects = async () => {
 			try {
 				setLoading(true);
@@ -105,25 +112,51 @@ const Projects2 = () => {
 	return (
 		<div className="flex flex-col items-stretch gap-5 lg:gap-7.5">
 			<div className="flex flex-wrap items-center gap-5 justify-between">
-				<h3 className="text-lg text-gray-900 font-semibold">
+				<h3 className="text-lg text-gray-700 font-semibold size-1/6">
 					{loading ? 'Loading...' : `HelpDesk Inbox: ${projects.length} `}
 				</h3>
-				<div className="btn-tabs" data-tabs="true">
-					<Link to="/TicketFilter/" className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500">
-						<KeenIcon icon="filter" />
-					</Link>
-					<a href="#"
-						className={`btn btn-icon btn-sm ${activeView === 'cards' ? 'active' : ''}`}
-						onClick={() => setActiveView('cards')}>
-						<KeenIcon icon="category" />
-					</a>
-					<a
-						href="#"
-						className={`btn btn-icon btn-sm ${activeView === 'list' ? 'active' : ''}`}
-						onClick={() => setActiveView('list')}>
-						<KeenIcon icon="row-horizontal" />
-					</a>
-				</div>
+
+				<TooltipProvider>
+					<div className="btn-tabs" data-tabs="true">
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Link
+									to="/TicketFilter/"
+									className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"
+								>
+									<KeenIcon icon="filter" />
+								</Link>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">Filter Tickets</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<a
+									href="#"
+									className={`btn btn-icon btn-sm ${activeView === 'cards' ? 'active' : ''}`}
+									onClick={() => setActiveView('cards')}
+								>
+									<KeenIcon icon="category" />
+								</a>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">Card View</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<a
+									href="#"
+									className={`btn btn-icon btn-sm ${activeView === 'list' ? 'active' : ''}`}
+									onClick={() => setActiveView('list')}
+								>
+									<KeenIcon icon="row-horizontal" />
+								</a>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">List View</TooltipContent>
+						</Tooltip>
+					</div>
+				</TooltipProvider>
 			</div>
 
 			{loading ? (

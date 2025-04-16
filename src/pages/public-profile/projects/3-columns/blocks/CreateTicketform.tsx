@@ -8,6 +8,8 @@ import { getDropdown, createTicket } from '@/api/api';
 import { showToast } from '@/components/toast';
 import { Navbar, NavbarActions, NavbarDropdown } from '@/partials/navbar';
 import {KeenIcon} from '@/components'
+import { toast } from 'sonner';
+
 
 
 const CreateTicketForm = () => {
@@ -103,8 +105,7 @@ const CreateTicketForm = () => {
 				}
 
 				if (result.data.success) {
-					showToast('Ticket created successfully.', 'success');
-					alert(`Ticket created successfully : Ticket ID: ${result.data}`);
+					toast.success('Ticket created successfully', { position: 'top-right'});
 					setTitle('');
 					setDescription('');
 					setCategory('');
@@ -125,10 +126,10 @@ const CreateTicketForm = () => {
 	};
 
 	return (
-		<Container className='card p-3'>
+		<Container className='card p-3 '>
 				{error && <Alert variant='danger'>{error}</Alert>}
 			<Navbar>
-				<MenuLabel className=' text-gray-700'>Create Ticket</MenuLabel>
+				<MenuLabel className=' text-gray-700 mb-3'>Create Ticket</MenuLabel>
 				<Button type='button' onClick={() => { setTitle(''); setDescription(''); setCategory(''); setPriority(''); }} className='btn btn-sm ml-auto text-gray-500 mb-1 bg-gray-300 hover:bg-gray-200'>Reset</Button>
 			</Navbar>	
 			<div className="p-3">
@@ -173,7 +174,7 @@ const CreateTicketForm = () => {
 					<div className="flex flex-col gap-2">
 						<MenuLabel>Upload Files</MenuLabel>
 						<div
-							className={`border-2 border-dashed p-6 flex flex-col items-center justify-center text-center rounded-lg transition-all duration-300 cursor-pointer ${dragging ? "border-blue-500 bg-blue-100" : "border-gray-300 bg-gray-50"}`}
+							className={`border-2 border-dashed p-6 flex flex-col items-center justify-center text-center rounded-lg transition-all duration-300 cursor-pointer ${dragging ? "border-blue-500 bg-blue-100" : "border-gray-300"}`}
 							onDragOver={handleDragOver}
 							onDragLeave={handleDragLeave}
 							onDrop={handleDrop}
