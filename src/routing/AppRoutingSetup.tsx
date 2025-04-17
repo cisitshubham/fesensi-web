@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { DefaultPage, Demo1DarkSidebarPage } from '@/pages/dashboards';
 
-
 import {
   ProfileActivityPage,
   ProfileBloggerPage,
@@ -89,6 +88,12 @@ import {
 } from '@/pages/authentication';
 
 import { Filter } from '@/pages/TicketFiter';
+
+
+// manual imports 
+import AgentTickets from '@/pages/agent/my-tickets/my-tickets';
+import Tickets from '@/pages/agent/tickets/tickets';
+
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -186,18 +191,29 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/network/user-table/store-clients" element={<NetworkStoreClientsPage />} />
           <Route path="/network/user-table/visitors" element={<NetworkVisitorsPage />} />
           <Route path="/auth/welcome-message" element={<AuthenticationWelcomeMessagePage />} />
-          <Route path="/auth/account-deactivated" element={<AuthenticationAccountDeactivatedPage />}/>
+          <Route
+            path="/auth/account-deactivated"
+            element={<AuthenticationAccountDeactivatedPage />}
+          />
           <Route path="/authentication/get-started" element={<AuthenticationGetStartedPage />} />
-         
-		 {/* My Routings */}
-	      
-		  <Route path="/public-profile/projects/createTickets" element={< CreateTicketForm />} />
-		  <Route path="/public-profile/projects/UpdateTicketForm/:id" element={< UpdateTicketForm />} />
-		   <Route path="/public-profile/projects/ticket/view/:id" element={< ViewTicket />} />
-		  <Route path="/TicketFilter/:id?" element={<Filter />} />
 
+          {/*------------------------------------------ manual routes ------------------------ */}
 
+          {/* Shubham Routings */}
+          {/* users */}
+          <Route path="/public-profile/projects/createTickets" element={<CreateTicketForm />} />
+          <Route
+            path="/public-profile/projects/UpdateTicketForm/:id"
+            element={<UpdateTicketForm />}
+          />
+          <Route path="/public-profile/projects/ticket/view/:id" element={<ViewTicket />} />
+          <Route path="/TicketFilter/:id?" element={<Filter />} />
 
+          {/* aadesh routing  */}
+          {/* agent  */}
+
+          <Route path="/agent/mytickets" element={<AgentTickets />} />
+          <Route path="/agent/ticket" element={<Tickets/>}/>
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

@@ -1,4 +1,42 @@
-module.exports = {
+import tailwindcssAnimate from 'tailwindcss-animate';
+import plugin from './src/plugins/plugin.js';
+import theme from './src/plugins/components/theme.js';
+import breakpoints from './src/plugins/components/breakpoints.js';
+import typography from './src/plugins/components/typography.js';
+import menu from './src/plugins/components/menu.js';
+import dropdown from './src/plugins/components/dropdown.js';
+import accordion from './src/plugins/components/accordion.js';
+import input from './src/plugins/components/input.js';
+import inputGroup from './src/plugins/components/input-group.js';
+import select from './src/plugins/components/select.js';
+import textarea from './src/plugins/components/textarea.js';
+import fileInput from './src/plugins/components/file-input.js';
+import switchComponent from './src/plugins/components/switch.js';
+import checkbox from './src/plugins/components/checkbox.js';
+import radio from './src/plugins/components/radio.js';
+import range from './src/plugins/components/range.js';
+import container from './src/plugins/components/container.js';
+import imageInput from './src/plugins/components/image-input.js';
+import modal from './src/plugins/components/modal.js';
+import drawer from './src/plugins/components/drawer.js';
+import tooltip from './src/plugins/components/tooltip.js';
+import popover from './src/plugins/components/popover.js';
+import btn from './src/plugins/components/btn.js';
+import btnGroup from './src/plugins/components/btn-group.js';
+import tabs from './src/plugins/components/tabs.js';
+import pagination from './src/plugins/components/pagination.js';
+import card from './src/plugins/components/card.js';
+import table from './src/plugins/components/table.js';
+import badge from './src/plugins/components/badge.js';
+import rating from './src/plugins/components/rating.js';
+import scrollable from './src/plugins/components/scrollable.js';
+import progress from './src/plugins/components/progress.js';
+import apexcharts from './src/plugins/components/apexcharts.js';
+import leaflet from './src/plugins/components/leaflet.js';
+
+
+
+export default {
   content: ['index.html', './src/**/*.{ts,tsx}'],
   safelist: [
     'demo1',
@@ -196,9 +234,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        // sans: ['Inter', 'system-ui', 'sans-serif']
-		sans: ['Open Sans', 'system-ui', 'sans-serif'],
-		},
+        sans: ['Inter', 'system-ui', 'sans-serif']
+      },
       colors: {
         //begin: Shadcn UI Colors
         background: 'hsl(var(--background))',
@@ -684,40 +721,40 @@ module.exports = {
     })
   },
   plugins: [
-    require('tailwindcss-animate'), 
-    require('./src/plugins/plugin'),
-    require('./src/plugins/components/theme'),
-    require('./src/plugins/components/breakpoints'),
-    require('./src/plugins/components/typography'),
-    require('./src/plugins/components/menu'),
-    require('./src/plugins/components/dropdown'),
-    require('./src/plugins/components/accordion'),
-    require('./src/plugins/components/input'),
-    require('./src/plugins/components/input-group'),
-    require('./src/plugins/components/select'),
-    require('./src/plugins/components/textarea'),
-    require('./src/plugins/components/file-input'),
-    require('./src/plugins/components/switch'),
-    require('./src/plugins/components/checkbox'),
-    require('./src/plugins/components/radio'),
-    require('./src/plugins/components/range'),
-    require('./src/plugins/components/container'),
-    require('./src/plugins/components/image-input'),
-    require('./src/plugins/components/modal'),
-    require('./src/plugins/components/drawer'),
-    require('./src/plugins/components/tooltip'),
-    require('./src/plugins/components/popover'),
-    require('./src/plugins/components/btn'),
-    require('./src/plugins/components/btn-group'),
-    require('./src/plugins/components/tabs'),
-    require('./src/plugins/components/pagination'),
-    require('./src/plugins/components/card'),
-    require('./src/plugins/components/table'),
-    require('./src/plugins/components/badge'),
-    require('./src/plugins/components/rating'),
-    require('./src/plugins/components/scrollable'),
-    require('./src/plugins/components/progress'),
-    require('./src/plugins/components/apexcharts'),
-    require('./src/plugins/components/leaflet')
+    tailwindcssAnimate,
+    plugin,
+    theme,
+    breakpoints,
+    typography,
+    menu,
+    dropdown,
+    accordion,
+    input,
+    inputGroup,
+    select,
+    textarea,
+    fileInput,
+    switchComponent,
+    checkbox,
+    radio,
+    range,
+    container,
+    imageInput,
+    modal,
+    drawer,
+    tooltip,
+    popover,
+    btn,
+    btnGroup,
+    tabs,
+    pagination,
+    card,
+    table,
+    badge,
+    rating,
+    scrollable,
+    progress,
+    apexcharts,
+    leaflet
   ]
 };
