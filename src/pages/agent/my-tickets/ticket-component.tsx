@@ -1,6 +1,6 @@
 /**
  * Ticket Component
- * 
+ *
  * Input data must be of type TicketType:
  * refer to src/types.ts
  */
@@ -35,7 +35,7 @@ export default function Ticket({ ticket }: TicketProps) {
   return (
     <Link
       to={{
-        pathname: `/agent/ticket`,
+        pathname: `/agent/ticket`
       }}
       state={{ ticket }} // Pass the complete ticket data as state
       className="block"
@@ -45,16 +45,18 @@ export default function Ticket({ ticket }: TicketProps) {
           ticket.priority === 'High'
             ? ' border-orange-500 hover:shadow-orange-500'
             : ticket.priority === 'Medium'
-            ? ' border-yellow-500 hover:shadow-yellow-500'
-            : ticket.priority === 'Low'
-            ? ' border-green-500 hover:shadow-green-500'
-            : ticket.priority === 'Critical'
-            ? ' border-red-500 hover:shadow-red-500'
-            : ' border-gray-500 shadow-gray-500'
+              ? ' border-yellow-500 hover:shadow-yellow-500'
+              : ticket.priority === 'Low'
+                ? ' border-green-500 hover:shadow-green-500'
+                : ticket.priority === 'Critical'
+                  ? ' border-red-500 hover:shadow-red-500'
+                  : ' border-gray-500 shadow-gray-500'
         }`}
       >
-       <Badge className='absolute right-0  bg-blue-500/80 rounded-md p-1' > <Bell className=""/>
-       </Badge>
+        <Badge className="absolute right-0  bg-blue-500/80 rounded-md p-1">
+          {' '}
+          <Bell className="" />
+        </Badge>
         {/* Ticket Details */}
         <div className="p-6 space-y-4">
           <div className="flex flex-row justify-between items-center">
@@ -67,11 +69,15 @@ export default function Ticket({ ticket }: TicketProps) {
           </div>
 
           <div className="flex flex-col">
-            <div className="text-red-400" id="deadline-date">{ticket.deadline}</div>
+            <div className="text-red-400" id="deadline-date">
+              {ticket.deadline}
+            </div>
             <div className="font-bold flex text-black items-center gap-2" id="title">
               {ticket.title}
             </div>
-            <div className="text-gray-500" id="description">{ticket.description}</div>
+            <div className="text-gray-500" id="description">
+              {ticket.description}
+            </div>
           </div>
         </div>
       </Card>

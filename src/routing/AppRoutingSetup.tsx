@@ -89,11 +89,14 @@ import {
 
 import { Filter } from '@/pages/TicketFiter';
 
-
-// manual imports 
+// manual imports
 import AgentTickets from '@/pages/agent/my-tickets/my-tickets';
-import Tickets from '@/pages/agent/tickets/tickets';
-
+import Tickets from '@/pages/agent/tickets-description/tickets';
+import IncompleteTicket from '@/pages/agent/incomplete-ticket/Incomplete-ticket';
+import AdminUsersPage from '@/pages/admin/userlist/userslist';
+import UserDetailPage from '@/pages/admin/userdetail/userdetailpage';
+import CreateCategory from '@/pages/admin/Categories/createCategory';
+import RolesAndPermissions from '@/pages/admin/RolesAndPermissions/rolesAndPermissions';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -213,7 +216,14 @@ const AppRoutingSetup = (): ReactElement => {
           {/* agent  */}
 
           <Route path="/agent/mytickets" element={<AgentTickets />} />
-          <Route path="/agent/ticket" element={<Tickets/>}/>
+          <Route path="/agent/ticket" element={<Tickets />} />
+          <Route path="/agent/incomplete-ticket" element={<IncompleteTicket />} />
+
+          {/* admin */}
+          <Route path="/admin/allUsers" element={<AdminUsersPage />} />
+          <Route path="/admin/user" element={<UserDetailPage />} />
+          <Route path="/admin/categories" element={<CreateCategory />} />
+          <Route path="/admin/roles" element={<RolesAndPermissions/>} />
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

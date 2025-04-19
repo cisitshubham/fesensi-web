@@ -12,12 +12,9 @@ const getData = (key: string): unknown | undefined => {
 const setData = (key: string, value: unknown): void => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-
   } catch (error) {
     console.error('Save in local storage', error);
   }
 };
-
-
 
 export { getData, setData };

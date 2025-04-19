@@ -13,7 +13,7 @@ export default function AgentTickets() {
       priority: TicketPriority.High,
       createdAt: '2025-04-10',
       createdBy: 'John Doe',
-      assignedTo: 'Jane Smith',
+      assignedTo: 'Jane Smith'
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ export default function AgentTickets() {
       priority: TicketPriority.Medium,
       createdAt: '2025-04-12',
       createdBy: 'Alice Johnson',
-      assignedTo: 'Bob Brown',
+      assignedTo: 'Bob Brown'
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ export default function AgentTickets() {
       createdAt: '2025-04-05',
       createdBy: 'Charlie Davis',
       resolution: 'Fixed payment gateway configuration.',
-      resolutionDate: '2025-04-14',
+      resolutionDate: '2025-04-14'
     },
     {
       id: 4,
@@ -46,12 +46,12 @@ export default function AgentTickets() {
       description: 'Implement a new feature for exporting reports.',
       priority: TicketPriority.Low,
       createdAt: '2025-04-15',
-      createdBy: 'Eve Wilson',
-    },
+      createdBy: 'Eve Wilson'
+    }
   ];
 
   return (
-    <div className="space-y-4 px-4">
+    <div className="space-y-4 px-6">
       {tickets.map((ticket) => (
         <Ticket key={ticket.id} ticket={ticket} />
       ))}
