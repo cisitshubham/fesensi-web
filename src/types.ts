@@ -31,3 +31,17 @@ export enum TicketPriority {
   High = 'High',
   Critical = 'Critical'
 }
+
+export type User = {
+  _id: number;
+  name: string;
+  email: string;
+  role?: string;
+  first_name?: string;
+  level?: string | null;
+  categories?: string[] | null;
+  status?: boolean;
+  profile_img?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
