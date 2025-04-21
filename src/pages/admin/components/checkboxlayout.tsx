@@ -1,10 +1,7 @@
-import { Fragment } from 'react';
 
-import { toAbsoluteUrl } from '@/utils';
+import { IHighlightedPostsItems } from '@/partials/misc';
+import PermissionsCheck from './roles';
 
-import { MiscEngage, MiscFaq, MiscHighlightedPosts, IHighlightedPostsItems } from '@/partials/misc';
-import { Members } from '@/pages/account/members/team-members';
-import { PermissionsCheck } from '@/pages/account/members/permissions-check';
 const AccountPermissionsCheckContent = () => {
   const posts: IHighlightedPostsItems = [
     {
@@ -31,41 +28,10 @@ const AccountPermissionsCheckContent = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+    <div className=" gap-5 lg:gap-7.5">
       <div className="col-span-2">
         <div className="flex flex-col gap-5 lg:gap-7.5">
           <PermissionsCheck />
-
-          <Members />
-
-          <MiscFaq />
-
-          <MiscEngage
-            title="Contact Support"
-            description="Need assistance? Contact our support team for prompt, personalized help your queries & concerns."
-            image={
-              <Fragment>
-                <img
-                  src={toAbsoluteUrl('/media/illustrations/31.svg')}
-                  className="dark:hidden max-h-[150px]"
-                  alt=""
-                />
-                <img
-                  src={toAbsoluteUrl('/media/illustrations/31-dark.svg')}
-                  className="light:hidden max-h-[150px]"
-                  alt=""
-                />
-              </Fragment>
-            }
-            more={{
-              title: 'Contact Support',
-              url: ''
-            }}
-          />
-        </div>
-      </div>
-      <div className="col-span-1">
-        <div className="flex flex-col gap-5 lg:gap-7.5">
         </div>
       </div>
     </div>
