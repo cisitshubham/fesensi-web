@@ -1,7 +1,6 @@
 'use client';
-
-import { Link, useLocation } from 'react-router-dom';
-import type { Tickettype } from '@/types';
+import { Link, useLocation,useParams } from 'react-router-dom';
+import type { Tickettype, TicketStatus } from '@/types';
 import { AlertCircle, Clock, FileText, Flag, User, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +8,39 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ActivityLogAndComments from './activity-log-and-comments';
+import { useEffect, useState } from 'react'
+import { MyTicketDetails } from '@/api/api'
+
+
 export default function Tickets() {
   const location = useLocation();
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
+  const { id } = useParams();
+
+  const [ticketData, setTicketData] = useState(ticket);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  useEffect(()=>{
+	const fetchTicketData = async () => {	
+	try {
+		setLoading(true);
+		const response = await MyTicketDetails(id);	
+		console.log(response.data);
+			
+		setTicketData(response.data);
+		setLoading(false);
+		} catch (error:any) {
+		setError(error);
+		setLoading(false);
+		}}
+
+  	fetchTicketData();
+	}, []);
+
+	
+	
+
 
   // Function to determine status color
   const getStatusColor = (status: string) => {
@@ -31,12 +60,14 @@ export default function Tickets() {
 
   // Function to determine priority color
   const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high':
+    switch (priority) {
+      case 'HIGH':
         return 'bg-red-500 hover:bg-red-600';
-      case 'medium':
+      case 'MEDIUM':
         return 'bg-orange-500 hover:bg-orange-600';
-      case 'low':
+		case 'CRITICAL':
+		return 'bg-red-500 hover:shadow-red-500';
+      case 'LOW':
         return 'bg-green-500 hover:bg-green-600';
     }
   };
@@ -66,10 +97,11 @@ export default function Tickets() {
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
-                    <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
+					<div className="text-sm text-muted-foreground">Ticket #{ticketData.ticket_number}</div>
+					<CardTitle className="text-2xl mt-1">{ticketData.title}</CardTitle>
                   </div>
                   <div className="flex gap-2">
+					<Badge className={'bg-slate-500'}>{ticketData.category}</Badge>
                     <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
                     <Badge className={getPriorityColor(ticket.priority)}>
                       {ticket.priority}
@@ -78,7 +110,6 @@ export default function Tickets() {
                 </div>
               </CardHeader>
               <Separator className="mb-4" />
-
               <CardContent>
                 <div className="space-y-4">
                   <div>
@@ -89,32 +120,23 @@ export default function Tickets() {
                   </div>
 
                   {/* Ticket images */}
-                  <div className="mt-6">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Attachments</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      <img
-                        src=""
-                        alt="Ticket attachment 1"
-                        width={300}
-                        height={200}
-                        className="rounded-md object-cover aspect-video"
-                      />
-                      <img
-                        src=""
-                        alt="Ticket attachment 2"
-                        width={300}
-                        height={200}
-                        className="rounded-md object-cover aspect-video"
-                      />
-                      <img
-                        src=""
-                        alt="Ticket attachment 3"
-                        width={300}
-                        height={200}
-                        className="rounded-md object-cover aspect-video"
-                      />
-                    </div>
-                  </div>
+				{ticketData.attachments && ticketData.attachments.length > 0 && (
+					<div className="mt-6">
+						<h3 className="text-sm font-medium text-muted-foreground mb-2">Attachments</h3>
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+							{ticketData.attachments.map((attachment, index) => (
+								<img
+									key={index}
+									src={(attachment as any).file_url}
+									alt={`Ticket attachment ${index + 1}`}
+									width={300}
+									height={200}
+									className="rounded-md object-cover aspect-video"
+								/>
+							))}
+						</div>
+					</div>
+				)}
                 </div>
               </CardContent>
             </Card>
@@ -143,13 +165,13 @@ export default function Tickets() {
                     <span>Created By</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <Avatar>
+                    {/* <Avatar>
                       <AvatarImage
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.creator)}&background=random`}
                       />
-										  {/* <AvatarFallback>{getInitials(ticket)}</AvatarFallback> */}
-                    </Avatar>
-									  {/* <span className="font-medium">{ticket.creator}</span> */}
+										  {/* <AvatarFallback>{getInitials(ticket)}</AvatarFallback> }
+                    </Avatar> */}
+									  <span className="font-medium">{(ticketData as any).assigned_to}</span>
                   </div>
                 </div>
 
@@ -166,9 +188,9 @@ export default function Tickets() {
                           <AvatarImage
                             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.assignedTo)}&background=random`}
                           />
-                          <AvatarFallback>{getInitials(ticket.assignedTo)}</AvatarFallback>
+												  {/* <AvatarFallback>{getInitials(ticketData.assigned_to || '')}</AvatarFallback> */}
                         </Avatar>
-                        <span className="font-medium">{ticket.assignedTo}</span>
+						<span className="font-medium">{(ticketData as any).assigned_to}</span>
                       </div>
                     </div>
                   </>
@@ -181,19 +203,19 @@ export default function Tickets() {
                     <AlertCircle className="h-4 w-4" />
                     <span>Escalated To</span>
                   </div>
-                  {ticket.escalatedTo ? (
+                  {/* {ticket.escalatedTo ? ( */}
                     <div className="flex items-center gap-2 mt-2">
-                      <Avatar>
+                      {/* <Avatar>
                         <AvatarImage
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.escalatedTo)}&background=random`}
                         />
-                        <AvatarFallback>{getInitials(ticket.escalatedTo)}</AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium">{ticket.escalatedTo}</span>
+					  <AvatarFallback>{getInitials((ticketData as any).assigned_to)}</AvatarFallback>
+                      </Avatar> */}
+					<span className="font-medium">{(ticketData as any).assigned_to}</span>
                     </div>
-                  ) : (
-                    <span className="mt-2 text-gray-500">N/A</span>
-                  )}
+                  {/* ) : (
+                    // <span className="mt-2 text-gray-500">N/A</span>
+                  )} */}
                 </div>
 
                 <Separator orientation="vertical" />
@@ -206,20 +228,31 @@ export default function Tickets() {
         </div>
       </div>
       <div className="flex justify-center mt-6 gap-5">
-        <Button onClick={handleResolve} className="mt-6">
-          Resolve
-        </Button>
-        <Link
-          to={{
-            pathname: '/agent/incomplete-ticket'
-          }}
-          state={{ ticket }} // Pass the complete ticket data as state
-          className="block"
-        >
-          <Button variant={'destructive'} className="mt-6 ">
-            Incomplete
-          </Button>
-        </Link>
+    	{ticketData.status === 'RESOLVED' as TicketStatus && (
+			<Button onClick={handleResolve} className="mt-6">
+				Resolve
+			</Button>
+		)}
+		{ticketData.isResolved && (
+		<Button onClick={handleResolve} className="mt-6">
+			Update Resoulation
+		</Button>
+		)}
+		{ticketData.isUserCommented && (
+		<Link
+			to={{
+				pathname: '/agent/incomplete-ticket'
+			}}
+			state={{ ticket }} // Pass the complete ticket data as state
+			className="block"
+		>
+			<Button variant={'destructive'} className="mt-6 ">
+				Incomplete
+			</Button>
+		</Link>
+		)}
+
+       
       </div>
     </div>
   );
