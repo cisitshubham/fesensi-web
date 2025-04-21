@@ -195,13 +195,7 @@ export const createRoles = async (formData: FormData) => {
 	  }
 	    return null;	  
 };
-	try {
-		const response = await axiosInstance.get(`/admin/users/${userId}`);
-		return response.data;
-	} catch (error) {
-		console.error('Error fetching user by ID:', error);
-	}	
-};
+
 
 // AGENT API 
 
