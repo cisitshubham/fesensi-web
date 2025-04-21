@@ -1,7 +1,5 @@
-import { CreateTicketForm } from "../3-columns/blocks";
+import { CreateTicketForm } from '../3-columns/blocks';
 const TicketForm = () => {
-  return (
-	<CreateTicketForm />
-  );
+  return <CreateTicketForm />;
 };
 export { TicketForm };

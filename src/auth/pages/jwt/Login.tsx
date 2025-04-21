@@ -77,7 +77,9 @@ const Login = () => {
         <div className="text-center mb-2 flex flex-col items-center justify-center gap-2">
           <img
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
-            className="h-[32px] max-w-none" alt=""/>
+            className="h-[32px] max-w-none"
+            alt=""
+          />
           <h3 className="text-lg font-semibold text-gray-900 leading-none mb-2">Sign In</h3>
         </div>
 

@@ -8,7 +8,11 @@ import { createCategories } from '@/api/api';
 
 export default function CreateCategory() {
   const handleAddCategory = () => {
-    const newCategory = { name: '', createdAt: new Date().toISOString().split('T')[0], createdBy: 'Admin' };
+    const newCategory = {
+      name: '',
+      createdAt: new Date().toISOString().split('T')[0],
+      createdBy: 'Admin'
+    };
     setCategories((prev) => [...prev, newCategory]);
     setEditIndex(categories.length); // Set the new category in edit mode
     setEditedCategory({ name: '' }); // Initialize the editedCategory state

@@ -61,7 +61,7 @@ const Demo1LightSidebarPage = () => {
       </Container>
 
       <Container>
-        <Demo1LightSidebarContent  date={date} />
+        <Demo1LightSidebarContent date={date} />
       </Container>
     </Fragment>
   );

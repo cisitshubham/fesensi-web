@@ -18,6 +18,9 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const AVAILABLE_CATEGORIES = ['general', 'support', 'sales', 'marketing'];
 
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+
 export default function UserDetailPage() {
   const { id } = useParams();
   const [editMode, setEditMode] = useState(false);

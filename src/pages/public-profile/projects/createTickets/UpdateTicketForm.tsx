@@ -1,7 +1,5 @@
-import { UpdateTicketForm } from "../3-columns/blocks";
+import { UpdateTicketForm } from '../3-columns/blocks';
 const TicketUpdateForm = () => {
-	return (
-		<UpdateTicketForm />
-	);
+  return <UpdateTicketForm />;
 };
 export { TicketUpdateForm };

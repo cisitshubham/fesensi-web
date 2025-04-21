@@ -224,9 +224,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/allUsers" element={<AdminUsersPage />} />
           <Route path="/admin/user/:id?" element={<UserDetailPage />} />
           <Route path="/admin/categories" element={<CreateCategory />} />
-          <Route path="/admin/roles" element={<RolesAndPermissions/>} />
-          <Route path="/admin/configurations" element={<PermissionsToggle/>} />
-
+          <Route path="/admin/roles" element={<RolesAndPermissions />} />
+          <Route path="/admin/configurations" element={<PermissionsToggle />} />
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

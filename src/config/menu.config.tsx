@@ -11,23 +11,24 @@ const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string,
 		icon: 'element-11',
 		path: '/'
 	},
-	{
-		title: 'Tickets',
-		icon: 'document',
-		path: '/public-profile/projects/3-columns'
-	},
-	...(roles.includes('ADMIN') ? [
+
+	// Customer Tabs
+	...(roles.includes('CUSTOMER') ? [
 		{
-			title: 'Admin Panel',
-			icon: 'shield',
-			path: '/admin'
+			title: 'Tickets',
+			icon: 'document',
+			path: '/public-profile/projects/3-columns'
 		}
 	] : []),
+
+
+
+	// Aegent Tabs
 	...(roles.includes('AGENT') ? [
 		{
-			title: 'Agent Tools',
-			icon: 'shield',
-			path: '/agent'
+			title: 'My Tickets',
+			icon: 'file-sheet',
+			path: '/agent/mytickets'
 		}
 	] : [])
 ];

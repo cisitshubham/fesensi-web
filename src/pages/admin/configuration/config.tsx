@@ -18,6 +18,7 @@ export default function PermissionsToggle() {
     { title: 'Security Settings', description: 'Adjust workspace security protocols and measures.', checked: true },
     { title: 'Insights Access', description: 'View workspace analytics and performance data.', checked: false },
     { title: 'Merchant List', description: 'Update and manage merchant associations.', checked: false }
+
   ];
 
   const [items, setItems] = useState<IPermissionsToggleItem[]>(initialItems);
@@ -53,6 +54,8 @@ export default function PermissionsToggle() {
           value={index}
           onChange={() => handleToggle(index)}
         />
+        <input defaultChecked={item.checked} name="param" type="checkbox" value={index} readOnly />
+
       </div>
     </div>
   );
@@ -62,7 +65,9 @@ export default function PermissionsToggle() {
       <div className="card-header">
         <h3 className="card-title">
           Role Permissions for
-          <a href="#" className="link">&nbsp;Project Manager</a>
+          <a href="#" className="link">
+            &nbsp;Project Manager
+          </a>
         </h3>
       </div>
       <div className="card-body grid grid-cols-1 lg:grid-cols-2 gap-5 py-5 lg:py-7.5">
@@ -78,5 +83,4 @@ export default function PermissionsToggle() {
       </div>
     </div>
   );
-};
-
+}

@@ -30,18 +30,16 @@ const ResetPasswordChange = () => {
     initialValues: {
       newPassword: '',
       confirmPassword: '',
-	  otp:'',
+      otp: ''
     },
     validationSchema: passwordSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
       setHasErrors(undefined);
 
-  
       const email = new URLSearchParams(window.location.search).get('email');
-		
-		
-      if ( !email) {
+
+      if (!email) {
         setHasErrors(true);
         setStatus('Email properties are required');
         setLoading(false);
@@ -50,7 +48,7 @@ const ResetPasswordChange = () => {
       }
 
       try {
-        await changePassword(email,values.newPassword, values.confirmPassword,values.otp);
+        await changePassword(email, values.newPassword, values.confirmPassword, values.otp);
         setHasErrors(false);
         navigate(
           currentLayout?.name === 'auth-branded'
@@ -84,13 +82,13 @@ const ResetPasswordChange = () => {
         </div>
 
         {hasErrors && <Alert variant="danger">{formik.status}</Alert>}
-		  <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
           <label className="form-label text-gray-900">One Time Password</label>
           <label className="input">
             <input
               type={showNewPassword ? 'text' : 'password'}
               placeholder="Enter OTP"
-              autoComplete="off"	
+              autoComplete="off"
               {...formik.getFieldProps('otp')}
               className={clsx(
                 'form-control bg-transparent',
@@ -98,7 +96,6 @@ const ResetPasswordChange = () => {
                 { 'is-valid': formik.touched.otp && !formik.errors.otp }
               )}
             />
-           
           </label>
           {formik.touched.otp && formik.errors.otp && (
             <span role="alert" className="text-danger text-xs mt-1">
