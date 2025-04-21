@@ -1,10 +1,13 @@
 export type Tickettype = {
-  id: number;
+  IsCumstomerCommneted: boolean;
+  creator: string | number | boolean;
+  _id: string | number | null | undefined;
+  ticket_number: number;
   status: TicketStatus;
-  deadline: string;
+  due_date: string;
   title: string;
   description: string;
-  priority: TicketPriority;
+  priority: string;
   createdAt: string;
   updatedAt?: string;
   attachments?: string[];

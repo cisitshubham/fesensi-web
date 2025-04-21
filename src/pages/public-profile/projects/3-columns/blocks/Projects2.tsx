@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import { KeenIcon } from '@/components';
-import { getAllTicket,verifyRole } from '@/api/api';
+import { getAllTicket } from '@/api/api';
 import { CardProject, CardProjectRow } from '@/partials/cards';
 import { Link } from 'react-router-dom'
 import {

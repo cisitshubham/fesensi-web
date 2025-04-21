@@ -18,6 +18,13 @@ export default function  rolesAndPermissions  () {
   return (
     <Fragment>
       <PageNavbar />
+    <div className="px-8">
+      <Card className="">
+        <CardHeader className="flex flex-row items-center justify-between p-4">
+          <CardTitle>Roles and RolesAndPermissions</CardTitle>
+          <Button>Add</Button>
+        </CardHeader>
+
 
       {currentLayout?.name === 'demo1-layout' && (
         <Container>

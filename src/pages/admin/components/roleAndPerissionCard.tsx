@@ -6,12 +6,23 @@ import { useState } from 'react';
 
 export default function RoleAndPermissionCard() {
   const [permissions, setPermissions] = useState([
-    { id: 1, name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero quasi aspernatur corporis excepturi sequi aliquid, hic officia dolore illo ad sint necessitatibus suscipit. Magni cum rerum voluptatum debitis dignissimos in similique autem enim nostrum! Vitae nihil iure ut quae aspernatur voluptate voluptas labore necessitatibus consectetur.' },
-    { id: 2, name: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor aspernatur libero vero, fugit porro similique veniam dolorum qui doloribus debitis.' },
-    { id: 3, name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, reprehenderit.' },
-    { id: 4, name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum at dolorum aperiam!' },
-    { id: 5, name: 'Permission 5' },
-
+    {
+      id: 1,
+      name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero quasi aspernatur corporis excepturi sequi aliquid, hic officia dolore illo ad sint necessitatibus suscipit. Magni cum rerum voluptatum debitis dignissimos in similique autem enim nostrum! Vitae nihil iure ut quae aspernatur voluptate voluptas labore necessitatibus consectetur.'
+    },
+    {
+      id: 2,
+      name: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor aspernatur libero vero, fugit porro similique veniam dolorum qui doloribus debitis.'
+    },
+    {
+      id: 3,
+      name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, reprehenderit.'
+    },
+    {
+      id: 4,
+      name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum at dolorum aperiam!'
+    },
+    { id: 5, name: 'Permission 5' }
   ]);
 
   const [isEditingAll, setIsEditingAll] = useState(false);
@@ -57,7 +68,7 @@ export default function RoleAndPermissionCard() {
           ))}
         </div>
       </CardContent>
-        <Separator className="my-2" />
+      <Separator className="my-2" />
       <CardFooter>
         {isEditingAll ? (
           <button

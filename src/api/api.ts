@@ -164,3 +164,14 @@ export const getUserById = async (userId: string) => {
 		console.error('Error fetching user by ID:', error);
 	}	
 };
+
+// AGENT API 
+
+export const MyTickets = async ()=>{
+	try {
+		const response = await axiosInstance.get('/agent/myTickets');
+		return response.data;
+		} catch (error) {
+			console.error('Error fetching ticket by ID:', error);
+		}
+}

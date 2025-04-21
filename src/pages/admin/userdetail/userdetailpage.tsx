@@ -6,6 +6,9 @@ import { useState, useEffect } from 'react';
 import { getUserById } from '@/api/api'; // Import API function to fetch user details
 import { useParams, useNavigate } from 'react-router-dom'; // ✅ Correct hooks
 
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+
 export default function UserDetailPage() {
   const { id } = useParams(); // ✅ Get user ID from route params
   const navigate = useNavigate();

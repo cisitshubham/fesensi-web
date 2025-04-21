@@ -2,9 +2,9 @@
 import { getSidebarMenu } from '@/config/menu.config';
 
 export const useMenus = () => {
-	const getMenuConfig = (roles: string[]) => {
-		return getSidebarMenu('primary', roles); 
-	};
+  const getMenuConfig = (roles: string[]) => {
+    return getSidebarMenu('primary', roles);
+  };
 
-	return { getMenuConfig };
+  return { getMenuConfig };
 };

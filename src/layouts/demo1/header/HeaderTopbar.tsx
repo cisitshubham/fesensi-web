@@ -47,7 +47,7 @@ const HeaderTopbar = () => {
         onClick={handleOpen}
         className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"
       >
-   		 <KeenIcon icon="magnifier" />
+        <KeenIcon icon="magnifier" />
       </button>
       <ModalSearch open={searchModalOpen} onOpenChange={handleClose} />
 
@@ -152,7 +152,7 @@ const HeaderTopbar = () => {
               }}
             />
           </MenuToggle>
-          {DropdownUser({ menuItemRef: itemUserRef},user)}
+          {DropdownUser({ menuItemRef: itemUserRef }, user)}
         </MenuItem>
       </Menu>
     </div>
