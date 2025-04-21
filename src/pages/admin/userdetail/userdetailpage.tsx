@@ -2,19 +2,36 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input'; 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getUserById } from '@/api/api'; // Import API function to fetch user details
+import { useParams, useNavigate } from 'react-router-dom'; // ✅ Correct hooks
 
 export default function UserDetailPage() {
+  const { id } = useParams(); // ✅ Get user ID from route params
+  const navigate = useNavigate();
+
   const [editMode, setEditMode] = useState(false);
   const [user, setUser] = useState({
-    name: 'Aadesh Kumar',
-    email: 'aadesh@example.com',
-    phone: '+1234567890',
-    address: '123 Main Street, City, Country',
-    role: 'Admin'
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    role: ''
   });
 
-  const handleInputChange = (e: { target: { name: string; value: string } }) => {
+  useEffect(() => {
+    if (id) {
+      const fetchUserDetails = async () => {
+        const response = await getUserById(id); // ID is a string from useParams
+        if (response?.success) {
+          setUser(response.data); // Update user state with fetched data
+        }
+      };
+      fetchUserDetails();
+    }
+  }, [id]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
@@ -31,56 +48,18 @@ export default function UserDetailPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>
-                {editMode ? (
-                  <Input name="name" value={user.name} onChange={handleInputChange} />
-                ) : (
-                  user.name
-                )}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Email</TableCell>
-              <TableCell>
-                {editMode ? (
-                  <Input name="email" value={user.email} onChange={handleInputChange} />
-                ) : (
-                  user.email
-                )}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Phone</TableCell>
-              <TableCell>
-                {editMode ? (
-                  <Input name="phone" value={user.phone} onChange={handleInputChange} />
-                ) : (
-                  user.phone
-                )}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Address</TableCell>
-              <TableCell>
-                {editMode ? (
-                  <Input name="address" value={user.address} onChange={handleInputChange} />
-                ) : (
-                  user.address
-                )}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Role</TableCell>
-              <TableCell>
-                {editMode ? (
-                  <Input name="role" value={user.role} onChange={handleInputChange} />
-                ) : (
-                  user.role
-                )}
-              </TableCell>
-            </TableRow>
+            {['name', 'email', 'phone', 'address', 'role'].map((field) => (
+              <TableRow key={field}>
+                <TableCell className="capitalize">{field}</TableCell>
+                <TableCell>
+                  {editMode ? (
+                    <Input name={field} value={(user as any)[field]} onChange={handleInputChange} />
+                  ) : (
+                    (user as any)[field]
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Card>
@@ -88,7 +67,11 @@ export default function UserDetailPage() {
         <Button variant="default" onClick={() => setEditMode(!editMode)}>
           {editMode ? 'Save' : 'Edit'}
         </Button>
-        {!editMode && <Button variant="destructive">Deactivate and logout</Button>}
+        {!editMode && (
+          <Button variant="destructive" onClick={() => console.log('Deactivate user logic')}>
+            Deactivate and logout
+          </Button>
+        )}
       </div>
     </div>
   );
