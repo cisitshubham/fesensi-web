@@ -146,3 +146,21 @@ export const TicketFilter = async (formData: any) => {
     }
 };
 
+export const getAllUsers = async () => {
+	try {
+		const response = await axiosInstance.get('/admin/users/list');
+		return response.data;
+	} catch (error) {
+		console.error('Error fetching all users:', error);
+	}
+};
+
+
+export const getUserById = async (userId: string) => {
+	try {
+		const response = await axiosInstance.get(`/admin/users/${userId}`);
+		return response.data;
+	} catch (error) {
+		console.error('Error fetching user by ID:', error);
+	}	
+};
