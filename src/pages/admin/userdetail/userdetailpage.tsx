@@ -42,6 +42,7 @@ export default function UserDetailPage() {
       const response = await getUserById(id);
       if (response?.success) {
         const data = response.data;
+        console.log('User data:', data);
         setUser({
           _id: data._id || '',
           profile_img: data.profile_img || '',
@@ -143,7 +144,7 @@ export default function UserDetailPage() {
             {Object.entries(user).map(([key, value]) => {
               if (['_id', 'profile_img'].includes(key)) return null;
 
-              if (key === 'name' || key === 'email') {
+              if (['name', 'email', 'level'].includes(key)) {
                 return (
                   <TableRow key={key}>
                     <TableCell className="capitalize">{key}</TableCell>
@@ -222,7 +223,11 @@ export default function UserDetailPage() {
                   <TableCell>
                     {typeof value === 'boolean'
                       ? value.toString()
-                      : value || <span className="text-muted-foreground italic">Not provided</span>}
+                      : value instanceof Date
+                      ? value.toISOString()
+                      : typeof value === 'string' || Array.isArray(value)
+                      ? value
+                      : <span className="text-muted-foreground italic">Not provided</span>}
                   </TableCell>
                 </TableRow>
               );

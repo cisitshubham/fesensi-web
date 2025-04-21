@@ -187,3 +187,14 @@ export const getRoles = async () => {
 		console.error('Error fetching roles:', error);
 	}
 };
+
+
+export const createCategories = async (formData: FormData) => {
+	try {
+		const response = await axiosInstance.post('/tickets/create/categories', formData);
+		return response.data;
+	} catch (error) {
+		console.error('Error creating category:', error);
+	}
+		return null;
+	}

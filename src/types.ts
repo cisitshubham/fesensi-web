@@ -39,6 +39,6 @@ export type User = {
   categories?: string[] | null;
   status?: boolean;
   profile_img?: string;
-  createdAt?: string;
+  createdAt?: String;
   updatedAt?: string;
 };

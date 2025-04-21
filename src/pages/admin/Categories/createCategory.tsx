@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { KeenIcon } from '@/components';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { createCategories } from '@/api/api';
 
 export default function CreateCategory() {
   const handleAddCategory = () => {
