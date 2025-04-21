@@ -213,3 +213,11 @@ export const MyTickets = async ()=>{
 			console.error('Error fetching ticket by ID:', error);
 		}
 }
+export const MyTicketDetails = async (TicketId:any)=>{
+	try {
+		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
+		return response.data;		
+		} catch (error) {	
+			console.error('Error fetching ticket by ID:', error);
+		}
+}

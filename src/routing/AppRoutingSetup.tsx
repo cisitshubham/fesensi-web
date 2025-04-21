@@ -217,7 +217,7 @@ const AppRoutingSetup = (): ReactElement => {
           {/* agent  */}
 
           <Route path="/agent/mytickets" element={<AgentTickets />} />
-          <Route path="/agent/ticket" element={<Tickets />} />
+          <Route path="/agent/ticket/:id" element={<Tickets />} />
           <Route path="/agent/incomplete-ticket" element={<IncompleteTicket />} />
 
           {/* admin */}

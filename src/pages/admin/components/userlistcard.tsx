@@ -14,7 +14,7 @@ export default function UserListCard({ user }: { user: User }) {
   const handleViewProfile = () => {
     const userId = user._id;
     if (userId) {
-      navigate(`/admin/user/${userId}`);
+     	 navigate(`/admin/user/${userId}`);
     }
   };
 
