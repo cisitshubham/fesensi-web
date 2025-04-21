@@ -1,4 +1,7 @@
 export type Tickettype = {
+  isUserCommented: boolean;
+  isResolved: boolean;
+  category: string;
   IsCumstomerCommneted: boolean;
   creator: string | number | boolean;
   _id: string | number | null | undefined;

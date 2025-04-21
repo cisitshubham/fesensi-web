@@ -15,9 +15,7 @@ interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
 }
 
-export default function Ticket({ ticket }: TicketProps) {	
-	console.log(ticket);
-	
+export default function Ticket({ ticket }: TicketProps) {		
   // Function to determine the badge color based on the ticket status
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -33,11 +31,11 @@ export default function Ticket({ ticket }: TicketProps) {
         return 'bg-gray-100 text-gray-600';
     }
   };
-
+  
   return (
     <Link
       to={{
-        pathname: `/agent/ticket`
+        pathname: `/agent/ticket/${ticket._id}`
       }}
       state={{ ticket }} 
       className="block"

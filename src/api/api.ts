@@ -195,13 +195,8 @@ export const createRoles = async (formData: FormData) => {
 	  }
 	    return null;	  
 };
-	try {
-		const response = await axiosInstance.get(`/admin/users/${userId}`);
-		return response.data;
-	} catch (error) {
-		console.error('Error fetching user by ID:', error);
-	}	
-};
+
+	
 
 // AGENT API 
 
@@ -210,6 +205,14 @@ export const MyTickets = async ()=>{
 		const response = await axiosInstance.get('/agent/myTickets');
 		return response.data;
 		} catch (error) {
+			console.error('Error fetching ticket by ID:', error);
+		}
+}
+export const MyTicketDetails = async (TicketId:any)=>{
+	try {
+		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
+		return response.data;		
+		} catch (error) {	
 			console.error('Error fetching ticket by ID:', error);
 		}
 }

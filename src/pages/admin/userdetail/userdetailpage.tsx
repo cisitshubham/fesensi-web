@@ -18,11 +18,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const AVAILABLE_CATEGORIES = ['general', 'support', 'sales', 'marketing'];
 
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+
 
 export default function UserDetailPage() {
-  const { id } = useParams();
+
+  const { id } = useParams(); // ✅ Get user ID from route params
+
+
   const [editMode, setEditMode] = useState(false);
   const [user, setUser] = useState<User>({
     _id: '',
