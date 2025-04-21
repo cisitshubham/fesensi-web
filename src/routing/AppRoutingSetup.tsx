@@ -97,6 +97,7 @@ import AdminUsersPage from '@/pages/admin/userlist/userslist';
 import UserDetailPage from '@/pages/admin/userdetail/userdetailpage';
 import CreateCategory from '@/pages/admin/Categories/createCategory';
 import RolesAndPermissions from '@/pages/admin/RolesAndPermissions/rolesAndPermissions';
+import PermissionsToggle from '@/pages/admin/configuration/config';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -224,6 +225,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/user" element={<UserDetailPage />} />
           <Route path="/admin/categories" element={<CreateCategory />} />
           <Route path="/admin/roles" element={<RolesAndPermissions/>} />
+          <Route path="/admin/configurations" element={<PermissionsToggle/>} />
+
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

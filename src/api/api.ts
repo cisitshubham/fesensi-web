@@ -100,6 +100,7 @@ export const createTicket = async (formData: FormData) => {
 		}
 	}
 };
+
 export const updateTicket = async (formData: FormData) => {
 	let ticketID= formData.get('ticketId')
 	try {
