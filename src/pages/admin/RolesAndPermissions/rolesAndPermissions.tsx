@@ -5,10 +5,9 @@ export default function RolesAndPermissions() {
   return (
     <div className="px-8">
       <Card className="">
-        <CardHeader className='flex flex-row items-center justify-between p-4'>
+        <CardHeader className="flex flex-row items-center justify-between p-4">
           <CardTitle>Roles and RolesAndPermissions</CardTitle>
           <Button>Add</Button>
-          
         </CardHeader>
 
         <CardContent>

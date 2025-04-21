@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/ui/table';
-import { Input } from '@/components/ui/input'; 
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 
 export default function UserDetailPage() {

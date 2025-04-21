@@ -156,7 +156,7 @@ export interface IMenuItemConfig {
   title?: string;
   disabled?: boolean;
   heading?: string;
-  role?:string
+  role?: string;
   icon?: string;
   badge?: string;
   separator?: boolean;

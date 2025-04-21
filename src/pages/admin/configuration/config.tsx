@@ -8,18 +8,68 @@ interface IPermissionsToggleItem {
   checked: boolean;
 }
 
-export default function PermissionsToggle (){
+export default function PermissionsToggle() {
   const items: IPermissionsToggleItem[] = [
-    { icon: 'category', title: 'Workspace Settings', description: 'Users may view and update the settings of the workspace.', checked: true },
-    { icon: 'two-credit-cart', title: 'Billing Management', description: 'Users are authorized to review, update subscriptions.', checked: false },
-    { icon: 'mouse-square', title: 'Integration Setup', description: 'Manage user integrations and associated tags.', checked: true },
-    { icon: 'toggle-off-circle', title: 'Permissions Control', description: 'Grant or revoke user access and tags.', checked: false },
-    { icon: 'map', title: 'Map Creation', description: 'Initiate new mapping projects within workspace.', checked: false },
-    { icon: 'exit-up', title: 'Data Export', description: 'Allow extraction of workspace data for analysis.', checked: true },
-    { icon: 'security-user', title: 'User Roles', description: 'Update roles and permissions for map users.', checked: true },
-    { icon: 'shield-tick', title: 'Security Settings', description: 'Adjust workspace security protocols and measures.', checked: true },
-    { icon: 'key-square', title: 'Insights Access', description: 'View workspace analytics and performance data.', checked: false },
-    { icon: 'shop', title: 'Merchant List', description: 'Update and manage merchant associations.', checked: false }
+    {
+      icon: 'category',
+      title: 'Workspace Settings',
+      description: 'Users may view and update the settings of the workspace.',
+      checked: true
+    },
+    {
+      icon: 'two-credit-cart',
+      title: 'Billing Management',
+      description: 'Users are authorized to review, update subscriptions.',
+      checked: false
+    },
+    {
+      icon: 'mouse-square',
+      title: 'Integration Setup',
+      description: 'Manage user integrations and associated tags.',
+      checked: true
+    },
+    {
+      icon: 'toggle-off-circle',
+      title: 'Permissions Control',
+      description: 'Grant or revoke user access and tags.',
+      checked: false
+    },
+    {
+      icon: 'map',
+      title: 'Map Creation',
+      description: 'Initiate new mapping projects within workspace.',
+      checked: false
+    },
+    {
+      icon: 'exit-up',
+      title: 'Data Export',
+      description: 'Allow extraction of workspace data for analysis.',
+      checked: true
+    },
+    {
+      icon: 'security-user',
+      title: 'User Roles',
+      description: 'Update roles and permissions for map users.',
+      checked: true
+    },
+    {
+      icon: 'shield-tick',
+      title: 'Security Settings',
+      description: 'Adjust workspace security protocols and measures.',
+      checked: true
+    },
+    {
+      icon: 'key-square',
+      title: 'Insights Access',
+      description: 'View workspace analytics and performance data.',
+      checked: false
+    },
+    {
+      icon: 'shop',
+      title: 'Merchant List',
+      description: 'Update and manage merchant associations.',
+      checked: false
+    }
   ];
 
   const renderItem = (item: IPermissionsToggleItem, index: number) => (
@@ -39,13 +89,7 @@ export default function PermissionsToggle (){
         </div>
       </div>
       <div className="switch switch-sm">
-        <input
-          defaultChecked={item.checked}
-          name="param"
-          type="checkbox"
-          value={index}
-          readOnly
-        />
+        <input defaultChecked={item.checked} name="param" type="checkbox" value={index} readOnly />
       </div>
     </div>
   );
@@ -55,14 +99,14 @@ export default function PermissionsToggle (){
       <div className="card-header">
         <h3 className="card-title">
           Role Permissions for
-          <a href="#" className="link">&nbsp;Project Manager</a>
+          <a href="#" className="link">
+            &nbsp;Project Manager
+          </a>
         </h3>
       </div>
       <div className="card-body grid grid-cols-1 lg:grid-cols-2 gap-5 py-5 lg:py-7.5">
         {items.map(renderItem)}
       </div>
-
     </div>
   );
-};
-
+}

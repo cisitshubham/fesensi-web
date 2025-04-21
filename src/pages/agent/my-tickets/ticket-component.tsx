@@ -15,17 +15,19 @@ interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
 }
 
-export default function Ticket({ ticket }: TicketProps) {
+export default function Ticket({ ticket }: TicketProps) {	
+	console.log(ticket);
+	
   // Function to determine the badge color based on the ticket status
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'Open':
+      case 'OPEN':
         return 'bg-blue-100 text-blue-600';
-      case 'In Progress':
+		case 'IN-PROGRESS':
         return 'bg-purple-100 text-purple-600';
-      case 'Closed':
+      case 'CLOSED':
         return 'bg-red-100 text-red-600';
-      case 'Resolved':
+      case 'RESOLVED':
         return 'bg-green-100 text-green-600';
       default:
         return 'bg-gray-100 text-gray-600';
@@ -37,31 +39,31 @@ export default function Ticket({ ticket }: TicketProps) {
       to={{
         pathname: `/agent/ticket`
       }}
-      state={{ ticket }} // Pass the complete ticket data as state
+      state={{ ticket }} 
       className="block"
     >
       <Card
         className={`relative border-[1px] overflow-hidden space-y-4 hover:shadow-md transition-shadow ${
-          ticket.priority === 'High'
+				  ticket.priority === 'HIGH'
             ? ' border-orange-500 hover:shadow-orange-500'
-            : ticket.priority === 'Medium'
+				  : ticket.priority === 'MEDIUM'
               ? ' border-yellow-500 hover:shadow-yellow-500'
-              : ticket.priority === 'Low'
+					  : ticket.priority === 'LOW'
                 ? ' border-green-500 hover:shadow-green-500'
-                : ticket.priority === 'Critical'
+						  : ticket.priority === 'CRITICAL'
                   ? ' border-red-500 hover:shadow-red-500'
                   : ' border-gray-500 shadow-gray-500'
-        }`}
-      >
-        <Badge className="absolute right-0  bg-blue-500/80 rounded-md p-1">
-          {' '}
-          <Bell className="" />
-        </Badge>
+        }`} >
+		{ticket.IsCumstomerCommneted === true && (
+		<Badge className="absolute right-0  bg-red-700/80 rounded-md p-1">
+		<Bell className="" />
+		</Badge>
+		)}
         {/* Ticket Details */}
         <div className="p-6 space-y-4">
           <div className="flex flex-row justify-between items-center">
             <Badge variant="outline" className="bg-gray-100 rounded-sm">
-              #{ticket.id}
+			#{ticket.ticket_number}
             </Badge>
             <Badge variant="outline" className={getStatusBadgeClass(ticket.status)}>
               {ticket.status}
@@ -70,7 +72,7 @@ export default function Ticket({ ticket }: TicketProps) {
 
           <div className="flex flex-col">
             <div className="text-red-400" id="deadline-date">
-              {ticket.deadline}
+              {ticket.due_date}
             </div>
             <div className="font-bold flex text-black items-center gap-2" id="title">
               {ticket.title}

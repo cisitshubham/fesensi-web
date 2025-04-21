@@ -27,7 +27,7 @@ export interface IDataGridContextProps<TData extends object> {
   totalRows: number;
   loading: boolean;
   setLoading: (state: boolean) => void;
-  reload: () => void
+  reload: () => void;
 }
 
 const DataGridContext = createContext<IDataGridContextProps<any> | undefined>(undefined);
@@ -69,7 +69,9 @@ export const DataGridProvider = <TData extends object>(props: TDataGridProps<TDa
 
   const [data, setData] = useState<TData[]>(mergedProps.data || []);
   const [loading, setLoading] = useState<boolean>(false);
-  const [totalRows, setTotalRows] = useState<number>(mergedProps.data ? mergedProps.data.length : 0);
+  const [totalRows, setTotalRows] = useState<number>(
+    mergedProps.data ? mergedProps.data.length : 0
+  );
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: props.pagination?.page ?? 0,
     pageSize: props.pagination?.size ?? 5
@@ -114,7 +116,7 @@ export const DataGridProvider = <TData extends object>(props: TDataGridProps<TDa
       setTotalRows(mergedProps.data ? mergedProps.data.length : 0);
       setLoading(false); // Hide loading bar after data is set
     }
-  }
+  };
 
   // Trigger debounced fetch for server-side data; load local data if serverSide is false
   useEffect(() => {
@@ -127,7 +129,8 @@ export const DataGridProvider = <TData extends object>(props: TDataGridProps<TDa
     );
 
     if (mergedProps.onRowSelectionChange) {
-      const newSelection = typeof updaterOrValue === 'function' ? updaterOrValue(rowSelection) : updaterOrValue;
+      const newSelection =
+        typeof updaterOrValue === 'function' ? updaterOrValue(rowSelection) : updaterOrValue;
       mergedProps.onRowSelectionChange(newSelection, table);
     }
   };

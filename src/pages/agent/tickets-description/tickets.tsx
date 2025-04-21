@@ -15,14 +15,14 @@ export default function Tickets() {
 
   // Function to determine status color
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
+    switch (status) {
+      case 'OPEN':
         return 'bg-blue-500 hover:bg-blue-600';
-      case 'in progress':
+      case 'IN-PROGRESS':
         return 'bg-yellow-500 hover:bg-yellow-600';
-      case 'resolved':
+      case 'RESOLVED':
         return 'bg-green-500 hover:bg-green-600';
-      case 'closed':
+      case 'CLOSED':
         return 'bg-gray-500 hover:bg-gray-600';
       default:
         return 'bg-slate-500 hover:bg-slate-600';
@@ -66,13 +66,13 @@ export default function Tickets() {
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-sm text-muted-foreground">Ticket #{ticket.id}</div>
+                    <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
                     <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
                   </div>
                   <div className="flex gap-2">
                     <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
                     <Badge className={getPriorityColor(ticket.priority)}>
-                      {ticket.priority} Priority
+                      {ticket.priority}
                     </Badge>
                   </div>
                 </div>
@@ -132,7 +132,7 @@ export default function Tickets() {
                     <Clock className="h-4 w-4" />
                     <span>Deadline</span>
                   </div>
-                  <div className="font-medium mt-1">{ticket.deadline}</div>
+                  <div className="font-medium mt-1">{ticket.due_date}</div>
                 </div>
 
                 <Separator orientation="vertical" />
@@ -145,11 +145,11 @@ export default function Tickets() {
                   <div className="flex items-center gap-2 mt-2">
                     <Avatar>
                       <AvatarImage
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.createdBy)}&background=random`}
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.creator)}&background=random`}
                       />
-                      <AvatarFallback>{getInitials(ticket.createdBy)}</AvatarFallback>
+										  {/* <AvatarFallback>{getInitials(ticket)}</AvatarFallback> */}
                     </Avatar>
-                    <span className="font-medium">{ticket.createdBy}</span>
+									  {/* <span className="font-medium">{ticket.creator}</span> */}
                   </div>
                 </div>
 

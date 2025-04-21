@@ -146,3 +146,14 @@ export const TicketFilter = async (formData: any) => {
     }
 };
 
+
+// AGENT API 
+
+export const MyTickets = async ()=>{
+	try {
+		const response = await axiosInstance.get('/agent/myTickets');
+		return response.data;
+		} catch (error) {
+			console.error('Error fetching ticket by ID:', error);
+		}
+}

@@ -116,7 +116,7 @@ const ResetPassword = () => {
           >
             {loading ? 'Please wait...' : 'Continue'}
           </button>
-		  
+
           <Link
             to={currentLayout?.name === 'auth-branded' ? '/auth/login' : '/auth/classic/login'}
             className="flex items-center justify-center text-sm gap-2 text-gray-700 hover:text-primary"
