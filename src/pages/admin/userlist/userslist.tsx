@@ -14,7 +14,7 @@ export default function AdminUsersPage() {
         const formattedData = response.data.map((user: User) => ({
           ...user,
           role: Array.isArray(user.role)
-            ? user.role.map((r) => r.role_name).join(', ')
+            ? user.role.join(', ')
             : 'N/A',
         }));
         setUsers(formattedData);
