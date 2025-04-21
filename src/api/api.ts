@@ -164,3 +164,26 @@ export const getUserById = async (userId: string) => {
 		console.error('Error fetching user by ID:', error);
 	}	
 };
+
+
+
+export const updateUser = async (userId: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/users/update/${userId}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return null;
+  }
+};
+
+
+
+export const getRoles = async () => {
+	try {
+		const response = await axiosInstance.get('/admin/roles/list');
+		return response.data;
+	} catch (error) {
+		console.error('Error fetching roles:', error);
+	}
+};

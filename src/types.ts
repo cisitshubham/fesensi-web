@@ -30,10 +30,10 @@ export enum TicketPriority {
 }
 
 export type User = {
-  _id: number;
+  _id: string; 
   name: string;
   email: string;
-  role?: string;
+  role?: string[] | null;
   first_name?: string;
   level?: string | null;
   categories?: string[] | null;

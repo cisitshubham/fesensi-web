@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { User } from '@/types';
 import { useNavigate } from 'react-router-dom'; 
 
@@ -30,9 +31,13 @@ export default function UserListCard({ user }: { user: User }) {
         <div>
           <p className="font-medium">{user.first_name || 'Unknown'}</p>
           <p className="text-sm text-muted-foreground">{user.email || 'No email provided'}</p>
+          {user.level && <p className="text-sm text-muted-foreground">Level: {user.level}</p>}
         </div>
       </div>
       <div className="flex space-x-2 items-center">
+        <Badge variant={user.status ? 'default' : 'destructive'}>
+          {user.status ? 'Active' : 'Inactive'}
+        </Badge>
         <Button className="text-sm hover:underline" onClick={handleViewProfile}>
           View Profile
         </Button>
