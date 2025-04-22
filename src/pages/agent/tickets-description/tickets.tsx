@@ -1,5 +1,5 @@
 'use client';
-import { Link, useLocation,useParams } from 'react-router-dom';
+import { Link, useLocation,useNavigate,useParams } from 'react-router-dom';
 import type { Tickettype, TicketStatus } from '@/types';
 import { AlertCircle, Clock, FileText, Flag, User, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -83,7 +83,8 @@ export default function Tickets() {
 
   // Function to handle resolution submission
   const handleResolve = () => {
-    // Placeholder logic for sending resolution
+
+
     alert('Resolution sent to the user!');
   };
 
@@ -234,10 +235,17 @@ export default function Tickets() {
 			</Button>
 		)}
 		{ticketData.isResolved && (
+          <Link
+          to={{
+            pathname: `/agent/ticket/resolve/${ticket._id}`
+          }}
+          className="block"
+        >
 		<Button onClick={handleResolve} className="mt-6">
 			Update Resoulation
 		</Button>
-		)}
+		
+    </Link>)}
 		{ticketData.isUserCommented && (
 		<Link
 			to={{

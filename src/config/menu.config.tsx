@@ -3,6 +3,8 @@ import { type TMenuConfig } from '@/components/menu';
 import { verifyRole } from '@/api/api'
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import path from 'path';
+import { Tabs } from '@mui/material';
 
 const res = await verifyRole();
 const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
@@ -30,7 +32,44 @@ const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string,
 			icon: 'file-sheet',
 			path: '/agent/mytickets'
 		}
-	] : [])
+	] : []),
+
+
+// admin Tabs
+	...(roles.includes('ADMIN') ? [
+		{
+			title: 'All Users',
+			icon: 'users',
+			path: '/admin/allUsers'
+		},
+		{
+			title: 'Permissions and Roles',
+			icon: 'shield',
+			path: '/admin/roles'
+		},
+		{
+			title: 'Categories',
+			icon: 'folder',
+			path: '/admin/categories'
+		},
+		{
+			title: 'Force Reasons',
+			icon: 'setting',
+			path: '/admin/force-reasons'
+		},
+		{
+			title: 'Configuration',
+			icon: 'setting',
+			path: '/admin/configurations'
+		},
+		{
+			title:'Analytics',
+			icon:'analytics',
+			path:'/admin/analytics'
+		}
+	] : []),
+
+
 ];
 
 
@@ -43,7 +82,8 @@ export const getMegaMenu = (roles: string[]): TMenuConfig => [
 		{
 			title: 'Admin Dashboard',
 			path: '/admin'
-		}
+		},
+
 	] : []),
 	...(roles.includes('AGENT') ? [
 		{

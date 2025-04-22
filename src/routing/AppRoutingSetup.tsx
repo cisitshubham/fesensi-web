@@ -94,10 +94,13 @@ import AgentTickets from '@/pages/agent/my-tickets/my-tickets';
 import Tickets from '@/pages/agent/tickets-description/tickets';
 import IncompleteTicket from '@/pages/agent/incomplete-ticket/Incomplete-ticket';
 import AdminUsersPage from '@/pages/admin/userlist/userslist';
-import UserDetailPage from '@/pages/admin/userdetail/userdetailpage';
+import UserDetailPage from '@/pages/admin/userlist/userdetailpage';
 import CreateCategory from '@/pages/admin/Categories/createCategory';
 import RolesAndPermissions from '@/pages/admin/RolesAndPermissions/rolesAndPermissions';
 import PermissionsToggle from '@/pages/admin/configuration/config';
+import ResolveTicket from '@/pages/agent/resolve-ticket/resolve';
+import CreateReasons from '@/pages/admin/force_reasons/force-reasons';
+import AnalyticsPage from '@/pages/admin/analytics/analytics';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -218,6 +221,7 @@ const AppRoutingSetup = (): ReactElement => {
 
           <Route path="/agent/mytickets" element={<AgentTickets />} />
           <Route path="/agent/ticket/:id" element={<Tickets />} />
+          <Route path="/agent/ticket/resolve/:id" element={<ResolveTicket />} />
           <Route path="/agent/incomplete-ticket" element={<IncompleteTicket />} />
 
           {/* admin */}
@@ -226,6 +230,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/categories" element={<CreateCategory />} />
           <Route path="/admin/roles" element={<RolesAndPermissions />} />
           <Route path="/admin/configurations" element={<PermissionsToggle />} />
+          <Route path="/admin/force-reasons" element={<CreateReasons />} />
+          <Route path="/admin/analytics" element={<AnalyticsPage />} />
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />
