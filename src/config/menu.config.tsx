@@ -19,7 +19,7 @@ const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string,
 		{
 			title: 'Tickets',
 			icon: 'document',
-			path: '/public-profile/projects/3-columns'
+			path: '/user/MyTickets'
 		}
 	] : []),
 

@@ -1,5 +1,6 @@
 export type Tickettype = {
   isUserCommented: boolean;
+  isAgentCommented: boolean;
   isResolved: boolean;
   category: string;
   IsCumstomerCommneted: boolean;
@@ -13,13 +14,29 @@ export type Tickettype = {
   priority: string;
   createdAt: string;
   updatedAt?: string;
-  attachments?: string[];
+  attachments?: {
+    _id: string;
+    file_url: string;
+    file_type: string;
+  }[];
   assignedTo?: string;
   createdBy: string;
   resolution?: string;
   resolutionDate?: string;
   escalatedTo?: string;
+  isCustomerTicketEdit?: boolean;
+  comments ?: string[];
+  latest_agent_comment?: {
+    _id: string;
+    comment_text: string;
+    createdAt: string;
+    attachments?: string[];
+    creator_name: string;
+  };
 };
+
+
+
 
 export enum TicketStatus {
   Open = 'Open',

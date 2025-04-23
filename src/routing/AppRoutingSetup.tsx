@@ -101,6 +101,12 @@ import PermissionsToggle from '@/pages/admin/configuration/config';
 import ResolveTicket from '@/pages/agent/resolve-ticket/resolve';
 import CreateReasons from '@/pages/admin/force_reasons/force-reasons';
 import AnalyticsPage from '@/pages/admin/analytics/analytics';
+import UserTickets from '@/pages/user/myTickets/mytickets';
+import UserTicketDetails from '@/pages/user/update-ticket/update-ticket';
+import UserTTicketDetails from '@/pages/user/Ticket/Ticket';
+import UserResolveTicket from '@/pages/user/Resolve/Resolve';
+import UserUpdateTicketForm from '@/pages/user/update-ticket/update-ticket';
+import UserCreateTicketForm from '@/pages/user/createTicket/CreateTicket';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -232,6 +238,17 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/configurations" element={<PermissionsToggle />} />
           <Route path="/admin/force-reasons" element={<CreateReasons />} />
           <Route path="/admin/analytics" element={<AnalyticsPage />} />
+
+
+
+          {/* users aadesh  */}
+          <Route path="/user/MyTickets" element={<UserTickets />} />
+          <Route path="/user/ticket/:id" element={<UserTTicketDetails />} />
+          <Route path="/user/ticket/update/:id" element={<UserUpdateTicketForm />} />
+          <Route path="/user/ticket/resolution/:id" element={<UserResolveTicket />} />
+          <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
+
+
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorsRouting />} />

@@ -229,11 +229,12 @@ export default function Tickets() {
         </div>
       </div>
       <div className="flex justify-center mt-6 gap-5">
-    	{ticketData.status === 'RESOLVED' as TicketStatus && (
+
+        
 			<Button onClick={handleResolve} className="mt-6">
 				Resolve
 			</Button>
-		)}
+	
 		{ticketData.isResolved && (
           <Link
           to={{

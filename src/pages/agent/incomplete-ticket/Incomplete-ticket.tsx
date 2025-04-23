@@ -18,7 +18,7 @@ export default function IncompleteTicket() {
   const [reasonType, setReasonType] = useState<string>('missing-information');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-
+  console.log(ticket);
   // Function to get appropriate color for status badge
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -65,7 +65,7 @@ export default function IncompleteTicket() {
 
     // Prepare the data to be submitted
     const incompleteData = {
-      ticketId: ticket?.id,
+      ticketId: ticket?._id,
       reasonType,
       reason,
       timestamp: new Date().toISOString()
@@ -83,7 +83,7 @@ export default function IncompleteTicket() {
         state: {
           notification: {
             type: 'success',
-            message: `Ticket #${ticket?.id} marked as incomplete successfully.`
+            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
           }
         }
       });
@@ -117,7 +117,7 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket.id}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
@@ -137,34 +137,6 @@ export default function IncompleteTicket() {
                   <FileText className="h-4 w-4" /> Description
                 </h3>
                 <p className="mt-1 text-base">{ticket.description}</p>
-              </div>
-
-              {/* Ticket images */}
-              <div className="mt-6">
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Attachments</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <img
-                    src=""
-                    alt="Ticket attachment 1"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                  <img
-                    src=""
-                    alt="Ticket attachment 2"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                  <img
-                    src=""
-                    alt="Ticket attachment 3"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                </div>
               </div>
             </div>
           </CardContent>

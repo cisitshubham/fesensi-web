@@ -24,7 +24,7 @@ export default function ResolveTicket() {
   const { id } = useParams();
   const ticketFromState: Tickettype | null = location.state?.ticket || null;
 
-  const STATUS_OPTIONS = ['in-progress', 'resolved by Agent', 'closed'] as const;
+  const STATUS_OPTIONS = ['in-progress', 'Resolved by Agent', 'closed'] as const;
   const isClosed = status === 'closed';
 
   useEffect(() => {
@@ -140,7 +140,7 @@ export default function ResolveTicket() {
                 ))}
               </div>
 
-              {status === 'resolved' && (
+              {status === 'Resolved by Agent' && (
                 <select
                   className="px-3 py-2 rounded-md border border-gray-300 text-sm capitalize bg-white dark:bg-gray-800 dark:border-gray-600"
                   onChange={(e) => handleResolvedDropdownChange(e.target.value)}
