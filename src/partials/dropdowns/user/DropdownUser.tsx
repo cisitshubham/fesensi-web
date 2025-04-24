@@ -56,7 +56,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
       </div>
     );
   };
-
+console.log(user)
   const buildMenu = () => {
     return (
       <Fragment>

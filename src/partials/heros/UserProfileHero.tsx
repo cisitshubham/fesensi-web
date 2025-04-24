@@ -30,7 +30,6 @@ const UserProfileHero = ({ image, name, info }: IUserProfileHeroProps) => {
       );
     });
   };
-
   const render = () => {
     return (
       <div

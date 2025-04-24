@@ -19,13 +19,13 @@ export type Tickettype = {
     file_url: string;
     file_type: string;
   }[];
-  assignedTo?: string;
+  assigned_to?: string;
   createdBy: string;
   resolution?: string;
   resolutionDate?: string;
   escalatedTo?: string;
   isCustomerTicketEdit?: boolean;
-  comments ?: string[];
+  comments?: string[];
   latest_agent_comment?: {
     _id: string;
     comment_text: string;
@@ -33,16 +33,26 @@ export type Tickettype = {
     attachments?: string[];
     creator_name: string;
   };
+  activity_log?: {
+    action: string;
+    createdAt: string;
+    details: string;
+  }[];
+  agentComment?: {
+    _id: string;
+    comment_text: string;
+    creator: string;
+    role: string;
+    createdAt: string;
+  };
 };
 
 
-
-
 export enum TicketStatus {
-  Open = 'Open',
-  InProgress = 'In Progress',
-  Closed = 'Closed',
-  Resolved = 'Resolved'
+  Open = 'OPEN',
+  InProgress = 'IN-PROGRESS',
+  Closed = 'CLOSEDD',
+  Resolved = 'RESOLVED'
 }
 
 export enum TicketPriority {
@@ -53,7 +63,7 @@ export enum TicketPriority {
 }
 
 export type User = {
-  _id: string; 
+  _id: string;
   name: string;
   email: string;
   role?: string[] | null;
