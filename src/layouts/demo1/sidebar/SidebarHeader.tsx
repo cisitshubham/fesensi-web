@@ -13,11 +13,11 @@ const SidebarHeader = forwardRef<HTMLDivElement, any>((props, ref) => {
         <div className="flex items-center gap-1 default-logo">
           <img
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
-            className=" h-[22px] max-w-none"
+            className=" h-[25px] max-w-none"
           />
           <hr className='bg-gradient-to-r from-[#314DCA] to-[#5A77FA]' />
           <h1 className="bg-gradient-to-r from-[#314DCA] to-[#5A77FA] tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
-            Fesensi
+            | Fesensi
           </h1>
         </div>
         <img
