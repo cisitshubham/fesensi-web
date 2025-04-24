@@ -1,129 +1,133 @@
 /* eslint-disable prettier/prettier */
 import { type TMenuConfig } from '@/components/menu';
-import { verifyRole } from '@/api/api'
-
+import { verifyRole } from '@/api/api';
 
 const res = await verifyRole();
-const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
-	{
-		title: 'Dashboard',
-		icon: 'element-11',
-		path: '/'
-	},
+const role = res?.data?.role ?? [];
+export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
+  {
+    title: 'Dashboard',
+    icon: 'element-11',
+    path: '/'
+  },
 
-	// Customer Tabs
-	...(roles.includes('CUSTOMER') ? [
-		{
-			title: 'Tickets',
-			icon: 'document',
-			path: '/user/MyTickets'
-		}
-	] : []),
+  // Customer Tabs
+  ...(roles.includes('CUSTOMER')
+    ? [
+        {
+          title: 'Tickets',
+          icon: 'document',
+          path: '/user/MyTickets'
+        }
+      ]
+    : []),
 
+  // Aegent Tabs
+  ...(roles.includes('AGENT')
+    ? [
+        {
+          title: 'My Tickets',
+          icon: 'file-sheet',
+          path: '/agent/mytickets'
+        }
+      ]
+    : []),
 
-
-	// Aegent Tabs
-	...(roles.includes('AGENT') ? [
-		{
-			title: 'My Tickets',
-			icon: 'file-sheet',
-			path: '/agent/mytickets'
-		}
-	] : []),
-
-
-// admin Tabs
-	...(roles.includes('ADMIN') ? [
-		{
-			title: 'All Users',
-			icon: 'users',
-			path: '/admin/allUsers'
-		},
-		{
-			title: 'Permissions and Roles',
-			icon: 'shield',
-			path: '/admin/roles'
-		},
-		{
-			title: 'Categories',
-			icon: 'folder',
-			path: '/admin/categories'
-		},
-		{
-			title: 'Force Reasons',
-			icon: 'lock-3',
-			path: '/admin/force-reasons'
-		},
-		{
-			title: 'Configuration',
-			icon: 'setting',
-			path: '/admin/configurations'
-		},
-		{
-			title:'Analytics',
-			icon:'compass',
-			path:'/admin/analytics'
-		}
-	] : []),
-
-
+  // admin Tabs
+  ...(roles.includes('ADMIN')
+    ? [
+        {
+          title: 'All Users',
+          icon: 'users',
+          path: '/admin/allUsers'
+        },
+        {
+          title: 'Permissions and Roles',
+          icon: 'shield',
+          path: '/admin/roles'
+        },
+        {
+          title: 'Categories',
+          icon: 'folder',
+          path: '/admin/categories'
+        },
+        {
+          title: 'Force Reasons',
+          icon: 'lock-3',
+          path: '/admin/force-reasons'
+        },
+        {
+          title: 'Configuration',
+          icon: 'setting',
+          path: '/admin/configurations'
+        },
+        {
+          title: 'Analytics',
+          icon: 'compass',
+          path: '/admin/analytics'
+        }
+      ]
+    : [])
 ];
-
 
 export const getMegaMenu = (roles: string[]): TMenuConfig => [
-	{
-		title: 'Home',
-		path: '/'
-	},
-	...(roles.includes('ADMIN') ? [
-		{
-			title: 'Admin Dashboard',
-			path: '/admin'
-		},
-
-	] : []),
-	...(roles.includes('AGENT') ? [
-		{
-			title: 'Agent Workspace',
-			path: '/agent/workspace'
-		}
-	] : []),
-	...(roles.includes('CUSTOMER') ? [
-		{
-			title: 'Support Center',
-			path: '/support'
-		}
-	] : [])
+  {
+    title: 'Home',
+    path: '/'
+  },
+  ...(roles.includes('ADMIN')
+    ? [
+        {
+          title: 'Admin Dashboard',
+          path: '/admin'
+        }
+      ]
+    : []),
+  ...(roles.includes('AGENT')
+    ? [
+        {
+          title: 'Agent Workspace',
+          path: '/agent/workspace'
+        }
+      ]
+    : []),
+  ...(roles.includes('CUSTOMER')
+    ? [
+        {
+          title: 'Support Center',
+          path: '/support'
+        }
+      ]
+    : [])
 ];
 
-
 export const MENU_ROOT: TMenuConfig = [
-	{
-		title: 'Public Profile',
-		icon: 'profile-circle',
-		rootPath: '/public-profile/',
-		path: 'public-profile/profiles/default',
-		childrenIndex: 2
-	},
-	{
-		title: 'Account',
-		icon: 'setting-2',
-		rootPath: '/account/',
-		path: '/',
-		childrenIndex: 3
-	},
-	{
-		title: 'Network',
-		icon: 'users',
-		rootPath: '/network/',
-		path: 'network/get-started',
-		childrenIndex: 4
-	},
-	{
-		title: 'Authentication',
-		icon: 'security-user',
-		rootPath: '/authentication/',
-		path: 'authentication/get-started',
-		childrenIndex: 5
-	}
+  {
+    title: 'Public Profile',
+    icon: 'profile-circle',
+    rootPath: '/public-profile/',
+    path: 'public-profile/profiles/default',
+    childrenIndex: 2
+  },
+  {
+    title: 'Account',
+    icon: 'setting-2',
+    rootPath: '/account/',
+    path: '/',
+    childrenIndex: 3
+  },
+  {
+    title: 'Network',
+    icon: 'users',
+    rootPath: '/network/',
+    path: 'network/get-started',
+    childrenIndex: 4
+  },
+  {
+    title: 'Authentication',
+    icon: 'security-user',
+    rootPath: '/authentication/',
+    path: 'authentication/get-started',
+    childrenIndex: 5
+  }
 ];

@@ -12,7 +12,7 @@ import {
 import * as authHelper from '../_helpers';
 import { type AuthModel, type UserModel } from '@/auth';
 import { MasterDropdownProvider } from '@/pages/global-components/master-dropdown-context';
-
+import { RoleProvider } from '@/pages/global-components/role-context';
 const API_URL = import.meta.env.VITE_APP_API_URL;
 export const LOGIN_URL = `${API_URL}/users/login`;
 export const REGISTER_URL = `${API_URL}/users/signup`;
@@ -163,7 +163,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       <MasterDropdownProvider>
-        {children}
+        <RoleProvider>{children}</RoleProvider>
       </MasterDropdownProvider>
     </AuthContext.Provider>
   );

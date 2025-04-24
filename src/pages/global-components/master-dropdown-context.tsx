@@ -19,7 +19,6 @@ export const MasterDropdownProvider: React.FC<{ children: React.ReactNode }> = (
     setError(null);
     try {
       const data = await GetMasterDropdown();
-      console.log(data.data, 'Master Dropdown Data'); // Debugging fetched data
       setDropdownData(data.data);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch dropdown data');
