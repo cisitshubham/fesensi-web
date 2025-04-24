@@ -29,9 +29,9 @@ const SidebarHeader = forwardRef<HTMLDivElement, any>((props, ref) => {
         <div className="flex items-center gap-1 default-logo">
           <img
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
-            className=" h-[22px] max-w-none"
+            className=" h-[25px] max-w-none"
           />
-          <h1 className="text-white font-bold uppercase tracking-wider text-nowrap">Fesensi</h1>
+          <h1 className="text-white font-bold uppercase tracking-wider text-nowrap">| Fesensi</h1>
         </div>
         <img
           src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
