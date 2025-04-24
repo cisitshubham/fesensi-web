@@ -4,8 +4,13 @@ import { verifyRole } from '@/api/api'
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-const res = await verifyRole();
-const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
+let role: string[] = [];
+(async () => {
+	const res = await verifyRole();
+	role = res?.data?.role ?? [];
+})();
+
+export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 	{
 		title: 'Dashboard',
 		icon: 'element-11',
