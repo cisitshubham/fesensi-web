@@ -28,7 +28,6 @@ import { MasterDropdownDatatype } from '@/types';
 export default function ReassignTicket() {
     
   const { dropdownData } = useMasterDropdown();
-  const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
   const [loading, setLoading] = useState(false);
