@@ -30,6 +30,7 @@ const App = () => {
       <Toaster />
     </BrowserRouter>
   );
-};
+}
+;
 
 export { App };
