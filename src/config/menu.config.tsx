@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { type TMenuConfig } from '@/components/menu';
 import { verifyRole } from '@/api/api';
+import { title } from 'process';
+import { icon } from 'leaflet';
 
 const res = await verifyRole();
 const role = res?.data?.role ?? [];
@@ -18,7 +20,43 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
           title: 'Tickets',
           icon: 'document',
           path: '/user/MyTickets'
-        }
+        },
+		{
+			title: 'knowledge base',
+			icon: 'file-sheewt'
+		  },
+		  {
+			title: 'Draft Tickets',
+			icon: 'pencil'
+		  },
+		  {
+			title: 'Escalated tickets',
+			icon: 'flag'
+		  },
+		  {
+			title: 'SLA Status',
+			icon: 'timer'
+		  },
+		  {
+			title: 'Archived Tickets',
+			icon: 'file-down'
+		  },
+		  {
+			title: 'Contact Support',
+			icon: 'abstract-32'
+		  },
+		  {
+			title: 'Announcements',
+			icon: 'megaphone'
+		  },
+		  {
+			title: 'Rate Us/Feedback',
+			icon: 'star'
+		  },
+		  {
+			title: 'Trust Level',
+			icon: 'like-shapes'
+		  }
       ]
     : []),
 
@@ -29,6 +67,42 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
           title: 'My Tickets',
           icon: 'file-sheet',
           path: '/agent/mytickets'
+        },
+        {
+          title: 'knowledge base',
+          icon: 'file-sheewt'
+        },
+        {
+          title: 'Draft Tickets',
+          icon: 'pencil'
+        },
+        {
+          title: 'Escalated tickets',
+          icon: 'flag'
+        },
+        {
+          title: 'SLA Status',
+          icon: 'timer'
+        },
+        {
+          title: 'Archived Tickets',
+          icon: 'file-down'
+        },
+        {
+          title: 'Contact Support',
+          icon: 'abstract-32'
+        },
+        {
+          title: 'Announcements',
+          icon: 'megaphone'
+        },
+        {
+          title: 'Rate Us/Feedback',
+          icon: 'star'
+        },
+        {
+          title: 'Trust Level',
+          icon: 'like-shapes'
         }
       ]
     : []),
