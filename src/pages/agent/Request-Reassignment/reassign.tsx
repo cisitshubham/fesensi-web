@@ -22,8 +22,12 @@ import { MyTicketDetails } from '@/api/api';
 import { useParams } from 'react-router';
 import { Tickettype } from '@/types';
 import { useLocation } from 'react-router';
+import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
+import { MasterDropdownDatatype } from '@/types';
 
 export default function ReassignTicket() {
+    
+  const { dropdownData } = useMasterDropdown();
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
@@ -90,18 +94,23 @@ export default function ReassignTicket() {
           <form className="space-y-4">
             <div className="space-y-2">
               <div className="space-y-2">
-                <Select >
-                <label>Select Reason</label>
-                  <SelectTrigger id="priority">
-                    <SelectValue placeholder="Select Reason" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">R1</SelectItem>
-                    <SelectItem value="medium">R2</SelectItem>
-                    <SelectItem value="high">R3</SelectItem>
-                    <SelectItem value="critical">R4</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select>
+                    <label>Select Reason</label>
+                    <SelectTrigger id="priority">
+                      <SelectValue placeholder="Select Reason" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dropdownData?.reassignOptions?.length > 0 ? (
+                        dropdownData.reassignOptions.map((item: MasterDropdownDatatype['reassignOptions'][0]) => (
+                          <SelectItem key={item._id} value={String(item.title || '')}>
+                            {item.title}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem disabled value={''}>No options available</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
               </div>
             </div>
 

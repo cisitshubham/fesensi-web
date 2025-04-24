@@ -11,6 +11,7 @@ import {
 
 import * as authHelper from '../_helpers';
 import { type AuthModel, type UserModel } from '@/auth';
+import { MasterDropdownProvider } from '@/pages/global-components/master-dropdown-context';
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 export const LOGIN_URL = `${API_URL}/users/login`;
@@ -91,28 +92,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  //   const login = async (email: string, password: string) => {
-  //     try {
-  //       const { data } = await axios.post(LOGIN_URL, {
-  //         email,
-  //         password
-  //       });
-  //       if (data?.data?.tokens?.access) {
-  //         localStorage.setItem('token', data.data.tokens.access);
-  //       } else {
-  //         console.error('No access token found in response.');
-  //       }
-
-  //       saveAuth(data.data.tokens);
-
-  //       setCurrentUser(data.data.user);
-  //     } catch (error) {
-  //       console.error('Login error:', error);
-  //       saveAuth(undefined);
-  //       throw new Error(`Error ${error}`);
-  //     }
-  //   };
-
   const register = async (
     first_name: string,
     last_name: string,
@@ -183,7 +162,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         verify
       }}
     >
-      {children}
+      <MasterDropdownProvider>
+        {children}
+      </MasterDropdownProvider>
     </AuthContext.Provider>
   );
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from "lucide-react"
 
 import { getTicketById } from "@/api/api"
@@ -13,9 +14,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
+import { CloseTicketUser } from "@/api/api"
 
 export default function UserResolveTicket() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [ticket, setTicket] = useState<Tickettype | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -48,9 +51,15 @@ export default function UserResolveTicket() {
   }, [id])
 
   const handleResolve = async () => {
-    // Implement the resolve functionality
-    console.log("Ticket resolved")
-    // You could redirect or show a success message here
+    if (!ticket?._id) return
+
+    try {
+      await CloseTicketUser({ ticketId: ticket._id })
+      console.log("Ticket resolved")
+      navigate("/") // Redirect to home page after resolving the ticket
+    } catch (err) {
+      console.error("Failed to resolve ticket:", err)
+    }
   }
 
   const handleSubmitFeedback = async () => {
@@ -58,9 +67,7 @@ export default function UserResolveTicket() {
 
     try {
       setSubmitting(true)
-      // Implement the API call to submit feedback
       console.log("Submitting feedback:", feedback)
-      // Reset form after submission
       setFeedback("")
       setShowFeedback(false)
       // Show success message or redirect
@@ -93,7 +100,7 @@ export default function UserResolveTicket() {
 
   if (loading) {
     return (
-      <Card className="w-full max-w-4xl mx-auto mt-8 shadow-md">
+      <Card className="w-full max-w-4xl mx-auto mt-8 shadow-md ">
         <CardHeader>
           <Skeleton className="h-8 w-3/4" />
         </CardHeader>

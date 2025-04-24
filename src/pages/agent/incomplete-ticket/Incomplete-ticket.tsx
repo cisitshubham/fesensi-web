@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { GetStatusColor, getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import type { Tickettype } from '@/types';
 
 export default function IncompleteTicket() {
@@ -19,35 +20,6 @@ export default function IncompleteTicket() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   console.log(ticket);
-  // Function to get appropriate color for status badge
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return 'bg-blue-500 hover:bg-blue-600';
-      case 'in progress':
-        return 'bg-yellow-500 hover:bg-yellow-600';
-      case 'resolved':
-        return 'bg-green-500 hover:bg-green-600';
-      case 'closed':
-        return 'bg-gray-500 hover:bg-gray-600';
-      default:
-        return 'bg-slate-500 hover:bg-slate-600';
-    }
-  };
-
-  // Function to get appropriate color for priority badge
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'bg-red-500 hover:bg-red-600';
-      case 'medium':
-        return 'bg-orange-500 hover:bg-orange-600';
-      case 'low':
-        return 'bg-green-500 hover:bg-green-600';
-      default:
-        return 'bg-slate-500 hover:bg-slate-600';
-    }
-  };
 
   // Handle back button click
   const handleBack = () => {
@@ -121,9 +93,9 @@ export default function IncompleteTicket() {
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
-                <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
-                <Badge className={getPriorityColor(ticket.priority)}>
-                  {ticket.priority} Priority
+                <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
+                <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>
+                  {ticket.priority} 
                 </Badge>
               </div>
             </div>

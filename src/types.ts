@@ -11,7 +11,7 @@ export type Tickettype = {
   due_date: string;
   title: string;
   description: string;
-  priority: string;
+  priority: TicketPriority;
   createdAt: string;
   updatedAt?: string;
   attachments?: {
@@ -51,15 +51,15 @@ export type Tickettype = {
 export enum TicketStatus {
   Open = 'OPEN',
   InProgress = 'IN-PROGRESS',
-  Closed = 'CLOSEDD',
+  Closed = 'CLOSED',
   Resolved = 'RESOLVED'
 }
 
 export enum TicketPriority {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-  Critical = 'Critical'
+  Low = 'LOW',
+  Medium = 'MEDIUM',
+  High = 'HIGH',
+  Critical = 'CRITICAL'
 }
 
 export type User = {
@@ -74,4 +74,31 @@ export type User = {
   profile_img?: string;
   createdAt?: String;
   updatedAt?: string;
+};
+
+export type MasterDropdownDatatype = {
+  status: {
+    _id: string;
+    name: string;
+  }[];
+  priorities: {
+    _id: string;
+    name: string;
+  }[];
+  categories: {
+    _id: string;
+    title: string;
+  }[];
+  resolvedPostList: {
+    _id: string;
+    title: string;
+  }[];
+  reassignOptions: {
+    _id: string;
+    title: string;
+  }[];
+  AdminUsers: {
+    _id: string;
+    first_name: string;
+  }[];
 };

@@ -235,3 +235,26 @@ export const GetUserTicketDetails = async (TicketId:any)=>{
       console.error('Error fetching ticket by ID:', error);
     }
 }
+
+
+
+export const GetMasterDropdown = async ()=>{
+  try {
+    const response = await axiosInstance.get('/tickets/ticket-dropdowns');
+    return response.data;
+    } catch (error) {
+      console.error('Error fetching ticket by ID:', error);
+    }
+}
+
+
+
+export const CloseTicketUser = async (data: { ticketId: string| number }) => {
+  try {
+    const response = await axiosInstance.post('/tickets/close', data); // Correct endpoint and payload
+    return response.data;
+  } catch (error) {
+    console.error('Error closing ticket:', error);
+  }
+  return null;
+};

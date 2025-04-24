@@ -15,12 +15,15 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Clock, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {  Clock, User } from 'lucide-react';
+import {  useEffect, useState } from 'react';
 import { MyTicketDetails } from '@/api/api';
 import { useParams } from 'react-router';
-import { Tickettype } from '@/types';
+import { Tickettype, TicketPriority } from '@/types';
 import { useLocation } from 'react-router';
+import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
+import { MasterDropdownDatatype } from '@/types';
+import { getPriorityColor } from '@/pages/global-components/GetStatusColor';
 
 export default function ForceResolve() {
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
@@ -28,6 +31,7 @@ export default function ForceResolve() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('');
 
+  const { dropdownData } = useMasterDropdown();
   const location = useLocation();
   const { id } = useParams();
   const ticketFromState: Tickettype | null = location.state?.ticket || null;
@@ -50,11 +54,21 @@ export default function ForceResolve() {
     fetchTicket();
   }, [id, ticketFromState]);
 
-  console.log(ticketData, 'ticketData');
-  return (
-    <div className=" px-6 ">
+  useEffect(() => {
+    console.log(dropdownData, 'Dropdown Data'); // Debugging dropdownData
+  }, [dropdownData]);
 
-      <Card className=" mx-auto">
+  if (loading) {
+    return <div className="text-center py-6">Loading ticket details...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-6 text-red-500">Error: {error}</div>;
+  }
+
+  return (
+    <div className="px-6">
+      <Card className="mx-auto">
         <CardHeader>
           <CardTitle>Force Resolve the ticket #{ticketData?._id}</CardTitle>
           <CardDescription>Forcefully Resolve the ticket.</CardDescription>
@@ -68,7 +82,7 @@ export default function ForceResolve() {
                 <h3 className="font-medium">{ticketData?.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{ticketData?.description}</p>
               </div>
-              <div className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md">
+              <div className={`bg-${getPriorityColor(ticketData?.priority || TicketPriority.Low)} text-sm p-1 rounded-md`}>
                 {ticketData?.priority}
               </div>
             </div>
@@ -89,16 +103,21 @@ export default function ForceResolve() {
           <form className="space-y-4">
             <div className="space-y-2">
               <div className="space-y-2">
-                <Select >
-                <label>Select Reason</label>
+                <Select>
+                  <label>Select Reason</label>
                   <SelectTrigger id="priority">
                     <SelectValue placeholder="Select Reason" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">R1</SelectItem>
-                    <SelectItem value="medium">R2</SelectItem>
-                    <SelectItem value="high">R3</SelectItem>
-                    <SelectItem value="critical">R4</SelectItem>
+                    {dropdownData?.resolvedPostList?.length > 0 ? (
+                      dropdownData.resolvedPostList.map((item: MasterDropdownDatatype['resolvedPostList'][0]) => (
+                        <SelectItem key={item._id} value={String(item.title || '')}>
+                          {item.title}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem disabled value={''}>No options available</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -113,7 +132,6 @@ export default function ForceResolve() {
               />
             </div>
 
- 
           </form>
         </CardContent>
 

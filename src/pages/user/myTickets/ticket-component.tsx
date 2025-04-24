@@ -6,6 +6,7 @@ import { Link } from "react-router-dom"
 import type { Tickettype } from "@/types"
 import { Bell, Calendar, Clock, ArrowRight } from "lucide-react"
 import { GetUserTicketDetails } from "@/api/api"
+import { getStatusBadge } from "@/pages/global-components/GetStatusColor"
 
 interface TicketProps {
   ticket: Tickettype
@@ -13,35 +14,7 @@ interface TicketProps {
 
 export default function UserTicket({ ticket }: TicketProps) {
   // Function to determine the status badge styling
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "OPEN":
-        return {
-          color: "bg-blue-100 text-blue-600 border-blue-200",
-          icon: <Clock className="w-3 h-3 mr-1" />,
-        }
-      case "IN-PROGRESS":
-        return {
-          color: "bg-purple-100 text-purple-600 border-purple-200",
-          icon: <Clock className="w-3 h-3 mr-1" />,
-        }
-      case "CLOSED":
-        return {
-          color: "bg-red-100 text-red-600 border-red-200",
-          icon: null,
-        }
-      case "RESOLVED":
-        return {
-          color: "bg-green-100 text-green-600 border-green-200",
-          icon: null,
-        }
-      default:
-        return {
-          color: "bg-gray-100 text-gray-600 border-gray-200",
-          icon: null,
-        }
-    }
-  }
+
 
   // Function to get priority indicator
 

@@ -1,10 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { type TMenuConfig } from '@/components/menu';
 import { verifyRole } from '@/api/api'
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import path from 'path';
-import { Tabs } from '@mui/material';
+
 
 const res = await verifyRole();
 const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
@@ -54,7 +51,7 @@ const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string,
 		},
 		{
 			title: 'Force Reasons',
-			icon: 'setting',
+			icon: 'lock-3',
 			path: '/admin/force-reasons'
 		},
 		{
@@ -64,7 +61,7 @@ const role = res?.data?.role ?? []; export const getSidebarMenu = (type: string,
 		},
 		{
 			title:'Analytics',
-			icon:'analytics',
+			icon:'compass',
 			path:'/admin/analytics'
 		}
 	] : []),
