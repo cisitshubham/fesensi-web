@@ -105,8 +105,13 @@ export default function UserDetailPage() {
       ...user,
       profile_img: imageFile ? imagePreview : user.profile_img,
     }
-    console.log(formdata)
-    const response = await updateUser(user._id, formdata)
+    const formData = new FormData();
+    Object.entries(formdata).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value instanceof File ? value : String(value));
+      }
+    });
+    const response = await updateUser(user._id, formData);
 
     if (response?.success) {
       setEditMode(false)

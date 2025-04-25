@@ -4,8 +4,9 @@ import { verifyRole } from '@/api/api';
 import { title } from 'process';
 import { icon } from 'leaflet';
 
-const res = await verifyRole();
-const role = res?.data?.role ?? [];
+// const res = await verifyRole();
+// const role = res?.data?.role ?? [];
+
 export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
   {
     title: 'Dashboard',
