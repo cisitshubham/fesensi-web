@@ -13,7 +13,9 @@ import { DateRange } from 'react-day-picker';
 import { addDays, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { KeenIcon } from '@/components/keenicons';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { useRole } from '@/pages/global-components/role-context';
 
 const Demo1LightSidebarPage = () => {
@@ -54,6 +56,7 @@ const Demo1LightSidebarPage = () => {
         <Toolbar>
           <ToolbarHeading title="Dashboard" description="Central Hub for Comprehensive View" />
           <ToolbarActions>
+
             <Select onValueChange={(value) => handleRoleToggle(value)}>
               <SelectTrigger className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition">
                 <SelectValue placeholder="Select Roles">
@@ -65,16 +68,19 @@ const Demo1LightSidebarPage = () => {
                   <SelectItem
                     key={index}
                     value={role}
+
                     className={cn(
                       'cursor-pointer px-3 py-2 hover:bg-primary-light rounded-md',
                       selectedRoles.includes(role) && 'bg-primary-light'
                     )}
+
                   >
                     {role}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
 
             <Popover>
               <PopoverTrigger asChild>
