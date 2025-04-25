@@ -5,6 +5,7 @@ import { GetUserTickets } from '@/api/api';
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import SearchbarFilters from '@/pages/global-components/searchbar_filters';
 
 
 export default function AgentTickets() {
@@ -32,8 +33,10 @@ export default function AgentTickets() {
 
   return (
     <div className="space-y-4 px-6">
+		<div className="flex flex-row justify-between items-center mb-4">
 		<Link to={"/user/create-ticket"}>
 		<Button variant={'default'}>Create Ticket</Button></Link>
+		<SearchbarFilters/></div>
       {tickets.map((ticket) => (
         <Ticket key={ticket._id} ticket={ticket} />
       ))}

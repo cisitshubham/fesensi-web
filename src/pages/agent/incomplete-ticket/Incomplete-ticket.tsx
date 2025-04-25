@@ -10,15 +10,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { GetStatusColor, getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import type { Tickettype } from '@/types';
+import { ticketIncomplete } from '@/api/api';
 
 export default function IncompleteTicket() {
   const location = useLocation();
   const navigate = useNavigate();
   const [ticket, setTicket] = useState<Tickettype | null>(location.state?.ticket || null);
   const [reason, setReason] = useState<string>('');
-  const [reasonType, setReasonType] = useState<string>('missing-information');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   console.log(ticket);
 
   // Handle back button click
@@ -28,41 +29,29 @@ export default function IncompleteTicket() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    if (!reasonType) {
+    if (!reason) {
       setError(true);
       return;
     }
 
     setIsSubmitting(true);
 
-    // Prepare the data to be submitted
-    const incompleteData = {
-      ticketId: ticket?._id,
-      reasonType,
-      reason,
-      timestamp: new Date().toISOString()
-    };
+    const formData = new FormData();
+    formData.append('comment_text', reason);
+    formData.append('ticket_id', ticket?._id || '');
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoading(true);
+      await ticketIncomplete(formData);
 
-      // In a real application, you would send this data to your API
-      console.log('Submitting incomplete ticket data:', incompleteData);
-
-      // Navigate back to tickets list or dashboard
-      navigate('/agent/tickets', {
-        state: {
-          notification: {
-            type: 'success',
-            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
-          }
-        }
-      });
-    } catch (error) {
-      console.error('Error marking ticket as incomplete:', error);
+      // Navigate back to tickets list or dashboard with a success notification
+      navigate('/');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to mark ticket as incomplete';
+      console.error('Error marking ticket as incomplete:', message);
       setError(true);
     } finally {
+      setLoading(false);
       setIsSubmitting(false);
     }
   };
@@ -89,7 +78,7 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">

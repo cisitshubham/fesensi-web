@@ -5,7 +5,7 @@ export type Tickettype = {
   category: string;
   IsCumstomerCommneted: boolean;
   creator: string | number | boolean;
-  _id: string | number | null | undefined;
+  _id: string ;
   ticket_number: number;
   status: TicketStatus;
   due_date: string;
@@ -58,7 +58,7 @@ export enum TicketStatus {
 export enum TicketPriority {
   Low = 'LOW',
   Medium = 'MEDIUM',
-  High = 'HIGH',
+  High = "HIGH",
   Critical = 'CRITICAL'
 }
 

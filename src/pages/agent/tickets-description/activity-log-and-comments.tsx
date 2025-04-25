@@ -7,6 +7,10 @@ interface ActivityLog {
   action: string;
   createdAt: string;
   details: string;
+  creator: {
+    _id: string;
+    first_name: string;
+  };
 }
 
 interface AgentComment {
@@ -19,6 +23,7 @@ interface AgentComment {
 
 // Utility function to format date
 const formatDate = (dateString: string | undefined | null) => {
+  if (typeof dateString === 'string') return dateString; // Directly return if it's already a string
   if (!dateString) return 'Invalid Date'; // Handle null or undefined dates
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return 'Invalid Date'; // Handle invalid date strings
@@ -47,6 +52,7 @@ export default function ActivityLogAndComments({
                 <CardContent>
                   <div className="text-sm text-gray-500">{formatDate(log.createdAt)}</div>
                   <div className="text-sm text-gray-700">{log.details}</div>
+                  <div className="text-sm text-gray-700">{log.creator.first_name}</div>
                 </CardContent>
               </Card>
             ))}

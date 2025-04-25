@@ -5,7 +5,7 @@ import { useParams } from "react-router"
 import { useNavigate } from "react-router-dom"
 import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from "lucide-react"
 
-import { getTicketById } from "@/api/api"
+import { getTicketById, addcomment } from "@/api/api"
 import type { Tickettype } from "@/types"
 import { Alert } from "@/components"
 import { Badge } from "@/components/ui/badge"
@@ -23,7 +23,7 @@ export default function UserResolveTicket() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
-  const [feedback, setFeedback] = useState("")
+  const [comment_text, setFeedback] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -56,25 +56,28 @@ export default function UserResolveTicket() {
     try {
       await CloseTicketUser({ ticketId: ticket._id })
       console.log("Ticket resolved")
-      navigate("/") // Redirect to home page after resolving the ticket
+      navigate("/") 
     } catch (err) {
       console.error("Failed to resolve ticket:", err)
     }
   }
 
   const handleSubmitFeedback = async () => {
-    if (!feedback.trim()) return
+    if (!comment_text.trim() || !ticket?._id) return
 
     try {
       setSubmitting(true)
-      console.log("Submitting feedback:", feedback)
-      setFeedback("")
+      const formData = new FormData();
+      formData.append("comment_text", comment_text);
+      formData.append("ticket", String(ticket._id));
+      await addcomment(formData);
+  
       setShowFeedback(false)
-      // Show success message or redirect
     } catch (err) {
       console.error("Failed to submit feedback:", err)
     } finally {
       setSubmitting(false)
+      navigate("/") 
     }
   }
 
@@ -237,7 +240,7 @@ export default function UserResolveTicket() {
                 <Textarea
                   placeholder="Please describe what's still not working or what additional help you need..."
                   className="min-h-[120px] w-full"
-                  value={feedback}
+                  value={comment_text}
                   onChange={(e) => setFeedback(e.target.value)}
                 />
                 <div className="flex justify-end gap-2">
@@ -254,7 +257,7 @@ export default function UserResolveTicket() {
                     variant="default"
                     className="flex items-center gap-2"
                     onClick={handleSubmitFeedback}
-                    disabled={!feedback.trim() || submitting}
+                    disabled={!comment_text.trim() || submitting}
                   >
                     <Send className="h-4 w-4" />
                     {submitting ? "Submitting..." : "Submit Feedback"}

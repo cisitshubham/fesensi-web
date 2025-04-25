@@ -3,7 +3,6 @@ import { TicketPriority } from "@/types";
 import { Clock } from "lucide-react";
 
 export  function GetStatusColor(status: TicketStatus ) {
-    console.log(status, "status")
     const statusColors: Record<TicketStatus, string> = {
         [TicketStatus.Open]: "blue-500",
         [TicketStatus.InProgress]:  "purple-500",
@@ -16,7 +15,6 @@ export  function GetStatusColor(status: TicketStatus ) {
 
 
 export function getPriorityColor(priority: TicketPriority) {
-    console.log(priority, "priority")
     const priorityColors: Record<TicketPriority, string> = {
         [TicketPriority.Low]: "blue-500",
         [TicketPriority.Medium]: "yellow-500",

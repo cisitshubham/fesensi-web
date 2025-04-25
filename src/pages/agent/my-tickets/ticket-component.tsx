@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { Tickettype } from '@/types';
 import { Bell } from 'lucide-react';
 import { getPriorityColor,getStatusBadge  } from '@/pages/global-components/GetStatusColor';
+import clsx from 'clsx';
 
 interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
@@ -18,6 +19,8 @@ interface TicketProps {
 
 export default function Ticket({ ticket }: TicketProps) {	
     const statusBadge = getStatusBadge(ticket.status)	
+    const priorityColor = getPriorityColor(ticket.priority);
+
   return (
     <Link
       to={{
@@ -27,9 +30,13 @@ export default function Ticket({ ticket }: TicketProps) {
       className="block"
     >
       <Card
-        className={`relative border-[1px] overflow-hidden space-y-4 hover:shadow-md hover:shadow-${getPriorityColor(ticket.priority)} transition-shadow border-${getPriorityColor(ticket.priority)}`} >
+        className={clsx(
+          'relative border-[1px] overflow-hidden space-y-4 transition-shadow',
+          `hover:shadow-${priorityColor}`,
+          `border-${priorityColor}`
+        )} >
 		{ticket.IsCumstomerCommneted === true && (
-		<Badge className="absolute right-0  bg-red-700/80 rounded-md p-1">
+		<Badge className="absolute right-0  bg-red-700/80 rounded-full p-1">
 		<Bell className="" />
 		</Badge>
 		)}

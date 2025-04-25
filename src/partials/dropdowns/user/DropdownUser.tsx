@@ -26,7 +26,6 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
     });
   };
 
-  console.log('user', user?.data);
 
   const buildHeader = () => {
     return (
