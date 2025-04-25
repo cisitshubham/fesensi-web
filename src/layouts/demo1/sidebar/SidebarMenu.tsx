@@ -19,6 +19,7 @@ import {
 } from '@/components/menu';
 import { useMenus } from '@/providers/useMenus';
 import { verifyRole } from '@/api/api';
+import { useRole } from '@/pages/global-components/role-context';
 
 const SidebarMenu = () => {
   const linkPl = 'ps-[10px]';
@@ -36,6 +37,7 @@ const SidebarMenu = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [menuConfig, setMenuConfig] = useState<TMenuConfig>([]);
   const { getMenuConfig } = useMenus();
+  const { selectedRoles } = useRole();
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -52,7 +54,7 @@ const SidebarMenu = () => {
     };
 
     fetchRoles();
-  }, []);
+  }, [selectedRoles]); 
 
   const buildMenu = (items: TMenuConfig) =>
     items.map((item, index) => {
