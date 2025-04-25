@@ -26,6 +26,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
     });
   };
 
+
   const buildHeader = () => {
     return (
       <div className="flex items-center justify-between px-5 py-1.5 gap-1.5">
@@ -43,14 +44,20 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
               to="/account/home/user-profile"
               className="text-sm text-gray-800 hover:text-primary font-semibold leading-none"
             >
-			{user?.data?.first_name ||''}
+              {user?.data?.first_name || ''}
             </Link>
-            <a href="mailto:{user?.data?.email || ''}"
-              className="text-xs text-gray-600 hover:text-primary font-medium leading-none"
-            >
-			{user?.data?.email || ''}
+            <a href={`mailto:${user?.email || ''}`}>
+              {user?.email || 'No Email'}
             </a>
-            <div className="text-xs text-gray-600">{user?.data?.role}</div>
+
+            <div className="text-xs text-gray-600">
+              {user?.data?.role?.map((role: any, index: number) => (
+                <span key={role._id}>
+                  {role.role_name}
+                  {index < user.data.role.length - 1 && ', '}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>

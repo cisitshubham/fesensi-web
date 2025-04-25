@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+
 const UserCreateTicketForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -111,12 +112,15 @@ const UserCreateTicketForm = () => {
           setValidationErrors({});
         } else {
           throw new Error(result.data.message || 'Failed to create ticket');
+		  toast.error('Failed to create ticket');
         }
       } catch (error: any) {
         setError(error.message || 'An unexpected error occurred.');
+		toast.error('An unexpected error occurred.');
       }
     } catch (error: any) {
       setError(error.message || 'An unexpected error occurred.');
+	  toast.error('An unexpected error occurred.');
     } finally {
       setLoading(false);
     }

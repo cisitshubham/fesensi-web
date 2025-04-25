@@ -141,14 +141,14 @@ const UpdateTicketForm = () => {
       }
       if (result.data.success) {
         toast.success('Ticket updated successfully', {
-          position: 'top-right',
+          position: 'bottom-right',
           action: 'updateTicket',
           cancel: true
         });
       }
     } catch {
       toast.error('Failed to update ticket. Please try again.', {
-        position: 'top-right',
+        position: 'bottom-right',
         action: 'updateTicket',
         cancel: true
       });

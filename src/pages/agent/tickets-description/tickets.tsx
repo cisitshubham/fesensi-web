@@ -1,5 +1,5 @@
 'use client';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link,  useLocation, useParams } from 'react-router-dom';
 import { Tickettype, TicketStatus } from '@/types';
 import { AlertCircle, Clock, FileText,  User, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -10,12 +10,14 @@ import ActivityLogAndComments from './activity-log-and-comments';
 import { useEffect, useState } from 'react';
 import { MyTicketDetails } from '@/api/api';
 import { getPriorityColor,GetStatusColor } from '@/pages/global-components/GetStatusColor';
-
+import { closeTicket } from '@/api/api';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 export default function Tickets() {
   const location = useLocation();
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
   const { id } = useParams(); 
-
+const navigate = useNavigate();
   const [ticketData, setTicketData] = useState(ticket);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,7 +27,6 @@ export default function Tickets() {
       try {
         setLoading(true);
         const response = await MyTicketDetails(id);
-        console.log(response.data);
 
         setTicketData(response.data);
         setLoading(false);
@@ -38,12 +39,33 @@ export default function Tickets() {
     fetchTicketData();
   }, []);
 
+
   
+
+const handlecloseTicket = async () => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('ticket_id', ticketData._id as any);
+      await closeTicket(formData); // Assuming this function is defined elsewhere
+      setLoading(false);
+    //   navigate('/')
+	toast.success('Ticket closed successfully!');
+    }
+    catch (error) {
+      console.error('Error closing ticket:', error);
+	  toast.error('Failed to close ticket!');
+      setLoading(false);
+    }
+  };
 
   // Function to get initials from name
 
 
-  const activityLog = ticketData.activity_log || []; // Replace with actual activity log data
+  const activityLog = (ticketData.activity_log || []).map((log: any) => ({
+    ...log,
+    creator: log.creator || { _id: 'unknown', first_name: 'Unknown' }, // Provide a default creator
+  }));
   const agentComments = ticketData.agentComment ? [ticketData.agentComment] : []; // Replace with actual comments data
 
   return (
@@ -210,17 +232,12 @@ export default function Tickets() {
 
         {/* close ticket  */}
         {ticketData.status === TicketStatus.Resolved && (
-          <Link
-            to={{
-              pathname: `/agent/Close/resolve/${ticket._id}`
-            }}
-            className="block"
-          >
-            <Button className="mt-6">Close Ticket</Button>
-          </Link>
+       
+            <Button onClick={handlecloseTicket} className="mt-6">Close Ticket</Button>
+          
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && (
+        {ticketData.status === TicketStatus.Open && ticketData.isResolved === false && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket'

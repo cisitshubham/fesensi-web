@@ -13,6 +13,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
+import {toast} from 'sonner';
 
 export default function UserTicketDetails() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +31,7 @@ export default function UserTicketDetails() {
       } catch (err) {
         console.error('Failed to fetch ticket:', err);
         setError('Failed to load ticket. Please try again.');
+		toast.error('Failed to load ticket. Please try again.');
         setTicket(null);
       } finally {
         setLoading(false);
@@ -97,7 +99,7 @@ export default function UserTicketDetails() {
       <CardHeader className="border-b">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
-            <CardTitle className="text-xl font-bold">Ticket #{ticket._id}</CardTitle>
+            <CardTitle className="text-xl font-bold">Ticket #{ticket.ticket_number}</CardTitle>
             <p className="text-sm text-muted-foreground">{ticket.title || 'Untitled Ticket'}</p>
           </div>
           <div className="flex flex-wrap gap-2">

@@ -29,9 +29,9 @@ const Demo1LightSidebarPage = () => {
 
   const handleRoleToggle = (role: string) => {
     if (selectedRoles.includes(role)) {
-      setSelectedRoles(selectedRoles.filter(r => r !== role));
+      setSelectedRoles([]); // Clear the array if the role is already selected
     } else {
-      setSelectedRoles([...selectedRoles, role]);
+      setSelectedRoles([role]); // Set the array to only contain the selected role
     }
   };
 
@@ -48,8 +48,7 @@ const Demo1LightSidebarPage = () => {
     getUser();
   }, []);
 
-  const roles = ['CUSTOMER', 'AGENT', 'ADMIN'];
-
+  const roles = user?.role || []; // Map roles from user object
   return (
     <Fragment>
       <Container>
@@ -58,31 +57,28 @@ const Demo1LightSidebarPage = () => {
           <ToolbarActions>
 
             <Select onValueChange={(value) => handleRoleToggle(value)}>
-              <SelectTrigger className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition">
+              <SelectTrigger className="px-4 py-2 rounded-md  hover:bg-primary/90 transition">
                 <SelectValue placeholder="Select Roles">
                   {selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="mt-2 w-48 bg-primary text-primary-foreground shadow-lg rounded-md p-1">
-                {roles.map((role, index) => (
+              <SelectContent className="mt-2  shadow-lg rounded-md ">
+                {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
                   <SelectItem
-                    key={index}
-                    value={role}
-
+                    key={_id}
+                    value={role_name}
                     className={cn(
-                      'cursor-pointer px-3 py-2 hover:bg-primary-light rounded-md',
-                      selectedRoles.includes(role) && 'bg-primary-light'
+                      'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
+                      selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
                     )}
-
                   >
-                    {role}
+                    {role_name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger asChild>
                 <button
                   id="date"
@@ -115,7 +111,10 @@ const Demo1LightSidebarPage = () => {
                   numberOfMonths={2}
                 />
               </PopoverContent>
-            </Popover>
+            </Popover> */}
+
+
+
           </ToolbarActions>
         </Toolbar>
       </Container>

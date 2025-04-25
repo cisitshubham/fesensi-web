@@ -16,41 +16,46 @@ import {
   ActivitiesUpcomingContent,
   ActivitiesVirtualTeam
 } from '@/partials/activities/items';
+import { Card } from '@/components/ui/card';
 
 const AnalyticsRoot = () => {
-  const [currentYear, setCurrentYear] = useState(2024);
-  const years = Array.from({ length: 8 }, (_, i) => 2024 - i);
+  const [currentReport, setCurrentReport] = useState('Tickets by Status');
+  const reports = [
+    'Tickets by Status',
+    'Tickets by Priority',
+    'SLA Compliance Report',
+    'Ticket Volume Over Time',
+    'Resolution Time Analysis',
+    'Response Time Analysis',
+    'Escalated Tickets Trend',
+    'Agent Performance Report',
+    'Tickets by Category',
+    'Tickets per Department / User Group',
+    'Top Repeated Issues'
+  ];
 
   return (
-    <div className="flex gap-5 lg:gap-7.5">
-      {years.map((year, index) => (
+    <div className="p-6">
+    <Card className="flex  gap-5 lg:gap-7.5">
+      {reports.map((report, index) => (
         <div
           key={index}
-          className={`card grow ${year === currentYear ? '' : 'hidden'}`}
-          id={`activity_${year}`}
+          className={`card grow ${report === currentReport ? '' : 'hidden'}`}
+          id={`activity_${report.replace(/\s+/g, '_')}`}
         >
           <div className="card-header">
-            <h3 className="card-title">Activity</h3>
-            <div className="flex items-center gap-2">
-              <label className="switch">
-                <input className="order-2" type="checkbox" value="1" name="check" defaultChecked />
-                <span className="switch-label">
-                  Auto refresh:&nbsp;
-                  <span className="switch-on:hidden">Off</span>
-                  <span className="hidden switch-on:inline">On</span>
-                </span>
-              </label>
-            </div>
+            <h3 className="card-title">{report}</h3>
+
           </div>
           <div className="card-body">
-            {(year === 2024 || year === 2023 || year === 2022) && <ActivitiesNewArticle />}
-            {(year === 2024 || year === 2022) && <ActivitiesInterview />}
-            {(year === 2024 || year === 2021) && <ActivitiesPhotographyWorkshop />}
-            <ActivitiesUpcomingContent />
-            {(year === 2024 || year === 2019) && <ActivitiesProductWebinar />}
-            <ActivitiesFollowersMilestone />
-            {(year === 2024 || year === 2021) && <ActivitiesProjectStatus />}
-            {(year === 2024 || year === 2018) && (
+            {report === 'Tickets by Status' && <ActivitiesNewArticle />}
+            {report === 'Tickets by Priority' && <ActivitiesInterview />}
+            {report === 'SLA Compliance Report' && <ActivitiesPhotographyWorkshop />}
+            {report === 'Ticket Volume Over Time' && <ActivitiesUpcomingContent />}
+            {report === 'Resolution Time Analysis' && <ActivitiesProductWebinar />}
+            {report === 'Response Time Analysis' && <ActivitiesFollowersMilestone />}
+            {report === 'Escalated Tickets Trend' && <ActivitiesProjectStatus />}
+            {report === 'Agent Performance Report' && (
               <ActivitiesBloggingConference
                 image={
                   <Fragment>
@@ -68,9 +73,9 @@ const AnalyticsRoot = () => {
                 }
               />
             )}
-            <ActivitiesDesignerWelcome />
-            {(year === 2024 || year === 2017) && <ActivitiesNewTeam />}
-            <ActivitiesVirtualTeam />
+            {report === 'Tickets by Category' && <ActivitiesDesignerWelcome />}
+            {report === 'Tickets per Department / User Group' && <ActivitiesNewTeam />}
+            {report === 'Top Repeated Issues' && <ActivitiesVirtualTeam />}
             <ActivitiesAnniversary />
           </div>
           <div className="card-footer justify-center">
@@ -82,22 +87,22 @@ const AnalyticsRoot = () => {
       ))}
 
       <div className="flex flex-col gap-2.5" data-tabs="true">
-        {years.map((year, index) => (
+        {reports.map((report, index) => (
           <a
             key={index}
             href="#"
-            data-tab-toggle={`#activity_${year}`}
-            className={`btn btn-sm text-gray-600 hover:text-primary tab-active:bg-primary-light tab-active:text-primary ${
-              year === currentYear ? 'active' : ''
-            }`}
+            data-tab-toggle={`#activity_${report.replace(/\s+/g, '_')}`}
+            className={`btn btn-sm text-gray-600 hover:text-primary tab-active:bg-primary-light tab-active:text-primary ${report === currentReport ? 'active' : ''
+              }`}
             onClick={() => {
-              setCurrentYear(year);
+              setCurrentReport(report);
             }}
           >
-            {year}
+            {report}
           </a>
         ))}
       </div>
+    </Card>
     </div>
   );
 };

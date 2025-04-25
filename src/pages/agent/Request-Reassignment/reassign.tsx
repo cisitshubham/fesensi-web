@@ -24,6 +24,9 @@ import { Tickettype } from '@/types';
 import { useLocation } from 'react-router';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
 import { MasterDropdownDatatype } from '@/types';
+import { requestReassign } from '@/api/api';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 export default function ReassignTicket() {
     
@@ -33,20 +36,27 @@ export default function ReassignTicket() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('');
-
+  const [selectedResolution, setSelectedResolution] = useState('');
   const location = useLocation();
   const { id } = useParams();
+  const [desc, setDesc] = useState('');
   const ticketFromState: Tickettype | null = location.state?.ticket || null;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTicket = async () => {
       try {
         setLoading(true);
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
+		if(!response) {
+			toast.error('Ticket data is not available.');
+			
+		}
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
+		toast.error('Failed to fetch ticket');
         setError(message);
       } finally {
         setLoading(false);
@@ -55,12 +65,52 @@ export default function ReassignTicket() {
 
     fetchTicket();
   }, [id, ticketFromState]);
+
+  
+const handkeSelectChange = (value: string) => {
+    setSelectedResolution(value);
+  }
+
+const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDesc(e.target.value);
+  }
+
+
+  const handleReassign = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!ticketData) {
+      setError('Ticket data is not available.');
+	  toast.error('Ticket data is not available.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('AgentreAssign', selectedResolution);
+    formData.append('AgentreAssignComment', desc);
+    formData.append('ticket_id', ticketData?._id as any);
+
+
+    try {
+      setLoading(true);
+      await requestReassign(formData);
+    //   navigate('/'); // Redirect to a success page or another route
+	  toast.success('Ticket reassigned successfully');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to reassign ticket';
+	  toast.error('Failed to reassign ticket');
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <div className="container px-6 ">
 
       <Card className=" mx-auto">
         <CardHeader>
-          <CardTitle>Reassign Ticket {ticketData?._id}</CardTitle>
+          <CardTitle>Reassign Ticket {ticketData?.ticket_number}</CardTitle>
           <CardDescription>Transfer this ticket to another team member</CardDescription>
         </CardHeader>
 
@@ -90,10 +140,10 @@ export default function ReassignTicket() {
           </div>
 
           {/* Reassignment form */}
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleReassign}>
             <div className="space-y-2">
               <div className="space-y-2">
-                  <Select>
+                  <Select onValueChange={handkeSelectChange}>
                     <label>Select Reason</label>
                     <SelectTrigger id="priority">
                       <SelectValue placeholder="Select Reason" />
@@ -101,7 +151,7 @@ export default function ReassignTicket() {
                     <SelectContent>
                       {dropdownData?.reassignOptions?.length > 0 ? (
                         dropdownData.reassignOptions.map((item: MasterDropdownDatatype['reassignOptions'][0]) => (
-                          <SelectItem key={item._id} value={String(item.title || '')}>
+                          <SelectItem key={item._id} value={String(item._id || '')}>
                             {item.title}
                           </SelectItem>
                         ))
@@ -119,17 +169,16 @@ export default function ReassignTicket() {
                 id="notes"
                 placeholder="Explain the reason for reassignment"
                 rows={3}
+                onChange={handleDescChange} 
               />
             </div>
 
- 
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" type="button" onClick={() => navigate(-1)}>Cancel</Button>
+              <Button type="submit">Reassign Ticket</Button>
+            </CardFooter>
           </form>
         </CardContent>
-
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Cancel</Button>
-          <Button>Reassign Ticket</Button>
-        </CardFooter>
       </Card>
     </div>
   );
