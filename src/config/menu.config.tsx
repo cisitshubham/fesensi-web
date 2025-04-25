@@ -23,7 +23,8 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         },
 		{
 			title: 'knowledge base',
-			icon: 'file-sheewt'
+			icon: 'book-open'
+
 		  },
 		  {
 			title: 'Draft Tickets',
@@ -47,7 +48,8 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 		  },
 		  {
 			title: 'Announcements',
-			icon: 'megaphone'
+			icon: 'notification-status'
+
 		  },
 		  {
 			title: 'Rate Us/Feedback',
@@ -70,7 +72,8 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         },
         {
           title: 'knowledge base',
-          icon: 'file-sheewt'
+          icon: 'book-open'
+
         },
         {
           title: 'Draft Tickets',
@@ -94,7 +97,8 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         },
         {
           title: 'Announcements',
-          icon: 'megaphone'
+          icon: 'notification-status'
+
         },
         {
           title: 'Rate Us/Feedback',
