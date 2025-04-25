@@ -63,9 +63,10 @@ export default function IncompleteTicket() {
 
     setIsSubmitting(true);
 
+	
     // Prepare the data to be submitted
     const incompleteData = {
-      ticketId: ticket?.id,
+      ticketId: ticket?._id,
       reasonType,
       reason,
       timestamp: new Date().toISOString()
@@ -83,7 +84,7 @@ export default function IncompleteTicket() {
         state: {
           notification: {
             type: 'success',
-            message: `Ticket #${ticket?.id} marked as incomplete successfully.`
+            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
           }
         }
       });
@@ -117,7 +118,7 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket.id}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
