@@ -49,7 +49,6 @@ const Demo1LightSidebarPage = () => {
   }, []);
 
   const roles = user?.role || []; // Map roles from user object
-  console.log('roles', roles);
   return (
     <Fragment>
       <Container>
