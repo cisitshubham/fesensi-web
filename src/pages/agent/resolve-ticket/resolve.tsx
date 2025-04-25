@@ -13,7 +13,7 @@ import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
 
 
-const STATUS_OPTIONS = ['in-progress', 'Resolved by Agent', 'closed'] as const;
+const STATUS_OPTIONS = ['in-progress', 'Resolved', 'closed'] as const;
 
 const BadgeDisplay = ({ status, isClosed }: { status: string; isClosed: boolean }) => (
   isClosed ? (
