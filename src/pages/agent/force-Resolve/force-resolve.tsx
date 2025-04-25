@@ -25,6 +25,7 @@ import { useMasterDropdown } from '@/pages/global-components/master-dropdown-con
 import { MasterDropdownDatatype } from '@/types';
 import { getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import { forceResolve } from '@/api/api';
+import { toast } from 'sonner';
 
 export default function ForceResolve() {
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
@@ -46,8 +47,8 @@ export default function ForceResolve() {
 
   const handleResolve = async () => {
     if (!selectedResolution) {
-      alert('Please select a resolution before proceeding.');
-      return;
+		toast.error('Please select a resolution reason.');
+		return;
     }
 
     try {
@@ -65,15 +66,16 @@ export default function ForceResolve() {
 
       const response = await forceResolve(formData);
       if (response.success) {
-        alert('Ticket resolved successfully!');
-      } else {
-        alert('Failed to resolve ticket.');
-      }
+		toast.success('Ticket resolved successfully!');
+			  
+	} else {
+		toast.error('Failed to resolve the ticket. Please try again.');
+	}
     }
     catch (error) {
       console.error('Error resolving ticket:', error);
-      alert('An error occurred while resolving the ticket.');
-    }
+	  toast.error('An error occurred while resolving the ticket.');
+	}
     finally {
       setLoading(false);
     }
@@ -88,6 +90,7 @@ export default function ForceResolve() {
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
+		toast.error('Failed to fetch ticket details.');
         setError(message);
       } finally {
         setLoading(false);

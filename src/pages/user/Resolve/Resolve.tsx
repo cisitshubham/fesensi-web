@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { CloseTicketUser } from "@/api/api"
+import {toast} from 'sonner'
 
 export default function UserResolveTicket() {
   const { id } = useParams<{ id: string }>()
@@ -55,10 +56,11 @@ export default function UserResolveTicket() {
 
     try {
       await CloseTicketUser({ ticketId: ticket._id })
-      console.log("Ticket resolved")
-      navigate("/") 
+    //   navigate("/") 
+	  toast.success("Ticket resolved successfully.")
     } catch (err) {
       console.error("Failed to resolve ticket:", err)
+	  toast.error("Failed to resolve ticket. Please try again.")
     }
   }
 
@@ -71,13 +73,15 @@ export default function UserResolveTicket() {
       formData.append("comment_text", comment_text);
       formData.append("ticket", String(ticket._id));
       await addcomment(formData);
-  
+	  toast.success("Query submitted successfully.")
       setShowFeedback(false)
     } catch (err) {
       console.error("Failed to submit feedback:", err)
+	  toast.error("Failed to submit feedback. Please try again.")
     } finally {
       setSubmitting(false)
-      navigate("/") 
+    //   navigate("/") 
+		toast.success("Query submitted successfully.")
     }
   }
 

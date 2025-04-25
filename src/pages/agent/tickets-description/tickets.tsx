@@ -12,6 +12,7 @@ import { MyTicketDetails } from '@/api/api';
 import { getPriorityColor,GetStatusColor } from '@/pages/global-components/GetStatusColor';
 import { closeTicket } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 export default function Tickets() {
   const location = useLocation();
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
@@ -39,7 +40,6 @@ const navigate = useNavigate();
   }, []);
 
 
-  console.log(ticketData);
   
 
 const handlecloseTicket = async () => {
@@ -49,10 +49,12 @@ const handlecloseTicket = async () => {
       formData.append('ticket_id', ticketData._id as any);
       await closeTicket(formData); // Assuming this function is defined elsewhere
       setLoading(false);
-      navigate('/')
+    //   navigate('/')
+	toast.success('Ticket closed successfully!');
     }
     catch (error) {
       console.error('Error closing ticket:', error);
+	  toast.error('Failed to close ticket!');
       setLoading(false);
     }
   };

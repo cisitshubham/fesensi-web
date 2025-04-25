@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { GetStatusColor, getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import type { Tickettype } from '@/types';
 import { ticketIncomplete } from '@/api/api';
+import { toast } from 'sonner';
 
 export default function IncompleteTicket() {
   const location = useLocation();
@@ -20,7 +21,6 @@ export default function IncompleteTicket() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(ticket);
 
   // Handle back button click
   const handleBack = () => {
@@ -45,15 +45,17 @@ export default function IncompleteTicket() {
       await ticketIncomplete(formData);
 
       // Navigate back to tickets list or dashboard with a success notification
-      navigate('/');
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to mark ticket as incomplete';
-      console.error('Error marking ticket as incomplete:', message);
-      setError(true);
-    } finally {
-      setLoading(false);
-      setIsSubmitting(false);
-    }
+    //   navigate('/');
+	toast.success('Ticket marked as incomplete successfully!');	
+	} catch (err) {
+		const message = err instanceof Error ? err.message : 'Failed to mark ticket as incomplete';
+		console.error('Error marking ticket as incomplete:', message);
+		toast.error('Failed to mark ticket as incomplete');
+		setError(true);
+		} finally {
+		setLoading(false);
+		setIsSubmitting(false);
+		}
   };
 
   if (!ticket) {

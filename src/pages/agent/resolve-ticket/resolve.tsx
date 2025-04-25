@@ -10,6 +10,8 @@ import { KeenIcon } from '@/components';
 import { MyTicketDetails } from '@/api/api';
 import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
+import { toast } from 'sonner';
+
 
 const STATUS_OPTIONS = ['in-progress', 'Resolved by Agent', 'closed'] as const;
 
@@ -153,21 +155,22 @@ export default function ResolveTicket() {
       formData.append('ticket_id', ticketData._id);
 
       files.forEach((file) => {
-        formData.append('files[]', file);
+		console.log(file);		
+        formData.append('image', file);
       });
 
       const response = await updateResolution(formData);
 
       if (response.success) {
-        alert('Ticket resolved successfully!');
-        navigate('/'); // Redirect after successful resolution
+        // navigate('/'); // Redirect after successful resolution
+		  toast.success('Reason saved successfully');
       } else {
-        alert('Failed to resolve ticket.');
+		toast.error('Failed to resolve ticket.');
       }
     } catch (error) {
       console.error('Error resolving ticket:', error);
-      alert('An error occurred while resolving the ticket.');
-    } finally {
+		toast.error('Failed to resolve ticket.');
+	} finally {
       setLoading(false);
     }
   };

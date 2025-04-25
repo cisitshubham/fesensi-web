@@ -26,6 +26,7 @@ import { useMasterDropdown } from '@/pages/global-components/master-dropdown-con
 import { MasterDropdownDatatype } from '@/types';
 import { requestReassign } from '@/api/api';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 export default function ReassignTicket() {
     
@@ -47,10 +48,15 @@ export default function ReassignTicket() {
       try {
         setLoading(true);
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
+		if(!response) {
+			toast.error('Ticket data is not available.');
+			
+		}
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
+		toast.error('Failed to fetch ticket');
         setError(message);
       } finally {
         setLoading(false);
@@ -75,6 +81,7 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     if (!ticketData) {
       setError('Ticket data is not available.');
+	  toast.error('Ticket data is not available.');
       return;
     }
 
@@ -87,9 +94,11 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     try {
       setLoading(true);
       await requestReassign(formData);
-      navigate('/'); // Redirect to a success page or another route
+    //   navigate('/'); // Redirect to a success page or another route
+	  toast.success('Ticket reassigned successfully');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reassign ticket';
+	  toast.error('Failed to reassign ticket');
       setError(message);
     } finally {
       setLoading(false);
