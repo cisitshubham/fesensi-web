@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { GetStatusColor, getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import type { Tickettype } from '@/types';
 
 export default function IncompleteTicket() {
@@ -18,36 +19,7 @@ export default function IncompleteTicket() {
   const [reasonType, setReasonType] = useState<string>('missing-information');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-
-  // Function to get appropriate color for status badge
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return 'bg-blue-500 hover:bg-blue-600';
-      case 'in progress':
-        return 'bg-yellow-500 hover:bg-yellow-600';
-      case 'resolved':
-        return 'bg-green-500 hover:bg-green-600';
-      case 'closed':
-        return 'bg-gray-500 hover:bg-gray-600';
-      default:
-        return 'bg-slate-500 hover:bg-slate-600';
-    }
-  };
-
-  // Function to get appropriate color for priority badge
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'bg-red-500 hover:bg-red-600';
-      case 'medium':
-        return 'bg-orange-500 hover:bg-orange-600';
-      case 'low':
-        return 'bg-green-500 hover:bg-green-600';
-      default:
-        return 'bg-slate-500 hover:bg-slate-600';
-    }
-  };
+  console.log(ticket);
 
   // Handle back button click
   const handleBack = () => {
@@ -83,7 +55,7 @@ export default function IncompleteTicket() {
         state: {
           notification: {
             type: 'success',
-            message: `Ticket #${ticket?.ticket_number} marked as incomplete successfully.`
+            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
           }
         }
       });
@@ -117,13 +89,13 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
-                <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
-                <Badge className={getPriorityColor(ticket.priority)}>
-                  {ticket.priority} Priority
+                <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
+                <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>
+                  {ticket.priority} 
                 </Badge>
               </div>
             </div>
@@ -137,34 +109,6 @@ export default function IncompleteTicket() {
                   <FileText className="h-4 w-4" /> Description
                 </h3>
                 <p className="mt-1 text-base">{ticket.description}</p>
-              </div>
-
-              {/* Ticket images */}
-              <div className="mt-6">
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Attachments</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <img
-                    src=""
-                    alt="Ticket attachment 1"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                  <img
-                    src=""
-                    alt="Ticket attachment 2"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                  <img
-                    src=""
-                    alt="Ticket attachment 3"
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover aspect-video"
-                  />
-                </div>
               </div>
             </div>
           </CardContent>

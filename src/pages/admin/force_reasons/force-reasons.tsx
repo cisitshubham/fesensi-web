@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 
 import { useState } from 'react';
@@ -18,87 +16,88 @@ import { Pencil, Trash2, Plus, X, Check, Loader2 } from 'lucide-react';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
 import type { MasterDropdownDatatype } from '@/types';
 import toast from 'react-hot-toast';
-export default function CreateCategory() {
+
+export default function CreateReasons() {
   const { dropdownData } = useMasterDropdown();
-  const [categories, setCategories] = useState<MasterDropdownDatatype['categories']>(
-    dropdownData.categories || []
+  const [reasons, setReasons] = useState<MasterDropdownDatatype['resolvedPostList']>(
+    dropdownData.resolvedPostList || []
   );
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editedCategory, setEditedCategory] = useState<{ title: string }>({ title: '' });
+  const [editedReason, setEditedReason] = useState<{ title: string }>({ title: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddCategory = () => {
-    const newCategory = {
+  const handleAddReason = () => {
+    const newReason = {
       _id: `temp-${Date.now()}`, // Generate a temporary unique ID
       title: '',
       createdAt: new Date().toISOString().split('T')[0],
       createdBy: 'Admin'
     };
-    setCategories((prev) => [...prev, newCategory]);
-    setEditIndex(categories.length); // Set the new category in edit mode
-    setEditedCategory({ title: '' }); // Initialize the editedCategory state
+    setReasons((prev) => [...prev, newReason]);
+    setEditIndex(reasons.length); // Set the new reason in edit mode
+    setEditedReason({ title: '' }); // Initialize the editedReason state
   };
 
   const handleEdit = (index: number) => {
     setEditIndex(index);
-    setEditedCategory({ title: categories[index].title });
+    setEditedReason({ title: reasons[index].title });
   };
 
   const handleSave = async () => {
-    if (!editedCategory.title.trim()) {
-      toast.error('Category title cannot be empty');
+    if (!editedReason.title.trim()) {
+      toast.error('Reason title cannot be empty');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const updatedCategories = [...categories];
+      const updatedReasons = [...reasons];
       if (editIndex !== null) {
-        updatedCategories[editIndex].title = editedCategory.title.trim();
+        updatedReasons[editIndex].title = editedReason.title.trim();
       }
 
       // Here you would typically call your API to save the changes
-      // await createCategories(updatedCategories)
+      // await createCloseReasons(updatedReasons)
 
-      setCategories(updatedCategories);
+      setReasons(updatedReasons);
       setEditIndex(null);
 
-      toast.success('Category saved successfully');
+      toast.success('Reason saved successfully');
     } catch (error) {
-      toast.error('Failded to save');
+      toast.error('Failed to save reason');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    // If it's a new category, remove it
-    if (editIndex === categories.length - 1 && categories[editIndex]._id.startsWith('temp-')) {
-      setCategories(categories.slice(0, -1));
+    // If it's a new reason, remove it
+    if (editIndex === reasons.length - 1 && reasons[editIndex]._id.startsWith('temp-')) {
+      setReasons(reasons.slice(0, -1));
     }
     setEditIndex(null);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditedCategory((prev) => ({ ...prev, [name]: value }));
+    setEditedReason((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDelete = async (index: number) => {
     setIsSubmitting(true);
 
     try {
-      const updatedCategories = categories.filter((_, i) => i !== index);
+      const updatedReasons = reasons.filter((_, i) => i !== index);
 
-      // Here you would typically call your API to delete the category
-      // await deleteCategory(categories[index]._id)
+      // Here you would typically call your API to delete the reason
+      // await deleteCloseReason(reasons[index]._id)
 
-      setCategories(updatedCategories);
+      setReasons(updatedReasons);
 
-      toast.success('Category deleted successfully');
+      toast.success('Reason deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete category');
+      toast.error('Failed to delete reason');
     } finally {
       setIsSubmitting(false);
     }
@@ -110,23 +109,23 @@ export default function CreateCategory() {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl font-bold">Categories</CardTitle>
-              <CardDescription className="mt-1">Manage your product categories</CardDescription>
+              <CardTitle className="text-2xl font-bold">Close Reasons</CardTitle>
+              <CardDescription className="mt-1">Manage your close reasons</CardDescription>
             </div>
             <Button
-              onClick={handleAddCategory}
+              onClick={handleAddReason}
               className="flex items-center gap-1"
               disabled={editIndex !== null || isSubmitting}
             >
               <Plus className="h-4 w-4" />
-              Add Category
+              Add Reason
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {categories.length === 0 ? (
+          {reasons.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No categories found. Click "Add Category" to create one.
+              No reasons found. Click "Add Reason" to create one.
             </div>
           ) : (
             <div className="rounded-md border">
@@ -138,21 +137,21 @@ export default function CreateCategory() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {categories.map((category, index) => (
-                    <TableRow key={category._id}>
+                  {reasons.map((reason, index) => (
+                    <TableRow key={reason._id}>
                       <TableCell>
                         {editIndex === index ? (
                           <Input
                             name="title"
-                            value={editedCategory.title}
+                            value={editedReason.title}
                             onChange={handleInputChange}
-                            placeholder="Enter category title"
+                            placeholder="Enter reason title"
                             autoFocus
                             className="max-w-md"
                           />
                         ) : (
                           <span className="font-medium">
-                            {category.title || (
+                            {reason.title || (
                               <span className="text-muted-foreground italic">Untitled</span>
                             )}
                           </span>

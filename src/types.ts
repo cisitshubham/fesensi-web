@@ -1,5 +1,6 @@
 export type Tickettype = {
   isUserCommented: boolean;
+  isAgentCommented: boolean;
   isResolved: boolean;
   category: string;
   IsCumstomerCommneted: boolean;
@@ -10,33 +11,59 @@ export type Tickettype = {
   due_date: string;
   title: string;
   description: string;
-  priority: string;
+  priority: TicketPriority;
   createdAt: string;
   updatedAt?: string;
-  attachments?: string[];
-  assignedTo?: string;
+  attachments?: {
+    _id: string;
+    file_url: string;
+    file_type: string;
+  }[];
+  assigned_to?: string;
   createdBy: string;
   resolution?: string;
   resolutionDate?: string;
   escalatedTo?: string;
+  isCustomerTicketEdit?: boolean;
+  comments?: string[];
+  latest_agent_comment?: {
+    _id: string;
+    comment_text: string;
+    createdAt: string;
+    attachments?: string[];
+    creator_name: string;
+  };
+  activity_log?: {
+    action: string;
+    createdAt: string;
+    details: string;
+  }[];
+  agentComment?: {
+    _id: string;
+    comment_text: string;
+    creator: string;
+    role: string;
+    createdAt: string;
+  };
 };
 
+
 export enum TicketStatus {
-  Open = 'Open',
-  InProgress = 'In Progress',
-  Closed = 'Closed',
-  Resolved = 'Resolved'
+  Open = 'OPEN',
+  InProgress = 'IN-PROGRESS',
+  Closed = 'CLOSED',
+  Resolved = 'RESOLVED'
 }
 
 export enum TicketPriority {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-  Critical = 'Critical'
+  Low = 'LOW',
+  Medium = 'MEDIUM',
+  High = 'HIGH',
+  Critical = 'CRITICAL'
 }
 
 export type User = {
-  _id: string; 
+  _id: string;
   name: string;
   email: string;
   role?: string[] | null;
@@ -47,4 +74,31 @@ export type User = {
   profile_img?: string;
   createdAt?: String;
   updatedAt?: string;
+};
+
+export type MasterDropdownDatatype = {
+  status: {
+    _id: string;
+    name: string;
+  }[];
+  priorities: {
+    _id: string;
+    name: string;
+  }[];
+  categories: {
+    _id: string;
+    title: string;
+  }[];
+  resolvedPostList: {
+    _id: string;
+    title: string;
+  }[];
+  reassignOptions: {
+    _id: string;
+    title: string;
+  }[];
+  AdminUsers: {
+    _id: string;
+    first_name: string;
+  }[];
 };

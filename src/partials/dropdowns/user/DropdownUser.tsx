@@ -50,12 +50,12 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
             >
 			{user?.data?.email || ''}
             </a>
+            <div className="text-xs text-gray-600">{user?.data?.role}</div>
           </div>
         </div>
       </div>
     );
   };
-
   const buildMenu = () => {
     return (
       <Fragment>
