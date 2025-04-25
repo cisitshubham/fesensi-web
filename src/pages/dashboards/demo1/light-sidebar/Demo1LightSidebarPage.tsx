@@ -48,8 +48,8 @@ const Demo1LightSidebarPage = () => {
     getUser();
   }, []);
 
-  const roles = ['CUSTOMER', 'AGENT', 'ADMIN'];
-
+  const roles = user?.role || []; // Map roles from user object
+  console.log('roles', roles);
   return (
     <Fragment>
       <Container>
@@ -64,24 +64,22 @@ const Demo1LightSidebarPage = () => {
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="mt-2  shadow-lg rounded-md ">
-                {roles.map((role, index) => (
+                {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
                   <SelectItem
-                    key={index}
-                    value={role}
-
+                    key={_id}
+                    value={role_name}
                     className={cn(
-                      'cursor-pointer p- hover:bg-primary rounded-md  flex flex-row justify-between gap-2',
-                      selectedRoles.includes(role) && 'bg-primary-light text-primary'
+                      'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
+                      selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
                     )}
-
                   >
-                    {role}
+                    {role_name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger asChild>
                 <button
                   id="date"
