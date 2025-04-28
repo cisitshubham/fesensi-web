@@ -38,6 +38,7 @@ export default function IncompleteTicket() {
 
 	
     // Prepare the data to be submitted
+    const reasonType = 'defaultReasonType'; // Replace 'defaultReasonType' with the appropriate value
     const incompleteData = {
       ticketId: ticket?._id,
       reasonType,
@@ -47,6 +48,11 @@ export default function IncompleteTicket() {
 
     try {
       setLoading(true);
+      const formData = new FormData();
+      formData.append('ticketId', ticket?._id || '');
+      formData.append('reasonType', reasonType);
+      formData.append('reason', reason);
+      formData.append('timestamp', new Date().toISOString());
       await ticketIncomplete(formData);
 
       // Navigate back to tickets list or dashboard

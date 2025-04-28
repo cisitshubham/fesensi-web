@@ -35,11 +35,11 @@ export default function UserTicket({ ticket }: TicketProps) {
                   {statusBadge.icon}
                   {ticket.status}
                 </Badge>
-                {ticket?.isAgentCommented && (
-                  <Badge className="bg-red-100 text-red-600 border-red-200">
-                    <Bell className="w-3 h-3 mr-1" /> New Reply
-                  </Badge>
-                )}
+            		{ticket.isAgentCommented === true && (
+		<Badge className="absolute right-0  bg-red-700/80 rounded-full p-1">
+		<Bell className="" />
+		</Badge>
+		)}
               </div>
               <h3 className="font-semibold text-lg text-gray-900">{ticket.title}</h3>
               <p className="text-gray-600 line-clamp-2 text-sm">{ticket.description}</p>

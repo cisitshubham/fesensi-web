@@ -7,13 +7,10 @@ import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { Demo1LightSidebarContent } from './';
 import { fetchUser } from '@/api/api';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { DateRange } from 'react-day-picker';
-import { addDays, format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { KeenIcon } from '@/components/keenicons';
 
+import { DateRange } from 'react-day-picker';
+import { addDays } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { useRole } from '@/pages/global-components/role-context';
@@ -39,6 +36,7 @@ const Demo1LightSidebarPage = () => {
     const getUser = async () => {
       try {
         const userData = await fetchUser();
+        console.log('Fetched User Data:', userData); // Debugging log
         setUser(userData.data);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -48,73 +46,61 @@ const Demo1LightSidebarPage = () => {
     getUser();
   }, []);
 
-  const roles = user?.role || []; // Map roles from user object
+  const roles = user?.role || []; 
+  console.log('Roles:', roles); // Log the roles to check if they are being fetched correctly
+
+  useEffect(() => {
+    console.log('Roles in useEffect:', roles); // Debugging log
+    if (roles.some((role: { role_name: string; }) => role.role_name === 'ADMIN')) {
+      setSelectedRoles(['ADMIN']);
+    } else if (
+      roles.length === 1 &&
+      (roles.some((role: { role_name: string; }) => role.role_name === 'CUSTOMER') || roles.some((role: { role_name: string; }) => role.role_name === 'USER'))
+    ) {
+      setSelectedRoles(roles.map((role: { role_name: any; }) => role.role_name));
+    } else if (roles.some((role: { role_name: string; }) => role.role_name === 'AGENT')) {
+      setSelectedRoles(['AGENT']); // Ensure AGENT role is handled
+    }
+  }, [roles]);
+
+  const isDropdownReadonly = roles.length === 1;
+console.log(selectedRoles)
   return (
     <Fragment>
       <Container>
         <Toolbar>
           <ToolbarHeading title="Dashboard" description="Central Hub for Comprehensive View" />
           <ToolbarActions>
-
-            <Select onValueChange={(value) => handleRoleToggle(value)}>
-              <SelectTrigger className="px-4 py-2 rounded-md  hover:bg-primary/90 transition">
-                <SelectValue placeholder="Select Roles">
-                  {selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent className="mt-2  shadow-lg rounded-md ">
-                {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
-                  <SelectItem
-                    key={_id}
-                    value={role_name}
-                    className={cn(
-                      'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
-                      selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
-                    )}
-                  >
-                    {role_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  id="date"
-                  className={cn(
-                    'btn btn-sm btn-light data-[state=open]:bg-light-active',
-                    !date && 'text-gray-400'
-                  )}
-                >
-                  <KeenIcon icon="calendar" className="me-0.5" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
-                      </>
-                    ) : (
-                      format(date.from, 'LLL dd, y')
-                    )
-                  ) : (
-                    <span>Pick a date range</span>
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover> */}
-
-
-
+            {isDropdownReadonly ? (
+              <div className="px-4 py-2 rounded-md bg-gray-200 text-gray-500">
+                {roles.length > 0 ? roles[0].role_name : 'Select Roles'}
+              </div>
+            ) : (
+              <Select onValueChange={(value) => handleRoleToggle(value)}>
+                <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
+                  <SelectValue placeholder={
+                    selectedRoles.length > 0
+                      ? selectedRoles.join(', ')
+                      : 'Select Roles'
+                  }>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="mt-2 shadow-lg rounded-md">
+                  {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
+                    <SelectItem
+                      key={_id}
+                      value={role_name}
+                      className={cn(
+                        'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
+                        selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
+                      )}
+                    >
+                      {role_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </ToolbarActions>
         </Toolbar>
       </Container>

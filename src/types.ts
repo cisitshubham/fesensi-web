@@ -56,10 +56,10 @@ export enum TicketStatus {
 }
 
 export enum TicketPriority {
-  Low = 'LOW',
   Medium = 'MEDIUM',
-  High = "HIGH",
-  Critical = 'CRITICAL'
+  High = 'HIGH',
+  Critical = 'CRITICAL',
+  Low = 'LOW',
 }
 
 export type User = {

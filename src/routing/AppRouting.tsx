@@ -6,26 +6,41 @@ import { AppRoutingSetup } from '.';
 
 const AppRouting = (): ReactElement => {
   const { setProgressBarLoader } = useLoaders();
-  const { verify, setLoading } = useAuthContext();
+  const { verify, setLoading, auth } = useAuthContext();
   const [previousLocation, setPreviousLocation] = useState('');
   const [firstLoad, setFirstLoad] = useState(true);
   const location = useLocation();
   const path = location.pathname.trim();
 
+  // Handle initial load
   useEffect(() => {
     if (firstLoad) {
-      verify().finally(() => {
-        setLoading(false);
-        setFirstLoad(false);
-      });
+      console.log('Initial load: Verifying user...');
+      verify()
+        .then(() => {
+          console.log('User verified successfully on initial load.');
+        })
+        .catch((error) => {
+          console.error('Error during initial user verification:', error);
+        })
+        .finally(() => {
+          setLoading(false);
+          setFirstLoad(false);
+        });
     }
-  });
+  }, []); // Add empty dependency array for initial load only
 
+  // Handle route changes and auth state changes
   useEffect(() => {
-    if (!firstLoad) {
+    if (!firstLoad && auth) {
+      console.log('Route or auth state changed: Verifying user...');
       setProgressBarLoader(true);
       verify()
-        .catch(() => {
+        .then(() => {
+          console.log('User verified successfully after route/auth change.');
+        })
+        .catch((error) => {
+          console.error('Error during user verification on route/auth change:', error);
           throw new Error('User verify request failed!');
         })
         .finally(() => {
@@ -37,7 +52,7 @@ const AppRouting = (): ReactElement => {
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [location, auth, firstLoad]);
 
   useEffect(() => {
     if (!CSS.escape(window.location.hash)) {

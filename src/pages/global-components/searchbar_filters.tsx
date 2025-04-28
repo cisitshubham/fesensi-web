@@ -21,7 +21,22 @@ import {
   DialogClose
 } from "@/components/ui/dialog"
 
-export default function SearchbarFilters() {
+export type Filters = {
+  status: string[];
+  priority: string[];
+  category: string[];
+  date: {
+    createdToday: boolean;
+    from: string;
+    to: string;
+  };
+};
+
+interface SearchbarFiltersProps {
+  onFiltersChange: (filters: Filters) => void;
+}
+
+export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersProps) {
     const { dropdownData } = useMasterDropdown();
     const [categories, setCategories] = useState<MasterDropdownDatatype['categories']>(
         dropdownData.categories || []
@@ -56,21 +71,32 @@ export default function SearchbarFilters() {
 
     const handleCheckboxChange = (filterType: keyof typeof filters, value: string) => {
         setFilters((prev) => {
-            if (filterType === "date") {
+            if (filterType === "date" && value === "createdToday") {
+                const isCreatedToday = !prev.date.createdToday;
+                const today = isCreatedToday ? new Date().toISOString().split('T')[0] : "";
                 return {
                     ...prev,
                     date: {
                         ...prev.date,
-                        [value]: !prev.date[value as keyof typeof prev.date],
+                        createdToday: isCreatedToday,
+                        from: today,
+                        to: today,
                     },
                 };
             }
-            const updated = (prev[filterType] || []).includes(value)
-                ? (prev[filterType] as string[]).filter((item) => item !== value)
-                : [...(prev[filterType] as string[]), value];
-            return { ...prev, [filterType]: updated };
-        })
-    }
+
+            if (Array.isArray(prev[filterType])) {
+                const updated = (prev[filterType] as string[]).includes(value)
+                    ? (prev[filterType] as string[]).filter((item) => item !== value)
+                    : [...(prev[filterType] as string[]), value];
+                const updatedFilters = { ...prev, [filterType]: updated };
+                onFiltersChange(updatedFilters); // Call API on filter change
+                return updatedFilters;
+            }
+
+            return prev; // Return previous state if filterType is not an array
+        });
+    };
 
     const handleDateChange = (field: keyof typeof filters["date"], value: string) => {
         setFilters((prev) => ({
@@ -88,6 +114,20 @@ export default function SearchbarFilters() {
     const clearAllFilters = () => {
         setFilters({ status: [], priority: [], category: [], date: { createdToday: false, from: "", to: "" } })
     }
+
+    const handleApplyFilters = () => {
+        const transformedFilters: Filters = {
+            status: filters.status,
+            priority: filters.priority,
+            category: filters.category,
+            date: {
+                createdToday: filters.date.createdToday,
+                from: filters.date.from,
+                to: filters.date.to,
+            },
+        };
+        onFiltersChange(transformedFilters);
+    };
 
     return (
         <div className="flex flex-col space-y-4 max-w-xl">
@@ -144,8 +184,8 @@ export default function SearchbarFilters() {
                                             <div key={priority._id} className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id={`priority-${priority._id}`}
-                                                    checked={filters.priority.includes(priority.name)}
-                                                    onCheckedChange={() => handleCheckboxChange("priority", priority.name)}
+                                                    checked={filters.priority.includes(priority._id)}
+                                                    onCheckedChange={() => handleCheckboxChange("priority", priority._id)}
                                                 />
                                                 <label
                                                     htmlFor={`priority-${priority._id}`}
@@ -165,8 +205,8 @@ export default function SearchbarFilters() {
                                             <div key={category._id} className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id={`category-${category._id}`}
-                                                    checked={filters.category.includes(category.title)}
-                                                    onCheckedChange={() => handleCheckboxChange("category", category.title)}
+                                                    checked={filters.category.includes(category._id)}
+                                                    onCheckedChange={() => handleCheckboxChange("category", category._id)}
                                                 />
                                                 <label
                                                     htmlFor={`category-${category._id}`}
@@ -228,9 +268,7 @@ export default function SearchbarFilters() {
                                     <DialogClose asChild>
                                         <Button variant="outline" size="sm">Cancel</Button>
                                     </DialogClose>
-                                    <DialogClose asChild>
-                                        <Button size="sm">Apply filters</Button>
-                                    </DialogClose>
+                                    <Button size="sm" onClick={handleApplyFilters}>Apply filters</Button>
                                 </div>
                             </DialogFooter>
                         </DialogContent>
@@ -241,42 +279,51 @@ export default function SearchbarFilters() {
             {/* Active filters display */}
             {activeFiltersCount > 0 && (
                 <div className="flex flex-wrap gap-2">
-                    {filters.status.map((status) => (
-                        <Badge key={`badge-status-${status}`} variant="outline" className="flex items-center gap-1">
-                            {status}
-                            <button
-                                className="ml-1 hover:bg-muted rounded-full"
-                                onClick={() => handleCheckboxChange("status", status)}
-                            >
-                                <span className="sr-only">Remove</span>
-                                <KeenIcon icon="cross" />
-                            </button>
-                        </Badge>
-                    ))}
-                    {filters.priority.map((priority) => (
-                        <Badge key={`badge-priority-${priority}`} variant="outline" className="flex items-center gap-1">
-                            {priority}
-                            <button
-                                className="ml-1 hover:bg-muted rounded-full"
-                                onClick={() => handleCheckboxChange("priority", priority)}
-                            >
-                                <span className="sr-only">Remove</span>
-                                <KeenIcon icon="cross" />
-                            </button>
-                        </Badge>
-                    ))}
-                    {filters.category.map((category) => (
-                        <Badge key={`badge-category-${category}`} variant="outline" className="flex items-center gap-1">
-                            {category}
-                            <button
-                                className="ml-1 hover:bg-muted rounded-full"
-                                onClick={() => handleCheckboxChange("category", category)}
-                            >
-                                <span className="sr-only">Remove</span>
-                                <KeenIcon icon="cross" />
-                            </button>
-                        </Badge>
-                    ))}
+                    {filters.status.map((status) => {
+                        const statusTitle = statuses.find((s) => s.name === status)?.name || status;
+                        return (
+                            <Badge key={`badge-status-${status}`} variant="outline" className="flex items-center gap-1">
+                                {statusTitle}
+                                <button
+                                    className="ml-1 hover:bg-muted rounded-full"
+                                    onClick={() => handleCheckboxChange("status", status)}
+                                >
+                                    <span className="sr-only">Remove</span>
+                                    <KeenIcon icon="cross" />
+                                </button>
+                            </Badge>
+                        );
+                    })}
+                    {filters.priority.map((priority) => {
+                        const priorityTitle = priorities.find((p) => p._id === priority)?.name || priority;
+                        return (
+                            <Badge key={`badge-priority-${priority}`} variant="outline" className="flex items-center gap-1">
+                                {priorityTitle}
+                                <button
+                                    className="ml-1 hover:bg-muted rounded-full"
+                                    onClick={() => handleCheckboxChange("priority", priority)}
+                                >
+                                    <span className="sr-only">Remove</span>
+                                    <KeenIcon icon="cross" />
+                                </button>
+                            </Badge>
+                        );
+                    })}
+                    {filters.category.map((category) => {
+                        const categoryTitle = categories.find((c) => c._id === category)?.title || category;
+                        return (
+                            <Badge key={`badge-category-${category}`} variant="outline" className="flex items-center gap-1">
+                                {categoryTitle}
+                                <button
+                                    className="ml-1 hover:bg-muted rounded-full"
+                                    onClick={() => handleCheckboxChange("category", category)}
+                                >
+                                    <span className="sr-only">Remove</span>
+                                    <KeenIcon icon="cross" />
+                                </button>
+                            </Badge>
+                        );
+                    })}
                     {filters.date?.createdToday && (
                         <Badge key="badge-date-created-today" variant="outline" className="flex items-center gap-1">
                             Created Today

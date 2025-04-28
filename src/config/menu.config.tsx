@@ -157,30 +157,30 @@ export const getMegaMenu = (roles: string[]): TMenuConfig => [
     title: 'Home',
     path: '/'
   },
-  ...(roles.includes('ADMIN')
-    ? [
-        {
-          title: 'Admin Dashboard',
-          path: '/admin'
-        }
-      ]
-    : []),
-  ...(roles.includes('AGENT')
-    ? [
-        {
-          title: 'Agent Workspace',
-          path: '/agent/workspace'
-        }
-      ]
-    : []),
-  ...(roles.includes('CUSTOMER')
-    ? [
-        {
-          title: 'Support Center',
-          path: '/support'
-        }
-      ]
-    : [])
+  // ...(roles.includes('ADMIN')
+  //   ? [
+  //       {
+  //         title: 'Admin Dashboard',
+  //         path: '/admin'
+  //       }
+  //     ]
+  //   : []),
+  // ...(roles.includes('AGENT')
+  //   ? [
+  //       {
+  //         title: 'Agent Workspace',
+  //         path: '/agent/workspace'
+  //       }
+  //     ]
+  //   : []),
+  // ...(roles.includes('CUSTOMER')
+  //   ? [
+  //       {
+  //         title: 'Support Center',
+  //         path: '/support'
+  //       }
+  //     ]
+  //   : [])
 ];
 
 export const MENU_ROOT: TMenuConfig = [

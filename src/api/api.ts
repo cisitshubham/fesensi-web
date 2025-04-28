@@ -257,17 +257,25 @@ export const addcomment = async (formData: FormData) => {
 // agent 
 
 
-export const MyTickets = async ()=>{
-	try {
-		const response = await axiosInstance.get('/agent/myTickets');
-		return response.data;
-		} catch (error) {
-			console.error('Error fetching ticket by ID:', error);
-		}
-}
+export const MyTickets = async (filters: any) => {
+  try {
+    console.log('Sending filters:', filters); // Log the filters being sent
+    const response = await axiosInstance.post('/agent/myTickets', filters);
+    console.log('API Response:', response.data); // Log the API response
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.error('🚨 Server Error Response:', error.response.data); // Log server error response
+    } else {
+      console.error('🚨 No Response from Server:', error.message); // Log if no response from server
+    }
+    throw new Error('Failed to fetch tickets. Please try again later.'); // Throw a user-friendly error
+  }
+};
+
 export const MyTicketDetails = async (TicketId:any)=>{
 	try {
-		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
+		const response = await axiosInstance.post(`/agent/myTicket/details/${TicketId}`);		
 		return response.data;		
 		} catch (error) {	
 			console.error('Error fetching ticket by ID:', error);
