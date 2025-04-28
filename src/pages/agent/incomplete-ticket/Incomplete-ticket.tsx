@@ -36,26 +36,34 @@ export default function IncompleteTicket() {
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('comment_text', reason);
-    formData.append('ticket_id', ticket?._id || '');
+	
+    // Prepare the data to be submitted
+    const incompleteData = {
+      ticketId: ticket?._id,
+      reasonType,
+      reason,
+      timestamp: new Date().toISOString()
+    };
 
     try {
       setLoading(true);
       await ticketIncomplete(formData);
 
-      // Navigate back to tickets list or dashboard with a success notification
-    //   navigate('/');
-	toast.success('Ticket marked as incomplete successfully!');	
-	} catch (err) {
-		const message = err instanceof Error ? err.message : 'Failed to mark ticket as incomplete';
-		console.error('Error marking ticket as incomplete:', message);
-		toast.error('Failed to mark ticket as incomplete');
-		setError(true);
-		} finally {
-		setLoading(false);
-		setIsSubmitting(false);
-		}
+      // Navigate back to tickets list or dashboard
+      navigate('/agent/tickets', {
+        state: {
+          notification: {
+            type: 'success',
+            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error marking ticket as incomplete:', error);
+      setError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!ticket) {
@@ -80,7 +88,7 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">

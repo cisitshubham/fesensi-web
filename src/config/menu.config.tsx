@@ -4,14 +4,18 @@ import { verifyRole } from '@/api/api';
 import { title } from 'process';
 import { icon } from 'leaflet';
 
-const res = await verifyRole();
-const role = res?.data?.role ?? [];
+let role: string[] = [];
+(async () => {
+	const res = await verifyRole();
+	role = res?.data?.role ?? [];
+})();
+
 export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
-  {
-    title: 'Dashboard',
-    icon: 'element-11',
-    path: '/'
-  },
+	{
+		title: 'Dashboard',
+		icon: 'element-11',
+		path: '/'
+	},
 
   // Customer Tabs
   ...(roles.includes('CUSTOMER')
