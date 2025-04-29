@@ -29,6 +29,7 @@ const navigate = useNavigate();
         const response = await MyTicketDetails(id);
 
         setTicketData(response.data);
+        console.log(response.data, 'response.data');
         setLoading(false);
       } catch (error: any) {
         setError(error);
@@ -39,7 +40,7 @@ const navigate = useNavigate();
     fetchTicketData();
   }, []);
 
-
+console.log(ticketData, 'ticketData');
   
 
 const handlecloseTicket = async () => {
@@ -237,7 +238,7 @@ const handlecloseTicket = async () => {
           
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && ticketData.isResolved === false && (
+        {ticketData.status === TicketStatus.Open  && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket'

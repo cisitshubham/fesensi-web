@@ -105,28 +105,16 @@ const UpdateTicketForm = () => {
 
     try {
       const formData = new FormData();
-      formData.append('title', title);
       formData.append('description', description);
 
-      if (priority && isValidObjectId(priority)) {
-        formData.append('priority', priority);
-      }
-
-      if (category && isValidObjectId(category)) {
-        formData.append('category', category);
-      }
+  
+  
 
       if (ticket?._id && isValidObjectId(ticket._id)) {
-        formData.append('ticketId', ticket._id);
+        formData.append('ticket_id', ticket._id);
       }
 
-      if (pStatus) {
-        formData.append('status', pStatus);
-      }
-      if (agentUser && isValidObjectId(agentUser)) {
-        formData.append('assigned_to', agentUser);
-      }
-
+  
       function isValidObjectId(value: any) {
         return /^[0-9a-fA-F]{24}$/.test(value);
       }

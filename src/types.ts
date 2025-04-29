@@ -45,6 +45,7 @@ export type Tickettype = {
     role: string;
     createdAt: string;
   };
+  isSelected?: boolean;
 };
 
 

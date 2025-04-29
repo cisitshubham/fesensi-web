@@ -187,7 +187,7 @@ export default function UserTicketDetails() {
             <Button variant={'destructive'}>Update Ticket</Button>
           </Link>
         )}
-        {!ticket.isCustomerTicketEdit && (
+        {ticket.isAgentCommented && ticket.status === "IN-PROGRESS" && (
           <Link to={`/user/ticket/resolution/${ticket._id}`} className="">
             <Button variant={'default'}>Check Resolution</Button>
           </Link>

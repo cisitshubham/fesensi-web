@@ -22,7 +22,7 @@ export default function UserTicket({ ticket }: TicketProps) {
 
   return (
     <Link to={`/user/ticket/${ticket._id}`} className="block w-full">
-      <Card className="overflow-hidden transition-all duration-200 hover:shadow-md group">
+      <Card className="overflow-hidden transition-all duration-200 hover:shadow-md group relative">
         {/* Priority indicator */}
         <CardContent className="p-5">
           <div className="flex items-start justify-between">
@@ -35,11 +35,11 @@ export default function UserTicket({ ticket }: TicketProps) {
                   {statusBadge.icon}
                   {ticket.status}
                 </Badge>
-            		{ticket.isAgentCommented === true && (
-		<Badge className="absolute right-0  bg-red-700/80 rounded-full p-1">
-		<Bell className="" />
-		</Badge>
-		)}
+                {ticket.isAgentCommented === true && (
+                  <Badge className="absolute right-0 top-0 bg-red-700/80 rounded-full p-1">
+                    <Bell className="" />
+                  </Badge>
+                )}
               </div>
               <h3 className="font-semibold text-lg text-gray-900">{ticket.title}</h3>
               <p className="text-gray-600 line-clamp-2 text-sm">{ticket.description}</p>

@@ -37,6 +37,8 @@ export default function ActivityLogAndComments({
   activityLog: ActivityLog[];
   agentComments: AgentComment[];
 }) {
+
+ 
   return (
     <Card className="flex flex-col overflow-y-auto no-scrollbar max-h-[580px]">
       {/* Activity Log Section */}

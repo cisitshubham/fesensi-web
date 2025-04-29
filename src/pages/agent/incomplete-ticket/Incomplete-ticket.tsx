@@ -49,14 +49,12 @@ export default function IncompleteTicket() {
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append('ticketId', ticket?._id || '');
-      formData.append('reasonType', reasonType);
-      formData.append('reason', reason);
-      formData.append('timestamp', new Date().toISOString());
+      formData.append('ticket_id', ticket?._id || '');
+      formData.append('comment_text', reason);
       await ticketIncomplete(formData);
 
       // Navigate back to tickets list or dashboard
-      navigate('/agent/tickets', {
+      navigate('/agent/mytickets', {
         state: {
           notification: {
             type: 'success',

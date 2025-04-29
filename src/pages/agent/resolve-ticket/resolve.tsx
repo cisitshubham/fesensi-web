@@ -127,6 +127,7 @@ export default function ResolveTicket() {
         setLoading(true);
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
         setTicketData(response.data);
+        console.log(response.data, 'ticketData');
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';

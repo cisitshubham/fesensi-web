@@ -77,7 +77,6 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                 return {
                     ...prev,
                     date: {
-                        ...prev.date,
                         createdToday: isCreatedToday,
                         from: today,
                         to: today,

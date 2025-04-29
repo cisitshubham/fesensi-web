@@ -55,8 +55,7 @@ export default function UserResolveTicket() {
     if (!ticket?._id) return
 
     try {
-      await CloseTicketUser({ ticketId: ticket._id })
-    //   navigate("/") 
+      await CloseTicketUser({ ticket_id: ticket._id })
 	  toast.success("Ticket resolved successfully.")
     } catch (err) {
       console.error("Failed to resolve ticket:", err)

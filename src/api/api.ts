@@ -100,7 +100,7 @@ export const createTicket = async (formData: FormData) => {
 export const updateTicket = async (formData: FormData) => {
   let ticketID = formData.get('ticketId');
   try {
-    const response = await axiosInstance.post(`/admin/tickets/update/${ticketID}`, formData);
+    const response = await axiosInstance.post(`/tickets/ticket/update`, formData);
     return response;
   } catch (error: any) {
     if (error.response) {
@@ -233,8 +233,10 @@ export const GetMasterDropdown = async ()=>{
 
 
 export const CloseTicketUser = async (data: { ticketId: string| number }) => {
+  console.log(data)
   try {
-    const response = await axiosInstance.post('/tickets/close', data); // Correct endpoint and payload
+    const response = await axiosInstance.post('/tickets/ticket/isTicketResolved', data);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error closing ticket:', error);
@@ -259,17 +261,15 @@ export const addcomment = async (formData: FormData) => {
 
 export const MyTickets = async (filters: any) => {
   try {
-    console.log('Sending filters:', filters); // Log the filters being sent
     const response = await axiosInstance.post('/agent/myTickets', filters);
-    console.log('API Response:', response.data); // Log the API response
     return response.data;
   } catch (error: any) {
     if (error.response) {
-      console.error('🚨 Server Error Response:', error.response.data); // Log server error response
+      console.error('🚨 Server Error Response:', error.response.data); 
     } else {
-      console.error('🚨 No Response from Server:', error.message); // Log if no response from server
+      console.error('🚨 No Response from Server:', error.message); 
     }
-    throw new Error('Failed to fetch tickets. Please try again later.'); // Throw a user-friendly error
+    throw new Error('Failed to fetch tickets. Please try again later.'); 
   }
 };
 

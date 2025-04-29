@@ -223,7 +223,7 @@ const UserCreateTicketForm = () => {
             >
               <KeenIcon icon="cloud-add" className="text-3xl" />
               <p className="text-gray-700 font-medium">Drag & drop files here</p>
-              <p className="text-sm text-gray-500">or click to select files</p>
+              <p className="text-sm text-gray-500">or click to select files(2Mb)</p>
             </div>
             <input
               type="file"
