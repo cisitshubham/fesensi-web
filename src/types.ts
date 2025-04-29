@@ -1,6 +1,7 @@
 export type Tickettype = {
   isUserCommented: boolean;
   isAgentCommented: boolean;
+  isAgenForceResolve: boolean;
   isResolved: boolean;
   category: string;
   IsCumstomerCommneted: boolean;

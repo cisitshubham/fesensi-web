@@ -226,7 +226,7 @@ const handlecloseTicket = async () => {
         )}
 
         {/* force resolve */}
-        {ticketData.status === TicketStatus.InProgress && (
+			  {ticketData.status === TicketStatus.InProgress  && (
           <Link
             to={{
               pathname: `/agent/Force-resolve/${ticket._id}`
@@ -239,12 +239,11 @@ const handlecloseTicket = async () => {
 
         {/* close ticket  */}
         {ticketData.status === TicketStatus.Resolved && (
-       
             <Button onClick={handlecloseTicket} className="mt-6">Close Ticket</Button>
           
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open  && (
+			  {ticketData.status === TicketStatus.Open && ticketData.isUserCommented==false  && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket'
@@ -269,7 +268,7 @@ const handlecloseTicket = async () => {
           </Link>
         )}
         {/* Request Reassignment */}
-        {(ticketData.status === TicketStatus.Open ||
+        {/* {(ticketData.status === TicketStatus.Open ||
           ticketData.status === TicketStatus.InProgress) && (
           <Link
             to={{
@@ -279,7 +278,7 @@ const handlecloseTicket = async () => {
           >
             <Button className="mt-6">Request Reassignment</Button>
           </Link>
-        )}
+        )} */}
       </div>
     </div>
   );
