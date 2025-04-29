@@ -11,29 +11,9 @@ import { MyTicketDetails } from '@/api/api';
 import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
-import { position } from 'stylis';
 
 
-const STATUS_OPTIONS = ['in-progress', 'Resolved by Agent', 'closed'] as const;
 
-const BadgeDisplay = ({ status, isClosed }: { status: string; isClosed: boolean }) => (
-  isClosed ? (
-    <Badge className="bg-red-500 text-white capitalize">{status}</Badge>
-  ) : (
-    <div className="flex flex-wrap items-center gap-4 mt-2">
-      <div className="flex gap-3 flex-wrap">
-        {STATUS_OPTIONS.filter((s) => s !== 'closed').map((option) => (
-          <Badge
-            key={option}
-            className={getBadgeClass(option, status)}
-          >
-            {option.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
-          </Badge>
-        ))}
-      </div>
-    </div>
-  )
-);
 
 const getBadgeClass = (badgeStatus: string, currentStatus: string) => {
   const selected = badgeStatus === currentStatus;
@@ -167,6 +147,9 @@ export default function ResolveTicket() {
       if (response.success) {
         // navigate('/'); // Redirect after successful resolution
         toast.success('Reason saved successfully', { position: "top-center" });
+        setTimeout(() => {
+          navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
+        }, 3000);
       } else {
         toast.error('Failed to resolve ticket.', { position: "top-center" });
       }
@@ -208,10 +191,7 @@ export default function ResolveTicket() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <div>
-          <MenuLabel>Ticket Status</MenuLabel>
-          <BadgeDisplay status={status} isClosed={status === 'closed'} />
-        </div>
+  
 
         <Separator className="mb-6" />
 

@@ -29,7 +29,7 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 export default function ReassignTicket() {
-    
+
   const { dropdownData } = useMasterDropdown();
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
   const [loading, setLoading] = useState(false);
@@ -50,15 +50,15 @@ export default function ReassignTicket() {
           throw new Error('Ticket ID is not available.');
         }
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
-		if(!response) {
-			toast.error('Ticket data is not available.', { position: "top-center" });
-			
-		}
+        if (!response) {
+          toast.error('Ticket data is not available.', { position: "top-center" });
+
+        }
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
-		toast.error('Failed to fetch ticket', { position: "top-center" });
+        toast.error('Failed to fetch ticket', { position: "top-center" });
         setError(message);
       } finally {
         setLoading(false);
@@ -68,12 +68,12 @@ export default function ReassignTicket() {
     fetchTicket();
   }, [id, ticketFromState]);
 
-  
-const handkeSelectChange = (value: string) => {
+
+  const handkeSelectChange = (value: string) => {
     setSelectedResolution(value);
   }
 
-const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDesc(e.target.value);
   }
 
@@ -83,7 +83,7 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     if (!ticketData) {
       setError('Ticket data is not available.');
-	  toast.error('Ticket data is not available.', { position: "top-center" });
+      toast.error('Ticket data is not available.', { position: "top-center" });
       return;
     }
 
@@ -96,17 +96,21 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     try {
       setLoading(true);
       await requestReassign(formData);
-    //   navigate('/'); // Redirect to a success page or another route
-	  toast.success('Ticket reassigned successfully', { position: "top-center" });
+
+      toast.success('Ticket reassigned successfully', { position: "top-center" });
+      setTimeout(() => {
+
+        navigate('/agent/mytickets'); // Redirect to a success page or another route
+      }, 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reassign ticket';
-	  toast.error('Failed to reassign ticket', { position: "top-center" });
+      toast.error('Failed to reassign ticket', { position: "top-center" });
       setError(message);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="container px-6 ">
 
@@ -145,23 +149,23 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
           <form className="space-y-4" onSubmit={handleReassign}>
             <div className="space-y-2">
               <div className="space-y-2">
-                  <Select onValueChange={handkeSelectChange}>
-                    <label>Select Reason</label>
-                    <SelectTrigger id="priority">
-                      <SelectValue placeholder="Select Reason" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dropdownData?.reassignOptions?.length > 0 ? (
-                        dropdownData.reassignOptions.map((item: MasterDropdownDatatype['reassignOptions'][0]) => (
-                          <SelectItem key={item._id} value={String(item._id || '')}>
-                            {item.title}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem disabled value={''}>No options available</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
+                <Select onValueChange={handkeSelectChange}>
+                  <label>Select Reason</label>
+                  <SelectTrigger id="priority">
+                    <SelectValue placeholder="Select Reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dropdownData?.reassignOptions?.length > 0 ? (
+                      dropdownData.reassignOptions.map((item: MasterDropdownDatatype['reassignOptions'][0]) => (
+                        <SelectItem key={item._id} value={String(item._id || '')}>
+                          {item.title}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem disabled value={''}>No options available</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -171,7 +175,7 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 id="notes"
                 placeholder="Explain the reason for reassignment"
                 rows={3}
-                onChange={handleDescChange} 
+                onChange={handleDescChange}
               />
             </div>
 

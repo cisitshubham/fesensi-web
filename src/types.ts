@@ -103,3 +103,14 @@ export type MasterDropdownDatatype = {
     first_name: string;
   }[];
 };
+
+
+
+export type Notificationtype = {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  createdAt: string;
+  read: boolean;
+};

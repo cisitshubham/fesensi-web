@@ -36,7 +36,7 @@ export default function IncompleteTicket() {
 
     setIsSubmitting(true);
 
-	
+
     // Prepare the data to be submitted
     const reasonType = 'defaultReasonType'; // Replace 'defaultReasonType' with the appropriate value
     const incompleteData = {
@@ -52,16 +52,11 @@ export default function IncompleteTicket() {
       formData.append('ticket_id', ticket?._id || '');
       formData.append('comment_text', reason);
       await ticketIncomplete(formData);
+      toast.success('Ticket marked as incomplete successfully.', { position: 'top-center' });
+      setTimeout(() => {
 
-      // Navigate back to tickets list or dashboard
-      navigate('/agent/mytickets', {
-        state: {
-          notification: {
-            type: 'success',
-            message: `Ticket #${ticket?._id} marked as incomplete successfully.`
-          }
-        }
-      });
+        navigate('/agent/mytickets');
+      }, 3000);
     } catch (error) {
       console.error('Error marking ticket as incomplete:', error);
       setError(true);
@@ -98,7 +93,7 @@ export default function IncompleteTicket() {
               <div className="flex gap-2">
                 <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
                 <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>
-                  {ticket.priority} 
+                  {ticket.priority}
                 </Badge>
               </div>
             </div>

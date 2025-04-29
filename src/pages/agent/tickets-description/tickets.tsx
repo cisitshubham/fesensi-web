@@ -55,6 +55,9 @@ const handlecloseTicket = async () => {
       setLoading(false);
     //   navigate('/')
 	toast.success('Ticket closed successfully!', { position: "top-center" });
+  setTimeout(() => {
+    navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
+  }, 3000);
     }
     catch (error) {
       console.error('Error closing ticket:', error);
@@ -211,7 +214,7 @@ const handlecloseTicket = async () => {
 
 
         {/* update resolution  */}
-        {ticketData.status === TicketStatus.InProgress && (
+        {ticketData.status === TicketStatus.InProgress && ticketData.isUserCommented &&(
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`

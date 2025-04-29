@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { KeenIcon } from '@/components';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const UpdateTicketForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,8 +20,7 @@ const UpdateTicketForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ticket, setTicket] = useState<any>(null);
-
-
+  const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -117,7 +117,12 @@ const UpdateTicketForm = () => {
           action: 'updateTicket',
           cancel: true
         });
+      setTimeout(() => {
+        navigate('/user/Mytickets'); // Redirect to the desired page after 3 seconds
+      }, 3000);
+      
       }
+
     } catch {
       toast.error('Failed to update ticket. Please try again.', {
         position: "top-center",

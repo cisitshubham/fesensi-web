@@ -1,12 +1,9 @@
 import { useLanguage } from '@/i18n';
 import { KeenIcon } from '@/components';
 import { Menu, MenuItem, MenuSub, MenuToggle } from '@/components/menu';
-import { Tab, TabPanel, Tabs, TabsList } from '@/components/tabs';
-import { DropdownCrud2 } from '@/partials/dropdowns/general';
+
 import { DropdownNotificationsAll } from './DropdownNotificationsAll';
-import { DropdownNotificationsInbox } from './DropdownNotificationsInbox';
-import { DropdownNotificationsTeam } from './DropdownNotificationsTeam';
-import { DropdownNotificationsFollowing } from './DropdownNotificationsFollowing';
+
 
 interface IDropdownNotificationProps {
   menuTtemRef: any;
@@ -34,53 +31,9 @@ const DropdownNotifications = ({ menuTtemRef }: IDropdownNotificationProps) => {
 
   const buildTabs = () => {
     return (
-      <Tabs defaultValue={1} className="">
-        <TabsList className="justify-between px-5 mb-2">
-          <div className="flex items-center gap-5">
-            <Tab value={1}>All</Tab>
-            <Tab value={2} className="relative">
-              Inbox
-              <span className="badge badge-dot badge-success size-[5px] absolute top-2 rtl:start-0 end-0 transform translate-y-1/2 translate-x-full"></span>
-            </Tab>
-            <Tab value={3}>Team</Tab>
-            <Tab value={4}>Following</Tab>
-          </div>
-          <Menu>
-            <MenuItem
-              toggle="dropdown"
-              trigger="click"
-              dropdownProps={{
-                placement: isRTL() ? 'bottom-start' : 'bottom-end',
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: isRTL() ? [0, -10] : [0, 10] // [skid, distance]
-                    }
-                  }
-                ]
-              }}
-            >
-              <MenuToggle className="btn btn-sm btn-icon btn-light btn-clear">
-                <KeenIcon icon="setting-2" />
-              </MenuToggle>
-              {DropdownCrud2()}
-            </MenuItem>
-          </Menu>
-        </TabsList>
-        <TabPanel value={1}>
-          <DropdownNotificationsAll />
-        </TabPanel>
-        <TabPanel value={2}>
-          <DropdownNotificationsInbox />
-        </TabPanel>
-        <TabPanel value={3}>
-          <DropdownNotificationsTeam />
-        </TabPanel>
-        <TabPanel value={4}>
-          <DropdownNotificationsFollowing />
-        </TabPanel>
-      </Tabs>
+      <div>
+        <DropdownNotificationsAll />
+      </div>
     );
   };
 

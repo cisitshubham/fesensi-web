@@ -334,3 +334,14 @@ export const requestReassign = async (formData: FormData) => {
     }
     return null;
   }
+
+
+
+  export const GetPushNotifications = async () => {
+    try {
+      const response = await axiosInstance.post('/users/pushNotification');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching push notifications:', error);
+    }
+  }

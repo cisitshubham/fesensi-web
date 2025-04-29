@@ -9,7 +9,7 @@ import { KeenIcon } from '@/components';
 import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-
+import { useNavigate } from 'react-router';
 
 const UserCreateTicketForm = () => {
   const [title, setTitle] = useState('');
@@ -22,7 +22,7 @@ const UserCreateTicketForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-
+const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -110,6 +110,9 @@ const UserCreateTicketForm = () => {
           setPriority('');
           // setFiles();
           setValidationErrors({});
+          setTimeout(() => {
+            navigate('/user/MyTickets'); // Redirect to a success page or another route
+          }, 3000);
         } else {
           toast.error('Failed to create ticket', {position :"top-center"});
           throw new Error(result.data.message || 'Failed to create ticket');

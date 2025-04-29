@@ -16,8 +16,8 @@ const SidebarHeader = forwardRef<HTMLDivElement, any>((props, ref) => {
             className=" h-[25px] max-w-none"
           />
           <hr className='bg-gradient-to-r from-[#314DCA] to-[#5A77FA]' />
-          <h1 className="bg-gradient-to-r from-[#314DCA] to-[#5A77FA] tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
-            | Fesensi
+          <h1 className="bg-gradient-to-r from-[#314DCA] to-[#5A77FA] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
+           <p className='font-thin'> |</p> Fesensi
           </h1>
         </div>
         <img
@@ -31,7 +31,9 @@ const SidebarHeader = forwardRef<HTMLDivElement, any>((props, ref) => {
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
             className=" h-[25px] max-w-none"
           />
-          <h1 className="text-white font-bold uppercase tracking-wider text-nowrap">| Fesensi</h1>
+              <h1 className="bg-gradient-to-r from-[#314DCA] to-[#5A77FA] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
+           <p className='font-thin'> |</p> Fesensi
+          </h1>
         </div>
         <img
           src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}

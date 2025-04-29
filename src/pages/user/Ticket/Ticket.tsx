@@ -142,10 +142,10 @@ export default function UserTicketDetails() {
           <div>
             <h3 className="text-md font-semibold mb-2">Attachments</h3>
             <div className="flex flex-wrap gap-4">
-              {ticket.attachments.map((attachment: { _id?: string; file_url: string }, idx) => (
+              {ticket.attachments.map((attachment: { _id?: string; file_url: any }, idx) => (
                 <img
                   key={attachment._id || idx}
-                  src={attachment.file_url}
+                  src={attachment.file_url || '/media/avatars/placeholder.png'}
                   alt={`attachment-${idx}`}
                   className="w-32 h-32 object-cover border rounded-md"
                 />
@@ -163,13 +163,13 @@ export default function UserTicketDetails() {
           <CardContent className="p-4 bg-muted rounded-md">
             <p className="text-sm whitespace-pre-wrap">{ticket.latest_agent_comment.comment_text}</p>
 
-            {ticket.latest_agent_comment.attachments?.map((attachment, idx) => (
-              <img
-                key={idx}
-                src={attachment}
-                alt={`attachment-${idx}`}
-                className="w-32 h-32 object-cover border rounded-md"
-              />
+            {ticket.latest_agent_comment.attachments?.map((attachment:any, idx) => (
+                <img
+                  key={idx}
+                  src={attachment.file_url}
+                  alt={`attachment-${idx}`}
+                  className="w-32 h-32 object-cover border rounded-md"
+                />
             ))}
           </CardContent>
           <CardContent className="pt-6 space-y-6">
