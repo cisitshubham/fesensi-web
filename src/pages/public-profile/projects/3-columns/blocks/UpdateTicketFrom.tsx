@@ -61,7 +61,7 @@ const UpdateTicketForm = () => {
         }
       } catch (error: any) {
         toast.error(error || 'Failed to load categories and priorities. Please try again.', {
-          position: 'top-right',
+          position: "top-center" ,
           cancel: true
         });
       }
@@ -75,7 +75,7 @@ const UpdateTicketForm = () => {
         try {
           const response = await getTicketById(id);
           if (!response) {
-            toast.error('Failed to load ticket.', { position: 'top-right', cancel: true });
+            toast.error('Failed to load ticket.', { position: "top-center" });
           }
           if (response.data) {
             setTicket(response.data);
@@ -87,11 +87,7 @@ const UpdateTicketForm = () => {
             setpStatus(response.data.status || '');
           }
         } catch {
-          toast.error('Failed to load ticket.', {
-            position: 'top-right',
-            action: 'updateTicket',
-            cancel: true
-          });
+          toast.error('Failed to load ticket.', { position: "top-center" });
         }
       };
       fetchTicket();
@@ -141,14 +137,14 @@ const UpdateTicketForm = () => {
       }
       if (result.data.success) {
         toast.success('Ticket updated successfully', {
-          position: 'top-right',
+          position: 'top-center',
           action: 'updateTicket',
           cancel: true
         });
       }
     } catch {
       toast.error('Failed to update ticket. Please try again.', {
-        position: 'top-right',
+        position: 'top-center',
         action: 'updateTicket',
         cancel: true
       });

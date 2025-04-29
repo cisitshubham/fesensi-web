@@ -47,7 +47,7 @@ export default function ForceResolve() {
 
   const handleResolve = async () => {
     if (!selectedResolution) {
-		toast.error('Please select a resolution reason.');
+		toast.error('Please select a resolution reason.', { position: "top-center" });
 		return;
     }
 
@@ -66,15 +66,15 @@ export default function ForceResolve() {
 
       const response = await forceResolve(formData);
       if (response.success) {
-		toast.success('Ticket resolved successfully!');
+		toast.success('Ticket resolved successfully!', { position: "top-center" });
 			  
 	} else {
-		toast.error('Failed to resolve the ticket. Please try again.');
+		toast.error('Failed to resolve the ticket. Please try again.', { position: "top-center" });
 	}
     }
     catch (error) {
       console.error('Error resolving ticket:', error);
-	  toast.error('An error occurred while resolving the ticket.');
+	  toast.error('An error occurred while resolving the ticket.', { position: "top-center" });
 	}
     finally {
       setLoading(false);
@@ -85,12 +85,15 @@ export default function ForceResolve() {
     const fetchTicket = async () => {
       try {
         setLoading(true);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
-		toast.error('Failed to fetch ticket details.');
+		toast.error('Failed to fetch ticket details.', { position: "top-center" });
         setError(message);
       } finally {
         setLoading(false);

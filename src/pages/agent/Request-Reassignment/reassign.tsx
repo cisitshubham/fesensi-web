@@ -31,7 +31,6 @@ import { toast } from 'sonner';
 export default function ReassignTicket() {
     
   const { dropdownData } = useMasterDropdown();
-  const [dragging, setDragging] = useState(false);
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,16 +46,19 @@ export default function ReassignTicket() {
     const fetchTicket = async () => {
       try {
         setLoading(true);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
 		if(!response) {
-			toast.error('Ticket data is not available.');
+			toast.error('Ticket data is not available.', { position: "top-center" });
 			
 		}
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
-		toast.error('Failed to fetch ticket');
+		toast.error('Failed to fetch ticket', { position: "top-center" });
         setError(message);
       } finally {
         setLoading(false);
@@ -81,7 +83,7 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     if (!ticketData) {
       setError('Ticket data is not available.');
-	  toast.error('Ticket data is not available.');
+	  toast.error('Ticket data is not available.', { position: "top-center" });
       return;
     }
 
@@ -95,10 +97,10 @@ const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setLoading(true);
       await requestReassign(formData);
     //   navigate('/'); // Redirect to a success page or another route
-	  toast.success('Ticket reassigned successfully');
+	  toast.success('Ticket reassigned successfully', { position: "top-center" });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reassign ticket';
-	  toast.error('Failed to reassign ticket');
+	  toast.error('Failed to reassign ticket', { position: "top-center" });
       setError(message);
     } finally {
       setLoading(false);

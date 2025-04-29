@@ -24,6 +24,9 @@ const DropdownNotificationsAll = () => {
     }
   }, [viewportHeight]);
 
+  
+
+  
   const buildList = () => {
     return (
       <div className="flex flex-col gap-5 pt-3 pb-4 divider-y divider-gray-200">

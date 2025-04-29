@@ -103,7 +103,7 @@ const UserCreateTicketForm = () => {
         }
 
         if (result.data.success) {
-          toast.success('Ticket created successfully', { position: 'top-right' });
+          toast.success('Ticket created successfully', { position: 'top-center' });
           setTitle('');
           setDescription('');
           setCategory('');
@@ -111,16 +111,16 @@ const UserCreateTicketForm = () => {
           // setFiles();
           setValidationErrors({});
         } else {
+          toast.error('Failed to create ticket', {position :"top-center"});
           throw new Error(result.data.message || 'Failed to create ticket');
-		  toast.error('Failed to create ticket');
         }
       } catch (error: any) {
         setError(error.message || 'An unexpected error occurred.');
-		toast.error('An unexpected error occurred.');
+		toast.error('An unexpected error occurred.', {position :"top-center"});
       }
     } catch (error: any) {
       setError(error.message || 'An unexpected error occurred.');
-	  toast.error('An unexpected error occurred.');
+	  toast.error('An unexpected error occurred.', {position :"top-center"});
     } finally {
       setLoading(false);
     }

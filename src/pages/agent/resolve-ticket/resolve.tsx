@@ -11,6 +11,7 @@ import { MyTicketDetails } from '@/api/api';
 import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
+import { position } from 'stylis';
 
 
 const STATUS_OPTIONS = ['in-progress', 'Resolved by Agent', 'closed'] as const;
@@ -36,19 +37,18 @@ const BadgeDisplay = ({ status, isClosed }: { status: string; isClosed: boolean 
 
 const getBadgeClass = (badgeStatus: string, currentStatus: string) => {
   const selected = badgeStatus === currentStatus;
-  return `cursor-pointer text-sm px-3 py-1 rounded-full transition-colors duration-200 ${
-    selected
+  return `cursor-pointer text-sm px-3 py-1 rounded-full transition-colors duration-200 ${selected
       ? badgeStatus === 'in-progress'
         ? 'bg-blue-500 text-white'
         : badgeStatus === 'resolved'
-        ? 'bg-green-500 text-white'
-        : 'bg-red-500 text-white'
+          ? 'bg-green-500 text-white'
+          : 'bg-red-500 text-white'
       : badgeStatus === 'in-progress'
-      ? 'bg-blue-100 text-blue-700'
-      : badgeStatus === 'resolved'
-      ? 'bg-green-100 text-green-700'
-      : 'bg-red-100 text-red-700'
-  }`;
+        ? 'bg-blue-100 text-blue-700'
+        : badgeStatus === 'resolved'
+          ? 'bg-green-100 text-green-700'
+          : 'bg-red-100 text-red-700'
+    }`;
 };
 
 const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispatch<React.SetStateAction<File[]>> }) => {
@@ -59,9 +59,8 @@ const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispat
     <div className="flex flex-col gap-2 mb-4">
       <MenuLabel>Upload Files</MenuLabel>
       <div
-        className={`border-2 border-dashed p-6 rounded-lg text-center cursor-pointer flex flex-col items-center justify-center transition-all duration-300 ${
-          dragging ? 'bg-blue-100 border-blue-500' : 'border-gray-300'
-        }`}
+        className={`border-2 border-dashed p-6 rounded-lg text-center cursor-pointer flex flex-col items-center justify-center transition-all duration-300 ${dragging ? 'bg-blue-100 border-blue-500' : 'border-gray-300'
+          }`}
         onDragOver={(e) => {
           e.preventDefault();
           setDragging(true);
@@ -125,7 +124,10 @@ export default function ResolveTicket() {
     const fetchTicket = async () => {
       try {
         setLoading(true);
-        const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
+        const response = await MyTicketDetails(id);
         setTicketData(response.data);
         console.log(response.data, 'ticketData');
         setStatus(response.data.status.toLowerCase());
@@ -156,7 +158,7 @@ export default function ResolveTicket() {
       formData.append('ticket_id', ticketData._id);
 
       files.forEach((file) => {
-		console.log(file);		
+        console.log(file);
         formData.append('image', file);
       });
 
@@ -164,14 +166,14 @@ export default function ResolveTicket() {
 
       if (response.success) {
         // navigate('/'); // Redirect after successful resolution
-		  toast.success('Reason saved successfully');
+        toast.success('Reason saved successfully', { position: "top-center" });
       } else {
-		toast.error('Failed to resolve ticket.');
+        toast.error('Failed to resolve ticket.', { position: "top-center" });
       }
     } catch (error) {
       console.error('Error resolving ticket:', error);
-		toast.error('Failed to resolve ticket.');
-	} finally {
+      toast.error('Failed to resolve ticket.', { position: "top-center" });
+    } finally {
       setLoading(false);
     }
   };
@@ -213,11 +215,11 @@ export default function ResolveTicket() {
 
         <Separator className="mb-6" />
 
-        <Textarea 
-          placeholder="Enter the resolution" 
-          className="mb-4" 
-          value={resolution} 
-          onChange={(e) => setResolution(e.target.value)} 
+        <Textarea
+          placeholder="Enter the resolution"
+          className="mb-4"
+          value={resolution}
+          onChange={(e) => setResolution(e.target.value)}
         />
 
         <FileUpload files={files} setFiles={setFiles} />

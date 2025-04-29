@@ -232,7 +232,7 @@ export const GetMasterDropdown = async ()=>{
 
 
 
-export const CloseTicketUser = async (data: { ticketId: string| number }) => {
+export const CloseTicketUser = async (data: { ticket_id: string| number }) => {
   console.log(data)
   try {
     const response = await axiosInstance.post('/tickets/ticket/isTicketResolved', data);
@@ -273,9 +273,9 @@ export const MyTickets = async (filters: any) => {
   }
 };
 
-export const MyTicketDetails = async (TicketId:any)=>{
+export const MyTicketDetails = async (TicketId:string)=>{
 	try {
-		const response = await axiosInstance.post(`/agent/myTicket/details/${TicketId}`);		
+		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
 		return response.data;		
 		} catch (error) {	
 			console.error('Error fetching ticket by ID:', error);
@@ -286,7 +286,7 @@ export const MyTicketDetails = async (TicketId:any)=>{
 
 export const forceResolve = async (formData: FormData) => {
   try {
-    const response = await axiosInstance.post('agent/update/AddResovedPost', formData);
+    const response = await axiosInstance.post('/agent/update/AddResovedPost', formData);
     return response.data;
   } catch (error) {
     console.error('Error force resolving ticket:', error);

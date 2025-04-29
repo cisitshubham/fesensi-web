@@ -45,7 +45,7 @@ export default function CreateReasons() {
 
   const handleSave = async () => {
     if (!editedReason.title.trim()) {
-      toast.error('Reason title cannot be empty');
+      toast.error('Reason title cannot be empty', { position: "top-center" });
       return;
     }
 
@@ -63,9 +63,9 @@ export default function CreateReasons() {
       setReasons(updatedReasons);
       setEditIndex(null);
 
-      toast.success('Reason saved successfully');
+      toast.success('Reason saved successfully', { position: "top-center" });
     } catch (error) {
-      toast.error('Failed to save reason');
+      toast.error('Failed to save reason', { position: "top-center" });
     } finally {
       setIsSubmitting(false);
     }
@@ -95,9 +95,9 @@ export default function CreateReasons() {
 
       setReasons(updatedReasons);
 
-      toast.success('Reason deleted successfully');
+      toast.success('Reason deleted successfully', { position: "top-center" });
     } catch (error) {
-      toast.error('Failed to delete reason');
+      toast.error('Failed to delete reason', { position: "top-center" });
     } finally {
       setIsSubmitting(false);
     }

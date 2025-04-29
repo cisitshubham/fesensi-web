@@ -56,10 +56,10 @@ export default function UserResolveTicket() {
 
     try {
       await CloseTicketUser({ ticket_id: ticket._id })
-	  toast.success("Ticket resolved successfully.")
+	  toast.success("Ticket resolved successfully.", {position :"top-center"})
     } catch (err) {
       console.error("Failed to resolve ticket:", err)
-	  toast.error("Failed to resolve ticket. Please try again.")
+	  toast.error("Failed to resolve ticket. Please try again.", {position :"top-center"})
     }
   }
 
@@ -72,15 +72,15 @@ export default function UserResolveTicket() {
       formData.append("comment_text", comment_text);
       formData.append("ticket", String(ticket._id));
       await addcomment(formData);
-	  toast.success("Query submitted successfully.")
+	  toast.success("Query submitted successfully.", {position :"top-center"})
       setShowFeedback(false)
     } catch (err) {
       console.error("Failed to submit feedback:", err)
-	  toast.error("Failed to submit feedback. Please try again.")
+	  toast.error("Failed to submit feedback. Please try again.", {position :"top-center"})
     } finally {
       setSubmitting(false)
     //   navigate("/") 
-		toast.success("Query submitted successfully.")
+		toast.success("Query submitted successfully.", {position :"top-center"})
     }
   }
 

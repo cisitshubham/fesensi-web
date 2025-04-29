@@ -102,7 +102,7 @@ const CreateTicketForm = () => {
         }
 
         if (result.data.success) {
-          toast.success('Ticket created successfully', { position: 'top-right' });
+          toast.success('Ticket created successfully', { position: "top-center" });
           setTitle('');
           setDescription('');
           setCategory('');

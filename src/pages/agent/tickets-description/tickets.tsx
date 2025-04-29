@@ -26,6 +26,9 @@ const navigate = useNavigate();
     const fetchTicketData = async () => {
       try {
         setLoading(true);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
         const response = await MyTicketDetails(id);
 
         setTicketData(response.data);
@@ -51,11 +54,11 @@ const handlecloseTicket = async () => {
       await closeTicket(formData); // Assuming this function is defined elsewhere
       setLoading(false);
     //   navigate('/')
-	toast.success('Ticket closed successfully!');
+	toast.success('Ticket closed successfully!', { position: "top-center" });
     }
     catch (error) {
       console.error('Error closing ticket:', error);
-	  toast.error('Failed to close ticket!');
+	  toast.error('Failed to close ticket!', { position: "top-center" });
       setLoading(false);
     }
   };
