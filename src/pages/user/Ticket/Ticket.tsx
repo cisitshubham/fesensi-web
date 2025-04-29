@@ -13,7 +13,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
-import {toast} from 'sonner';
+import { toast } from 'sonner';
 
 export default function UserTicketDetails() {
   const { id } = useParams<{ id: string }>();
@@ -31,7 +31,7 @@ export default function UserTicketDetails() {
       } catch (err) {
         console.error('Failed to fetch ticket:', err);
         setError('Failed to load ticket. Please try again.');
-		toast.error('Failed to load ticket. Please try again.');
+        toast.error('Failed to load ticket. Please try again.', {position :"top-center"});
         setTicket(null);
       } finally {
         setLoading(false);
@@ -142,10 +142,10 @@ export default function UserTicketDetails() {
           <div>
             <h3 className="text-md font-semibold mb-2">Attachments</h3>
             <div className="flex flex-wrap gap-4">
-              {ticket.attachments.map((attachment, idx) => (
+              {ticket.attachments.map((attachment: { _id?: string; file_url: any }, idx) => (
                 <img
                   key={attachment._id || idx}
-                  src={attachment.file_url}
+                  src={attachment.file_url || '/media/avatars/placeholder.png'}
                   alt={`attachment-${idx}`}
                   className="w-32 h-32 object-cover border rounded-md"
                 />
@@ -156,42 +156,51 @@ export default function UserTicketDetails() {
       </CardContent>
 
       {ticket.latest_agent_comment?.comment_text && (
-      <Card className='mx-6'>
-        <CardHeader className="border-b">
-          <CardTitle className="text-lg font-bold">Latest Agent Comment</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 bg-muted rounded-md">
-          <p className="text-sm whitespace-pre-wrap">{ticket.latest_agent_comment.comment_text}</p>
-        </CardContent>
-      <CardContent className="pt-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Last Updated:</span>
-              <span className="text-sm">{ticket.latest_agent_comment.createdAt}</span>
+        <Card className='mx-6'>
+          <CardHeader className="border-b">
+            <CardTitle className="text-lg font-bold">Latest Agent Comment</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 bg-muted rounded-md">
+            <p className="text-sm whitespace-pre-wrap">{ticket.latest_agent_comment.comment_text}</p>
+
+            {ticket.latest_agent_comment.attachments?.map((attachment:any, idx) => (
+                <img
+                  key={idx}
+                  src={attachment.file_url}
+                  alt={`attachment-${idx}`}
+                  className="w-32 h-32 object-cover border rounded-md"
+                />
+            ))}
+          </CardContent>
+          <CardContent className="pt-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Last Updated:</span>
+                <span className="text-sm">{ticket.latest_agent_comment.createdAt}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Last Comment:</span>
+                <span className="text-sm">{ticket.latest_agent_comment.creator_name}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Tag className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Last Comment:</span>
-              <span className="text-sm">{ticket.latest_agent_comment.creator_name}</span>
-            </div>
-          </div>
-        </CardContent>
+          </CardContent>
         </Card>
       )}
 
       <CardFooter className="flex pt-4">
         <div className="flex flex-row">
-        {ticket.isCustomerTicketEdit && (
-          <Link to={`/user/ticket/update/${ticket._id}`} className="">
-            <Button variant={'destructive'}>Update Ticket</Button>
-          </Link>
-        )}
-        {!ticket.isCustomerTicketEdit && (
-          <Link to={`/user/ticket/resolution/${ticket._id}`} className="">
-            <Button variant={'default'}>Check Resolution</Button>
-          </Link>
-        )}
+          {ticket.isCustomerTicketEdit && (
+            <Link to={`/user/ticket/update/${ticket._id}`} className="">
+              <Button variant={'destructive'}>Update Ticket</Button>
+            </Link>
+          )}
+          {ticket.isAgentCommented && ticket.status === "IN-PROGRESS" && (
+            <Link to={`/user/ticket/resolution/${ticket._id}`} className="">
+              <Button variant={'default'}>Check Resolution</Button>
+            </Link>
+          )}
         </div>
       </CardFooter>
     </Card>

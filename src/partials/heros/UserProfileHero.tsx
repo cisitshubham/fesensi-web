@@ -16,7 +16,7 @@ const UserProfileHero = ({ image, name, info }: IUserProfileHeroProps) => {
 
           {item.email ? (
             <a
-              href="mailto: {{ item.email }}"
+              href={`mailto:${item.email}`}
               target="_blank"
               className="text-gray-600 font-medium hover:text-primary"
               rel="noreferrer"

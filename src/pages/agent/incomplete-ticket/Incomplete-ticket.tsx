@@ -36,26 +36,33 @@ export default function IncompleteTicket() {
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('comment_text', reason);
-    formData.append('ticket_id', ticket?._id || '');
+
+    // Prepare the data to be submitted
+    const reasonType = 'defaultReasonType'; // Replace 'defaultReasonType' with the appropriate value
+    const incompleteData = {
+      ticketId: ticket?._id,
+      reasonType,
+      reason,
+      timestamp: new Date().toISOString()
+    };
 
     try {
       setLoading(true);
+      const formData = new FormData();
+      formData.append('ticket_id', ticket?._id || '');
+      formData.append('comment_text', reason);
       await ticketIncomplete(formData);
+      toast.success('Ticket marked as incomplete successfully.', { position: 'top-center' });
+      setTimeout(() => {
 
-      // Navigate back to tickets list or dashboard with a success notification
-    //   navigate('/');
-	toast.success('Ticket marked as incomplete successfully!');	
-	} catch (err) {
-		const message = err instanceof Error ? err.message : 'Failed to mark ticket as incomplete';
-		console.error('Error marking ticket as incomplete:', message);
-		toast.error('Failed to mark ticket as incomplete');
-		setError(true);
-		} finally {
-		setLoading(false);
-		setIsSubmitting(false);
-		}
+        navigate('/agent/mytickets');
+      }, 3000);
+    } catch (error) {
+      console.error('Error marking ticket as incomplete:', error);
+      setError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!ticket) {
@@ -80,13 +87,13 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
                 <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
                 <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>
-                  {ticket.priority} 
+                  {ticket.priority}
                 </Badge>
               </div>
             </div>

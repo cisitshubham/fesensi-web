@@ -9,7 +9,7 @@ import { KeenIcon } from '@/components';
 import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-
+import { useNavigate } from 'react-router';
 
 const UserCreateTicketForm = () => {
   const [title, setTitle] = useState('');
@@ -22,7 +22,7 @@ const UserCreateTicketForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-
+const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,24 +103,26 @@ const UserCreateTicketForm = () => {
         }
 
         if (result.data.success) {
-          toast.success('Ticket created successfully', { position: 'top-right' });
+          toast.success('Ticket created successfully', { position: 'top-center' });
           setTitle('');
           setDescription('');
           setCategory('');
           setPriority('');
-          // setFiles();
           setValidationErrors({});
+          setTimeout(() => {
+            navigate('/user/MyTickets'); 
+          }, 3000);
         } else {
+          toast.error('Failed to create ticket', {position :"top-center"});
           throw new Error(result.data.message || 'Failed to create ticket');
-		  toast.error('Failed to create ticket');
         }
       } catch (error: any) {
         setError(error.message || 'An unexpected error occurred.');
-		toast.error('An unexpected error occurred.');
+		toast.error('An unexpected error occurred.', {position :"top-center"});
       }
     } catch (error: any) {
       setError(error.message || 'An unexpected error occurred.');
-	  toast.error('An unexpected error occurred.');
+	  toast.error('An unexpected error occurred.', {position :"top-center"});
     } finally {
       setLoading(false);
     }
@@ -223,7 +225,7 @@ const UserCreateTicketForm = () => {
             >
               <KeenIcon icon="cloud-add" className="text-3xl" />
               <p className="text-gray-700 font-medium">Drag & drop files here</p>
-              <p className="text-sm text-gray-500">or click to select files</p>
+              <p className="text-sm text-gray-500">or click to select files(2Mb)</p>
             </div>
             <input
               type="file"
@@ -239,11 +241,15 @@ const UserCreateTicketForm = () => {
           </div>
           {/* Show selected files */}
           <div className="mt-2 text-sm text-gray-600">
-            {files.length > 0 ? (
-              files.map((file, index) => <p key={index}>{file.name}</p>)
-            ) : (
-              <p>No files selected</p>
-            )}
+          {files.map((file, index) => (
+                    <div key={index} className="relative w-16 h-16">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Selected File"
+                        className="w-full h-full object-cover rounded-lg border"
+                      />
+                    </div>
+                  ))}
           </div>
 
           <div className="flex gap-2 mt-4">

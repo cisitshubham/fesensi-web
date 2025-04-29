@@ -100,7 +100,7 @@ export const createTicket = async (formData: FormData) => {
 export const updateTicket = async (formData: FormData) => {
   let ticketID = formData.get('ticketId');
   try {
-    const response = await axiosInstance.post(`/admin/tickets/update/${ticketID}`, formData);
+    const response = await axiosInstance.post(`/tickets/ticket/update`, formData);
     return response;
   } catch (error: any) {
     if (error.response) {
@@ -232,9 +232,11 @@ export const GetMasterDropdown = async ()=>{
 
 
 
-export const CloseTicketUser = async (data: { ticketId: string| number }) => {
+export const CloseTicketUser = async (data: { ticket_id: string| number }) => {
+  console.log(data)
   try {
-    const response = await axiosInstance.post('/tickets/close', data); // Correct endpoint and payload
+    const response = await axiosInstance.post('/tickets/ticket/isTicketResolved', data);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error closing ticket:', error);
@@ -257,15 +259,21 @@ export const addcomment = async (formData: FormData) => {
 // agent 
 
 
-export const MyTickets = async ()=>{
-	try {
-		const response = await axiosInstance.get('/agent/myTickets');
-		return response.data;
-		} catch (error) {
-			console.error('Error fetching ticket by ID:', error);
-		}
-}
-export const MyTicketDetails = async (TicketId:any)=>{
+export const MyTickets = async (filters: any) => {
+  try {
+    const response = await axiosInstance.post('/agent/myTickets', filters);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.error('🚨 Server Error Response:', error.response.data); 
+    } else {
+      console.error('🚨 No Response from Server:', error.message); 
+    }
+    throw new Error('Failed to fetch tickets. Please try again later.'); 
+  }
+};
+
+export const MyTicketDetails = async (TicketId:string)=>{
 	try {
 		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
 		return response.data;		
@@ -278,7 +286,7 @@ export const MyTicketDetails = async (TicketId:any)=>{
 
 export const forceResolve = async (formData: FormData) => {
   try {
-    const response = await axiosInstance.post('agent/update/AddResovedPost', formData);
+    const response = await axiosInstance.post('/agent/update/AddResovedPost', formData);
     return response.data;
   } catch (error) {
     console.error('Error force resolving ticket:', error);
@@ -325,4 +333,15 @@ export const requestReassign = async (formData: FormData) => {
       console.error('Error force resolving ticket:', error);
     }
     return null;
+  }
+
+
+
+  export const GetPushNotifications = async () => {
+    try {
+      const response = await axiosInstance.post('/users/pushNotification');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching push notifications:', error);
+    }
   }

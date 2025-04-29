@@ -109,6 +109,7 @@ import UserUpdateTicketForm from '@/pages/user/update-ticket/update-ticket';
 import UserCreateTicketForm from '@/pages/user/createTicket/CreateTicket';
 import ReassignTicket from '@/pages/agent/Request-Reassignment/reassign';
 import ForceResolve from '@/pages/agent/force-Resolve/force-resolve';
+import BulkReassign from '@/pages/agent/bulk-reassignment/bulk-reassign';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -233,6 +234,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/incomplete-ticket" element={<IncompleteTicket />} />
           <Route path="/agent/reassign-ticket/:id" element={<ReassignTicket />} />
           <Route path="/agent/Force-resolve/:id" element={<ForceResolve />} />
+          <Route path="/agent/bulk-reassignment" element={<BulkReassign />} />
 
           {/* admin */}
           <Route path="/admin/allUsers" element={<AdminUsersPage />} />

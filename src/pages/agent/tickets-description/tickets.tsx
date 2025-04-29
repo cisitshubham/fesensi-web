@@ -26,9 +26,13 @@ const navigate = useNavigate();
     const fetchTicketData = async () => {
       try {
         setLoading(true);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
         const response = await MyTicketDetails(id);
 
         setTicketData(response.data);
+        console.log(response.data, 'response.data');
         setLoading(false);
       } catch (error: any) {
         setError(error);
@@ -39,7 +43,7 @@ const navigate = useNavigate();
     fetchTicketData();
   }, []);
 
-
+console.log(ticketData, 'ticketData');
   
 
 const handlecloseTicket = async () => {
@@ -50,11 +54,14 @@ const handlecloseTicket = async () => {
       await closeTicket(formData); // Assuming this function is defined elsewhere
       setLoading(false);
     //   navigate('/')
-	toast.success('Ticket closed successfully!');
+	toast.success('Ticket closed successfully!', { position: "top-center" });
+  setTimeout(() => {
+    navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
+  }, 3000);
     }
     catch (error) {
       console.error('Error closing ticket:', error);
-	  toast.error('Failed to close ticket!');
+	  toast.error('Failed to close ticket!', { position: "top-center" });
       setLoading(false);
     }
   };
@@ -207,7 +214,7 @@ const handlecloseTicket = async () => {
 
 
         {/* update resolution  */}
-        {ticketData.status === TicketStatus.InProgress && (
+        {ticketData.status === TicketStatus.InProgress && ticketData.isUserCommented &&(
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`
@@ -237,7 +244,7 @@ const handlecloseTicket = async () => {
           
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && ticketData.isResolved === false && (
+        {ticketData.status === TicketStatus.Open  && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket'

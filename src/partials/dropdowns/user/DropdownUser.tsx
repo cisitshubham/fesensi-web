@@ -25,7 +25,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
       themeMode: newThemeMode
     });
   };
-
+console.log(user)
 
   const buildHeader = () => {
     return (
@@ -46,8 +46,8 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
             >
               {user?.data?.first_name || ''}
             </Link>
-            <a href={`mailto:${user?.email || ''}`}>
-              {user?.email || 'No Email'}
+            <a href={`mailto:${user?.data?.email || ''}`}>
+              {user?.data?.email || 'No Email'}
             </a>
 
             <div className="text-xs text-gray-600">

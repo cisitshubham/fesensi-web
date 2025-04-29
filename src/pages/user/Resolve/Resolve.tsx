@@ -55,35 +55,40 @@ export default function UserResolveTicket() {
     if (!ticket?._id) return
 
     try {
-      await CloseTicketUser({ ticketId: ticket._id })
-    //   navigate("/") 
-	  toast.success("Ticket resolved successfully.")
+      await CloseTicketUser({ ticket_id: ticket._id })
+	  toast.success("Ticket resolved successfully.", {position :"top-center"})
+    setTimeout(() => {
+      navigate("/user/MyTickets")
+    }, 3000);
     } catch (err) {
       console.error("Failed to resolve ticket:", err)
-	  toast.error("Failed to resolve ticket. Please try again.")
+	  toast.error("Failed to resolve ticket. Please try again.", {position :"top-center"})
     }
   }
-
   const handleSubmitFeedback = async () => {
-    if (!comment_text.trim() || !ticket?._id) return
-
+    if (!comment_text.trim() || !ticket?._id) return;
+  
     try {
-      setSubmitting(true)
+      setSubmitting(true);
       const formData = new FormData();
       formData.append("comment_text", comment_text);
       formData.append("ticket", String(ticket._id));
       await addcomment(formData);
-	  toast.success("Query submitted successfully.")
-      setShowFeedback(false)
+  
+      toast.success("Query submitted successfully.", { position: "top-center" });
+      setShowFeedback(false);
+  
+      setTimeout(() => {
+        navigate("/user/MyTickets");
+      }, 3000);
     } catch (err) {
-      console.error("Failed to submit feedback:", err)
-	  toast.error("Failed to submit feedback. Please try again.")
+      console.error("Failed to submit feedback:", err);
+      toast.error("Failed to submit feedback. Please try again.", { position: "top-center" });
     } finally {
-      setSubmitting(false)
-    //   navigate("/") 
-		toast.success("Query submitted successfully.")
+      setSubmitting(false);
     }
-  }
+  };
+  
 
   const getStatusColor = (status?: string) => {
     const map: Record<string, string> = {

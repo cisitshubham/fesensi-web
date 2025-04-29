@@ -10,25 +10,17 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { KeenIcon } from '@/components';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const UpdateTicketForm = () => {
   const { id } = useParams<{ id: string }>();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [priority, setPriority] = useState('');
-  const [status, setStatus] = useState<{ name: string }[]>([]);
   const [files, setFiles] = useState<File[]>([]);
-  const [categories, setCategories] = useState<{ _id: string; title: string }[]>([]);
-  const [priorities, setPriorities] = useState<{ _id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [adminUsers, setAdminUsers] = useState<{ _id: string; first_name: string }[]>([]);
   const [ticket, setTicket] = useState<any>(null);
-  const [agentUser, setAgentUser] = useState<string>('');
-  const [assigned_to, setAssignedTo] = useState<string>('');
-  const [pStatus, setpStatus] = useState<string>('');
-
+  const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,15 +45,10 @@ const UpdateTicketForm = () => {
     const fetchCategories = async () => {
       try {
         const response = await getDropdown();
-        setStatus(response.data.status || []);
-        setPriorities(response.data.priorities || []);
-        setCategories(response.data.categories || []);
-        if (Array.isArray(response.data.AdminUsers)) {
-          setAdminUsers(response.data.AdminUsers);
-        }
+
       } catch (error: any) {
         toast.error(error || 'Failed to load categories and priorities. Please try again.', {
-          position: 'top-right',
+          position: 'top-center',
           cancel: true
         });
       }
@@ -75,20 +62,17 @@ const UpdateTicketForm = () => {
         try {
           const response = await getTicketById(id);
           if (!response) {
-            toast.error('Failed to load ticket.', { position: 'top-right', cancel: true });
+            toast.error('Failed to load ticket.', { position: 'top-center', cancel: true });
           }
           if (response.data) {
             setTicket(response.data);
             setTitle(response.data.title || '');
             setDescription(response.data.description || '');
-            setCategory(response.data.category || '');
-            setPriority(response.data.priority || '');
-            setAssignedTo(response.data.assigned_to || '');
-            setpStatus(response.data.status || '');
+ 
           }
         } catch {
           toast.error('Failed to load ticket.', {
-            position: 'top-right',
+            position: 'top-center',
             action: 'updateTicket',
             cancel: true
           });
@@ -105,34 +89,22 @@ const UpdateTicketForm = () => {
 
     try {
       const formData = new FormData();
-      formData.append('title', title);
       formData.append('description', description);
 
-      if (priority && isValidObjectId(priority)) {
-        formData.append('priority', priority);
-      }
-
-      if (category && isValidObjectId(category)) {
-        formData.append('category', category);
-      }
+  
+  
 
       if (ticket?._id && isValidObjectId(ticket._id)) {
-        formData.append('ticketId', ticket._id);
+        formData.append('ticket_id', ticket._id);
       }
 
-      if (pStatus) {
-        formData.append('status', pStatus);
-      }
-      if (agentUser && isValidObjectId(agentUser)) {
-        formData.append('assigned_to', agentUser);
-      }
-
+  
       function isValidObjectId(value: any) {
         return /^[0-9a-fA-F]{24}$/.test(value);
       }
 
       if (files) {
-        Array.from(files).forEach((file) => formData.append('images', file));
+        Array.from(files).forEach((file) => formData.append('file', file));
       }
 
       let result = await updateTicket(formData);
@@ -141,14 +113,19 @@ const UpdateTicketForm = () => {
       }
       if (result.data.success) {
         toast.success('Ticket updated successfully', {
-          position: 'bottom-right',
+          position: "top-center",
           action: 'updateTicket',
           cancel: true
         });
+      setTimeout(() => {
+        navigate('/user/Mytickets'); // Redirect to the desired page after 3 seconds
+      }, 3000);
+      
       }
+
     } catch {
       toast.error('Failed to update ticket. Please try again.', {
-        position: 'bottom-right',
+        position: "top-center",
         action: 'updateTicket',
         cancel: true
       });
@@ -168,8 +145,7 @@ const UpdateTicketForm = () => {
           onClick={() => {
             setTitle('');
             setDescription('');
-            setCategory('');
-            setPriority('');
+        
           }}
           className="btn btn-sm ml-auto text-gray-500 mb-1 bg-gray-300 hover:bg-gray-200"
         >

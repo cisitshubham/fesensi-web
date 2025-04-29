@@ -9,12 +9,35 @@ import {
   DropdownNotificationsItem5,
   DropdownNotificationsItem6
 } from './items';
-
+import { GetPushNotifications } from '@/api/api';
+import { Notificationtype } from '@/types';
 const DropdownNotificationsAll = () => {
+
+
+  const [notifications, setNotifications] = useState<Notificationtype[]>([]);
   const footerRef = useRef<HTMLDivElement>(null);
   const [listHeight, setListHeight] = useState<number>(0);
   const [viewportHeight] = useViewport();
   const offset = 300;
+
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await GetPushNotifications();
+      if (response && Array.isArray(response.data)) {
+        setNotifications(response.data);
+        console.log(notifications)
+      } else {
+        console.error('Invalid response format:', response);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   useEffect(() => {
     if (footerRef.current) {
@@ -25,78 +48,35 @@ const DropdownNotificationsAll = () => {
   }, [viewportHeight]);
 
   const buildList = () => {
+    if (notifications.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center pt-3 pb-4">
+          <p className="text-gray-500">No notifications available</p>
+        </div>
+      );
+    }
+
     return (
       <div className="flex flex-col gap-5 pt-3 pb-4 divider-y divider-gray-200">
-        <DropdownNotificationsItem1
-          userName="Joe Lincoln"
-          avatar="300-4.png"
-          description="mentioned you in"
-          link="Latest Trends"
-          label="topic"
-          time="18 mins ago"
-          specialist="Web Design 2024"
-          text="For an expert opinion, check out what Mike has to say on this topic!"
-        />
-
-        <div className="border-b border-b-gray-200"></div>
-
-        <DropdownNotificationsItem2 />
-
-        <div className="border-b border-b-gray-200"></div>
-
-        <DropdownNotificationsItem3
-          userName="Guy Hawkins"
-          avatar="300-27.png"
-          badgeColor="bg-gray-400"
-          description="requested access to"
-          link="AirSpace"
-          day="project"
-          date="14 hours ago"
-          info="Dev Team"
-        />
-
-        <div className="border-b border-b-gray-200"></div>
-
-        <DropdownNotificationsItem4 />
-
-        <div className="border-b border-b-gray-200"></div>
-
-        <DropdownNotificationsItem5
-          userName="Raymond Pawell"
-          avatar="300-11.png"
-          badgeColor="badge-success"
-          description="posted a new article"
-          link="2024 Roadmap"
-          day=""
-          date="1 hour ago"
-          info="Roadmap"
-        />
-
-        <div className="border-b border-b-gray-200"></div>
-
-        <DropdownNotificationsItem6 />
+        {notifications.map((notification) => (
+          <div key={notification.id} className="notification-item">
+            <p className="notification-title">{notification.title}</p>
+            <p className="notification-message">{notification.message}</p>
+            <span className={`notification-type ${notification.type}`}>{notification.type}</span>
+            <span className="notification-time">{notification.createdAt}</span>
+          </div>
+        ))}
       </div>
     );
   };
 
-  const buildFooter = () => {
-    return (
-      <>
-        <div className="border-b border-b-gray-200"></div>
-        <div className="grid grid-cols-2 p-5 gap-2.5">
-          <button className="btn btn-sm btn-light justify-center">Archive all</button>
-          <button className="btn btn-sm btn-light justify-center">Mark all as read</button>
-        </div>
-      </>
-    );
-  };
+
 
   return (
     <div className="grow">
       <div className="scrollable-y-auto" style={{ maxHeight: `${listHeight}px` }}>
         {buildList()}
       </div>
-      <div ref={footerRef}>{buildFooter()}</div>
     </div>
   );
 };

@@ -45,6 +45,7 @@ export type Tickettype = {
     role: string;
     createdAt: string;
   };
+  isSelected?: boolean;
 };
 
 
@@ -56,10 +57,10 @@ export enum TicketStatus {
 }
 
 export enum TicketPriority {
-  Low = 'LOW',
   Medium = 'MEDIUM',
-  High = "HIGH",
-  Critical = 'CRITICAL'
+  High = 'HIGH',
+  Critical = 'CRITICAL',
+  Low = 'LOW',
 }
 
 export type User = {
@@ -101,4 +102,15 @@ export type MasterDropdownDatatype = {
     _id: string;
     first_name: string;
   }[];
+};
+
+
+
+export type Notificationtype = {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  createdAt: string;
+  read: boolean;
 };

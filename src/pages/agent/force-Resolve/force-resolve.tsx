@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MyTicketDetails } from '@/api/api';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Tickettype, TicketPriority } from '@/types';
 import { useLocation } from 'react-router';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
@@ -34,7 +34,7 @@ export default function ForceResolve() {
   const [status, setStatus] = useState<string>('');
   const [selectedResolution, setSelectedResolution] = useState('');
   const [desc, setDesc] = useState('');
-
+const navigate = useNavigate()
   const { dropdownData } = useMasterDropdown();
   const location = useLocation();
   const { id } = useParams();
@@ -47,7 +47,7 @@ export default function ForceResolve() {
 
   const handleResolve = async () => {
     if (!selectedResolution) {
-		toast.error('Please select a resolution reason.');
+		toast.error('Please select a resolution reason.', { position: "top-center" });
 		return;
     }
 
@@ -66,15 +66,16 @@ export default function ForceResolve() {
 
       const response = await forceResolve(formData);
       if (response.success) {
-		toast.success('Ticket resolved successfully!');
+		toast.success('Ticket resolved successfully!', { position: "top-center" });
+    navigate('/agent/mytickets')
 			  
 	} else {
-		toast.error('Failed to resolve the ticket. Please try again.');
+		toast.error('Failed to resolve the ticket. Please try again.', { position: "top-center" });
 	}
     }
     catch (error) {
       console.error('Error resolving ticket:', error);
-	  toast.error('An error occurred while resolving the ticket.');
+	  toast.error('An error occurred while resolving the ticket.', { position: "top-center" });
 	}
     finally {
       setLoading(false);
@@ -85,12 +86,15 @@ export default function ForceResolve() {
     const fetchTicket = async () => {
       try {
         setLoading(true);
+        if (!id) {
+          throw new Error('Ticket ID is not available.');
+        }
         const response = ticketFromState ? { data: ticketFromState } : await MyTicketDetails(id);
         setTicketData(response.data);
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
-		toast.error('Failed to fetch ticket details.');
+		toast.error('Failed to fetch ticket details.', { position: "top-center" });
         setError(message);
       } finally {
         setLoading(false);
