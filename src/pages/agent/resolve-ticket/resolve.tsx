@@ -76,9 +76,15 @@ const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispat
 
       {files.length > 0 ? (
         <div className="mt-2 text-sm text-gray-600">
-          {files.map((file, i) => (
-            <p key={i}>{file.name}</p>
-          ))}
+                {files.map((file, index) => (
+                    <div key={index} className="relative w-16 h-16">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Selected File"
+                        className="w-full h-full object-cover rounded-lg border"
+                      />
+                    </div>
+                  ))}
         </div>
       ) : (
         <p className="text-sm text-gray-500 mt-2">No files selected</p>

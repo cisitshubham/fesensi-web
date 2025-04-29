@@ -108,10 +108,9 @@ const navigate = useNavigate();
           setDescription('');
           setCategory('');
           setPriority('');
-          // setFiles();
           setValidationErrors({});
           setTimeout(() => {
-            navigate('/user/MyTickets'); // Redirect to a success page or another route
+            navigate('/user/MyTickets'); 
           }, 3000);
         } else {
           toast.error('Failed to create ticket', {position :"top-center"});
@@ -242,11 +241,15 @@ const navigate = useNavigate();
           </div>
           {/* Show selected files */}
           <div className="mt-2 text-sm text-gray-600">
-            {files.length > 0 ? (
-              files.map((file, index) => <p key={index}>{file.name}</p>)
-            ) : (
-              <p>No files selected</p>
-            )}
+          {files.map((file, index) => (
+                    <div key={index} className="relative w-16 h-16">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Selected File"
+                        className="w-full h-full object-cover rounded-lg border"
+                      />
+                    </div>
+                  ))}
           </div>
 
           <div className="flex gap-2 mt-4">
