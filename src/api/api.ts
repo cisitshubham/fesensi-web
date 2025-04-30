@@ -190,49 +190,49 @@ export const createCategories = async (formData: FormData) => {
 
 export const createRoles = async (formData: FormData) => {
   try {
-	const response = await axiosInstance.post('/admin/roles/create', formData);
-	return response.data;
-	  } catch (error) {
-	console.error('Error creating role:', error);
-	  }
-	    return null;	  
+    const response = await axiosInstance.post('/admin/roles/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating role:', error);
+  }
+  return null;
 };
 
 
 
 
-export const GetUserTickets = async ()=>{
+export const GetUserTickets = async () => {
   try {
     const response = await axiosInstance.get('/tickets/ticket-list');
     return response.data;
-    } catch (error) {
-      console.error('Error fetching ticket by ID:', error);
-    }
+  } catch (error) {
+    console.error('Error fetching ticket by ID:', error);
+  }
 }
 
-export const GetUserTicketDetails = async (TicketId:any)=>{
+export const GetUserTicketDetails = async (TicketId: any) => {
   try {
-    const response = await axiosInstance.get(`/tickets/ticket/${TicketId}`);		
-    return response.data;		
-    } catch (error) {	
-      console.error('Error fetching ticket by ID:', error);
-    }
+    const response = await axiosInstance.get(`/tickets/ticket/${TicketId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ticket by ID:', error);
+  }
 }
 
 
 
-export const GetMasterDropdown = async ()=>{
+export const GetMasterDropdown = async () => {
   try {
     const response = await axiosInstance.get('/tickets/ticket-dropdowns');
     return response.data;
-    } catch (error) {
-      console.error('Error fetching ticket by ID:', error);
-    }
+  } catch (error) {
+    console.error('Error fetching ticket by ID:', error);
+  }
 }
 
 
 
-export const CloseTicketUser = async (data: { ticket_id: string| number }) => {
+export const CloseTicketUser = async (data: { ticket_id: string | number }) => {
   console.log(data)
   try {
     const response = await axiosInstance.post('/tickets/ticket/isTicketResolved', data);
@@ -256,6 +256,19 @@ export const addcomment = async (formData: FormData) => {
 }
 
 
+
+
+export const addFeedback = async (formData: FormData) => {
+  try {
+    const response =await axiosInstance.post('/tickets/ticket/addFeedback', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding feedback:', error);
+  }
+  return null;
+}
+
+
 // agent 
 
 
@@ -265,21 +278,21 @@ export const MyTickets = async (filters: any) => {
     return response.data;
   } catch (error: any) {
     if (error.response) {
-      console.error('🚨 Server Error Response:', error.response.data); 
+      console.error('🚨 Server Error Response:', error.response.data);
     } else {
-      console.error('🚨 No Response from Server:', error.message); 
+      console.error('🚨 No Response from Server:', error.message);
     }
-    throw new Error('Failed to fetch tickets. Please try again later.'); 
+    throw new Error('Failed to fetch tickets. Please try again later.');
   }
 };
 
-export const MyTicketDetails = async (TicketId:string)=>{
-	try {
-		const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);		
-		return response.data;		
-		} catch (error) {	
-			console.error('Error fetching ticket by ID:', error);
-		}
+export const MyTicketDetails = async (TicketId: string) => {
+  try {
+    const response = await axiosInstance.get(`/agent/myTicket/details/${TicketId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ticket by ID:', error);
+  }
 }
 
 
@@ -304,62 +317,62 @@ export const requestReassign = async (formData: FormData) => {
 }
 
 
-	export const ticketIncomplete = async (formData: FormData) => {
-    try {
-      const response = await axiosInstance.post('/agent/update/ticketIncomplete', formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error force resolving ticket:', error);
-    }
-    return null;
+export const ticketIncomplete = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/agent/update/ticketIncomplete', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error force resolving ticket:', error);
   }
+  return null;
+}
 
 
 
-	export const closeTicket = async (formData: FormData) => {
-    try {
-      const response = await axiosInstance.post('/agent/closed/ticket', formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error force resolving ticket:', error);
-    }
-    return null;
+export const closeTicket = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/agent/closed/ticket', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error force resolving ticket:', error);
   }
-	export const updateResolution = async (formData: FormData) => {
-    try {
-      const response = await axiosInstance.post('/agent/update/resolution', formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error force resolving ticket:', error);
-    }
-    return null;
+  return null;
+}
+export const updateResolution = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/agent/update/resolution', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error force resolving ticket:', error);
   }
+  return null;
+}
 
 
 
-  export const GetPushNotifications = async () => {
-    try {
-      const response = await axiosInstance.post('/users/pushNotification');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching push notifications:', error);
-    }
+export const GetPushNotifications = async () => {
+  try {
+    const response = await axiosInstance.post('/users/pushNotification');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching push notifications:', error);
   }
+}
 
-  export const getReassignList = async () => {
-    try {
-      const response = await axiosInstance.get('/agent/myTicket/RequestReassign/');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching reassign list:', error);
-    }
+export const getReassignList = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign list:', error);
   }
+}
 
- export const getReassignListPending = async () => {
-    try {
-      const response = await axiosInstance.get('/agent/myTicket/RequestReassign/pending');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching reassign list:', error);
-    }
+export const getReassignListPending = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/pending');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign list:', error);
   }
+}

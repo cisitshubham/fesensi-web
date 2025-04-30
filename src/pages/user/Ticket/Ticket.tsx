@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { getPriorityColor,getStatusBadge,GetStatusColor } from '@/pages/global-components/GetStatusColor';
 
 export default function UserTicketDetails() {
   const { id } = useParams<{ id: string }>();
@@ -46,26 +47,8 @@ export default function UserTicketDetails() {
     }
   }, [id]);
   console.log(ticket, 'ticket');
-  const getStatusColor = (status?: string) => {
-    const map: Record<string, string> = {
-      open: 'bg-green-500 hover:bg-green-600',
-      pending: 'bg-yellow-500 hover:bg-yellow-600',
-      closed: 'bg-gray-500 hover:bg-gray-600',
-      resolved: 'bg-blue-500 hover:bg-blue-600'
-    };
-    return map[status?.toLowerCase() ?? ''] || 'bg-gray-500 hover:bg-gray-600';
-  };
 
-  const getPriorityColor = (priority?: string) => {
-    const map: Record<string, string> = {
-      low: 'bg-blue-500 hover:bg-blue-600',
-      medium: 'bg-yellow-500 hover:bg-yellow-600',
-      high: 'bg-orange-500 hover:bg-orange-600',
-      critical: 'bg-red-500 hover:bg-red-600'
-    };
-    return map[priority?.toLowerCase() ?? ''] || 'bg-gray-500 hover:bg-gray-600';
-  };
-
+  const statusBadge = getStatusBadge(ticket?.status || "")
   if (loading) {
     return (
       <Card className="w-full max-w-3xl mx-auto mt-8">
@@ -103,10 +86,11 @@ export default function UserTicketDetails() {
             <p className="text-sm text-muted-foreground">{ticket.title || 'Untitled Ticket'}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Badge className={getStatusColor(ticket.status)}>{ticket.status || 'Unknown'}</Badge>
-            <Badge className={getPriorityColor(ticket.priority)}>
-              {ticket.priority || 'No Priority'}
-            </Badge>
+          <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+            <Badge className={`${statusBadge.color} flex items-center gap-1`}>
+                  {statusBadge.icon}
+                  {ticket.status}
+                </Badge>
           </div>
         </div>
       </CardHeader>

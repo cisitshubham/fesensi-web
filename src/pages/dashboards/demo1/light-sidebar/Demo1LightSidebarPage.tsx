@@ -36,7 +36,6 @@ const Demo1LightSidebarPage = () => {
     const getUser = async () => {
       try {
         const userData = await fetchUser();
-        console.log('Fetched User Data:', userData); // Debugging log
         setUser(userData.data);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -47,10 +46,8 @@ const Demo1LightSidebarPage = () => {
   }, []);
 
   const roles = user?.role || []; 
-  console.log('Roles:', roles); // Log the roles to check if they are being fetched correctly
 
   useEffect(() => {
-    console.log('Roles in useEffect:', roles); // Debugging log
     if (roles.some((role: { role_name: string; }) => role.role_name === 'ADMIN')) {
       setSelectedRoles(['ADMIN']);
     } else if (
@@ -64,7 +61,6 @@ const Demo1LightSidebarPage = () => {
   }, [roles]);
 
   const isDropdownReadonly = roles.length === 1;
-console.log(selectedRoles)
   return (
     <Fragment>
       <Container>

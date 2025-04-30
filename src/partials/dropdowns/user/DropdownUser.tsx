@@ -25,7 +25,6 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
       themeMode: newThemeMode
     });
   };
-console.log(user)
 
   const buildHeader = () => {
     return (

@@ -111,6 +111,7 @@ import ReassignTicket from '@/pages/agent/Request-Reassignment/reassign';
 import ForceResolve from '@/pages/agent/force-Resolve/force-resolve';
 import BulkReassign from '@/pages/agent/bulk-reassignment/bulk-reassign';
 import RequestedReassignment from '@/pages/agent/requested-reassignment/requested-reassignmnet';
+import FeedbackPage from '@/pages/user/feedback/feedback-main';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -255,6 +256,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/ticket/update/:id" element={<UserUpdateTicketForm />} />
           <Route path="/user/ticket/resolution/:id" element={<UserResolveTicket />} />
           <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
+          <Route path="user/feedback" element={<FeedbackPage/>} />
 
 
         </Route>

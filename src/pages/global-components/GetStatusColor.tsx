@@ -16,8 +16,8 @@ export  function GetStatusColor(status: TicketStatus ) {
 
 export function getPriorityColor(priority: TicketPriority) {
     const priorityColors: Record<TicketPriority, string> = {
-        [TicketPriority.Low]: "blue-500",
-        [TicketPriority.Medium]: "yellow-500",
+      [TicketPriority.Medium]: "yellow-500",
+      [TicketPriority.Low]: "blue-500",
         [TicketPriority.High]: "orange-500",
         [TicketPriority.Critical]: "red-500",
     };

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
 import type { Tickettype } from "@/types"
 import { Bell, Calendar, Clock, ArrowRight, Tag, User, MessageSquare } from "lucide-react"
-import { getStatusBadge } from "@/pages/global-components/GetStatusColor"
+import { getStatusBadge,getPriorityColor } from "@/pages/global-components/GetStatusColor"
 
 interface TicketProps {
   ticket: Tickettype
@@ -14,17 +14,6 @@ interface TicketProps {
 export default function UserTicket({ ticket }: TicketProps) {
   const statusBadge = getStatusBadge(ticket.status)
 
-  // Function to format date to relative time (e.g., "2 days ago")
-  const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffTime = Math.abs(now.getTime() - date.getTime())
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-    if (diffDays === 0) return "Today"
-    if (diffDays === 1) return "Yesterday"
-    return `${diffDays} days ago`
-  }
 
   // Assuming ticket has these properties (add them to your type if needed)
   const priority = ticket.priority || "Medium"
@@ -33,18 +22,7 @@ export default function UserTicket({ ticket }: TicketProps) {
   const assignedTo = ticket.assigned_to || "Unassigned"
 
   // Get priority color
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return "bg-red-100 text-red-800 border-red-200"
-      case "medium":
-        return "bg-amber-100 text-amber-800 border-amber-200"
-      case "low":
-        return "bg-green-100 text-green-800 border-green-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
+
 
   return (
     <Link to={`/user/ticket/${ticket._id}`} className="block w-full">
@@ -74,9 +52,7 @@ export default function UserTicket({ ticket }: TicketProps) {
 
             {/* Right side content - New section */}
             <div className="flex flex-col gap-2 items-end min-w-[120px]">
-              <Badge variant="outline" className={`${getPriorityColor(priority)} px-2 py-0.5`}>
-                {priority} Priority
-              </Badge>
+           <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
 
               <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
                 <div className="flex items-center gap-1.5">
@@ -86,7 +62,7 @@ export default function UserTicket({ ticket }: TicketProps) {
 
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>{getRelativeTime(createdAt)}</span>
+                  <span>created at: {(createdAt)}</span>
                 </div>
 
            

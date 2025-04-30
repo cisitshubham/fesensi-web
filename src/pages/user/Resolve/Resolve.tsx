@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from "lucide-react"
 
 import { getTicketById, addcomment } from "@/api/api"
-import type { Tickettype } from "@/types"
+import { TicketStatus, type Tickettype } from "@/types"
 import { Alert } from "@/components"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,9 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { CloseTicketUser } from "@/api/api"
-import {toast} from 'sonner'
+import { getStatusBadge, getPriorityColor } from "@/pages/global-components/GetStatusColor"
+import { toast } from 'sonner'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export default function UserResolveTicket() {
   const { id } = useParams<{ id: string }>()
@@ -26,7 +28,8 @@ export default function UserResolveTicket() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [comment_text, setFeedback] = useState("")
   const [submitting, setSubmitting] = useState(false)
-
+  const [showDialog, setShowDialog] = useState(false)
+  
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -42,7 +45,7 @@ export default function UserResolveTicket() {
         setLoading(false)
       }
     }
-
+    
     if (id) {
       fetchTicket()
     } else {
@@ -50,34 +53,35 @@ export default function UserResolveTicket() {
       setLoading(false)
     }
   }, [id])
-
+  
+  const statusBadge = getStatusBadge(ticket?.status || "")
+  
   const handleResolve = async () => {
     if (!ticket?._id) return
 
     try {
       await CloseTicketUser({ ticket_id: ticket._id })
-	  toast.success("Ticket resolved successfully.", {position :"top-center"})
-    setTimeout(() => {
-      navigate("/user/MyTickets")
-    }, 3000);
+      toast.success("Ticket resolved successfully.", { position: "top-center" })
+      setShowDialog(true); // Open the dialog box
     } catch (err) {
       console.error("Failed to resolve ticket:", err)
-	  toast.error("Failed to resolve ticket. Please try again.", {position :"top-center"})
+      toast.error("Failed to resolve ticket. Please try again.", { position: "top-center" })
     }
   }
+
   const handleSubmitFeedback = async () => {
     if (!comment_text.trim() || !ticket?._id) return;
-  
+
     try {
       setSubmitting(true);
       const formData = new FormData();
       formData.append("comment_text", comment_text);
       formData.append("ticket", String(ticket._id));
       await addcomment(formData);
-  
+
       toast.success("Query submitted successfully.", { position: "top-center" });
       setShowFeedback(false);
-  
+
       setTimeout(() => {
         navigate("/user/MyTickets");
       }, 3000);
@@ -88,27 +92,9 @@ export default function UserResolveTicket() {
       setSubmitting(false);
     }
   };
-  
 
-  const getStatusColor = (status?: string) => {
-    const map: Record<string, string> = {
-      open: "bg-green-500 hover:bg-green-600",
-      pending: "bg-yellow-500 hover:bg-yellow-600",
-      closed: "bg-gray-500 hover:bg-gray-600",
-      resolved: "bg-blue-500 hover:bg-blue-600",
-    }
-    return map[status?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
-  }
 
-  const getPriorityColor = (priority?: string) => {
-    const map: Record<string, string> = {
-      low: "bg-blue-500 hover:bg-blue-600",
-      medium: "bg-yellow-500 hover:bg-yellow-600",
-      high: "bg-orange-500 hover:bg-orange-600",
-      critical: "bg-red-500 hover:bg-red-600",
-    }
-    return map[priority?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
-  }
+
 
   if (loading) {
     return (
@@ -148,7 +134,10 @@ export default function UserResolveTicket() {
               <CardTitle className="  text-sm text-muted-foreground mt-1">Ticket #{ticket._id}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
+              <Badge className={`${statusBadge.color} flex items-center`}>
+                {statusBadge.icon}
+                {ticket.status}
+              </Badge>
               <Badge className={getPriorityColor(ticket.priority)}>{ticket.priority}</Badge>
             </div>
           </div>
@@ -230,7 +219,12 @@ export default function UserResolveTicket() {
           <div className="w-full">
             <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
             <div className="flex gap-4 mb-4">
-              <Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
+              <Button
+                variant="default"
+                className="flex items-center gap-2"
+                onClick={handleResolve}
+                disabled={ticket.status === TicketStatus.Resolved || ticket.status === TicketStatus.Closed}
+              >
                 <CheckCircle className="h-4 w-4" />
                 Yes, mark as resolved
               </Button>
@@ -238,6 +232,7 @@ export default function UserResolveTicket() {
                 variant="outline"
                 className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
                 onClick={() => setShowFeedback(true)}
+                disabled={ticket.status === TicketStatus.Resolved || ticket.status === TicketStatus.Closed}
               >
                 <XCircle className="h-4 w-4" />
                 No, I need more help
@@ -277,6 +272,24 @@ export default function UserResolveTicket() {
           </div>
         </CardFooter>
       </Card>
-    </div>
+      {showDialog && (
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent className="">
+            <Card className="p-6">
+              <CardHeader>
+                <CardTitle>Ticket Resolved</CardTitle>
+              </CardHeader>
+              <p>Your ticket has been successfully resolved. Thank you for your patience!</p>
+              <p className="text-gray-500">Please rate your expierence</p>
+              <CardFooter className="flex flex-row justify-between items-center mt-4">
+                <Button onClick={() => navigate("/user/feedback")}>Rate</Button>
+                <Button variant={"outline"} onClick={() => navigate("/user/MyTickets")}>Go to My Tickets</Button>
+              </CardFooter>
+            </Card>
+          </DialogContent>
+        </Dialog>
+      )
+      }
+    </div >
   )
 }
