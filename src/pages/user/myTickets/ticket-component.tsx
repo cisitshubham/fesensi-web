@@ -16,10 +16,6 @@ export default function UserTicket({ ticket }: TicketProps) {
 
 
   // Assuming ticket has these properties (add them to your type if needed)
-  const priority = ticket.priority || "Medium"
-  const category = ticket.category || "Support"
-  const createdAt = ticket.createdAt || new Date().toISOString()
-  const assignedTo = ticket.assigned_to || "Unassigned"
 
   // Get priority color
 
@@ -57,12 +53,12 @@ export default function UserTicket({ ticket }: TicketProps) {
               <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
                 <div className="flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5" />
-                  <span>{category}</span>
+                  <span>{ticket.category}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>created at: {(createdAt)}</span>
+                  <span>created at: {(ticket.createdAt)}</span>
                 </div>
 
            
@@ -79,7 +75,7 @@ export default function UserTicket({ ticket }: TicketProps) {
 
           <div className="flex items-center text-sm text-gray-500">
             <User className="w-4 h-4 mr-1.5" />
-            <span>{assignedTo}</span>
+            <span>{ticket.assigned_to}</span>
             <ArrowRight className="w-4 h-4 ml-2 text-gray-400 group-hover:text-primary transition-colors" />
           </div>
         </CardFooter>

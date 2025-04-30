@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import ActivityLogAndComments from './activity-log-and-comments';
 import { useEffect, useState } from 'react';
 import { MyTicketDetails } from '@/api/api';
-import { getPriorityColor,GetStatusColor } from '@/pages/global-components/GetStatusColor';
+import { getPriorityColor,getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import { closeTicket } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -74,7 +74,7 @@ const handlecloseTicket = async () => {
     creator: log.creator || { _id: 'unknown', first_name: 'Unknown' }, // Provide a default creator
   }));
   const agentComments = ticketData.agentComment ? [ticketData.agentComment] : []; // Replace with actual comments data
-
+const statusBadge = getStatusBadge(ticket?.status || "")
   return (
     <div className="container mx-auto px-6 ">
       <div className="flex flex-col  md:flex-row gap-6">
@@ -92,7 +92,10 @@ const handlecloseTicket = async () => {
                   </div>
                   <div className="flex gap-2">
                     <Badge className={'bg-slate-500'}>{ticketData.category}</Badge>
-                    <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
+                    <Badge className={`${statusBadge.color} flex items-center gap-1`}>
+                  {statusBadge.icon}
+                  {ticket.status}
+                </Badge>
                     <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
                   </div>
                 </div>

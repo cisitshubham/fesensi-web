@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from "lucide-react"
 
 import { getTicketById, addcomment } from "@/api/api"
-import { TicketStatus, type Tickettype } from "@/types"
+import type { Tickettype } from "@/types"
 import { Alert } from "@/components"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,6 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { CloseTicketUser } from "@/api/api"
-import { getStatusBadge, getPriorityColor } from "@/pages/global-components/GetStatusColor"
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -29,7 +28,7 @@ export default function UserResolveTicket() {
   const [comment_text, setFeedback] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
-  
+
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -45,7 +44,7 @@ export default function UserResolveTicket() {
         setLoading(false)
       }
     }
-    
+
     if (id) {
       fetchTicket()
     } else {
@@ -53,9 +52,7 @@ export default function UserResolveTicket() {
       setLoading(false)
     }
   }, [id])
-  
-  const statusBadge = getStatusBadge(ticket?.status || "")
-  
+
   const handleResolve = async () => {
     if (!ticket?._id) return
 
@@ -94,7 +91,25 @@ export default function UserResolveTicket() {
   };
 
 
+  const getStatusColor = (status?: string) => {
+    const map: Record<string, string> = {
+      open: "bg-green-500 hover:bg-green-600",
+      pending: "bg-yellow-500 hover:bg-yellow-600",
+      closed: "bg-gray-500 hover:bg-gray-600",
+      resolved: "bg-blue-500 hover:bg-blue-600",
+    }
+    return map[status?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
+  }
 
+  const getPriorityColor = (priority?: string) => {
+    const map: Record<string, string> = {
+      low: "bg-blue-500 hover:bg-blue-600",
+      medium: "bg-yellow-500 hover:bg-yellow-600",
+      high: "bg-orange-500 hover:bg-orange-600",
+      critical: "bg-red-500 hover:bg-red-600",
+    }
+    return map[priority?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
+  }
 
   if (loading) {
     return (
@@ -134,10 +149,7 @@ export default function UserResolveTicket() {
               <CardTitle className="  text-sm text-muted-foreground mt-1">Ticket #{ticket._id}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge className={`${statusBadge.color} flex items-center`}>
-                {statusBadge.icon}
-                {ticket.status}
-              </Badge>
+              <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
               <Badge className={getPriorityColor(ticket.priority)}>{ticket.priority}</Badge>
             </div>
           </div>
@@ -219,12 +231,7 @@ export default function UserResolveTicket() {
           <div className="w-full">
             <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
             <div className="flex gap-4 mb-4">
-              <Button
-                variant="default"
-                className="flex items-center gap-2"
-                onClick={handleResolve}
-                disabled={ticket.status === TicketStatus.Resolved || ticket.status === TicketStatus.Closed}
-              >
+              <Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
                 <CheckCircle className="h-4 w-4" />
                 Yes, mark as resolved
               </Button>
@@ -232,7 +239,6 @@ export default function UserResolveTicket() {
                 variant="outline"
                 className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
                 onClick={() => setShowFeedback(true)}
-                disabled={ticket.status === TicketStatus.Resolved || ticket.status === TicketStatus.Closed}
               >
                 <XCircle className="h-4 w-4" />
                 No, I need more help
@@ -285,8 +291,8 @@ export default function UserResolveTicket() {
                 <Button onClick={() => navigate("/user/feedback")}>Rate</Button>
                 <Button variant={"outline"} onClick={() => navigate("/user/MyTickets")}>Go to My Tickets</Button>
               </CardFooter>
-            </Card>
-          </DialogContent>
+            </Card>  
+            </DialogContent>
         </Dialog>
       )
       }
