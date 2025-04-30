@@ -256,7 +256,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/ticket/update/:id" element={<UserUpdateTicketForm />} />
           <Route path="/user/ticket/resolution/:id" element={<UserResolveTicket />} />
           <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
-          <Route path="user/feedback" element={<FeedbackPage/>} />
+          <Route path="user/feedback/:id" element={<FeedbackPage/>} />
 
 
         </Route>

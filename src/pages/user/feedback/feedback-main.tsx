@@ -1,4 +1,4 @@
-"use client"
+
 
 import type React from "react"
 import { useState } from "react"
@@ -10,6 +10,8 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { addFeedback } from "@/api/api"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
+import { useParams } from "react-router"
+import { useNavigate } from "react-router"
 
 // Define the schema for validation
 const feedbackSchema = z.object({
@@ -19,6 +21,8 @@ const feedbackSchema = z.object({
 });
 
 export default function FeedbackPage() {
+    const navigate = useNavigate()
+    const { id } = useParams<{ id: string }>();
     const masterDropdown = useMasterDropdown()
     const feedbackCategories = masterDropdown.dropdownData?.feedbackOptions || []
     const [selectedRating, setSelectedRating] = useState<number | null>(null)
@@ -43,17 +47,22 @@ export default function FeedbackPage() {
             // Prepare the data for the API call
             const formData = new FormData();
             formData.append("rating", selectedRating?.toString() || "");
-            formData.append("category", category);
+            formData.append("feedbackOptions", category);
             formData.append("comment", comment || "");
+            formData.append("ticket", id || "");
 
             // Call the addFeedback API
             const result = await addFeedback(formData);
+            console.log(result, "result")
 
             if (!result || !result.data) {
+                toast.error("Invalid response from server.", {
+                    position: "top-center",
+                });
                 throw new Error("Invalid response from server.");
             }
 
-            if (result.data.success) {
+            if (result.success) {
                 toast.success("Feedback submitted successfully", {
                     position: "top-center",
                 });
@@ -62,6 +71,7 @@ export default function FeedbackPage() {
                 setSelectedRating(null);
                 setCategory("");
                 setComment("");
+                navigate("/user/myTickets"); // Redirect to the tickets page after submission
             }
         } catch (error) {
             if (error instanceof z.ZodError) {
