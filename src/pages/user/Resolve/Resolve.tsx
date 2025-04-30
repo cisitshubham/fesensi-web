@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { CloseTicketUser } from "@/api/api"
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-
+import { getStatusBadge,getPriorityColor } from "@/pages/global-components/GetStatusColor"
 export default function UserResolveTicket() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -89,28 +89,9 @@ export default function UserResolveTicket() {
       setSubmitting(false);
     }
   };
-
-
-  const getStatusColor = (status?: string) => {
-    const map: Record<string, string> = {
-      open: "bg-green-500 hover:bg-green-600",
-      pending: "bg-yellow-500 hover:bg-yellow-600",
-      closed: "bg-gray-500 hover:bg-gray-600",
-      resolved: "bg-blue-500 hover:bg-blue-600",
-    }
-    return map[status?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
-  }
-
-  const getPriorityColor = (priority?: string) => {
-    const map: Record<string, string> = {
-      low: "bg-blue-500 hover:bg-blue-600",
-      medium: "bg-yellow-500 hover:bg-yellow-600",
-      high: "bg-orange-500 hover:bg-orange-600",
-      critical: "bg-red-500 hover:bg-red-600",
-    }
-    return map[priority?.toLowerCase() ?? ""] || "bg-gray-500 hover:bg-gray-600"
-  }
-
+  
+  
+  const statusBadge = getStatusBadge(ticket?.status || "")
   if (loading) {
     return (
       <Card className="w-full max-w-4xl mx-auto mt-8 shadow-md ">
@@ -146,11 +127,14 @@ export default function UserResolveTicket() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
               <p className="text-xl font-bold">{ticket.title}</p>
-              <CardTitle className="  text-sm text-muted-foreground mt-1">Ticket #{ticket._id}</CardTitle>
+              <CardTitle className="  text-sm text-muted-foreground mt-1">Ticket #{ticket.ticket_number}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
-              <Badge className={getPriorityColor(ticket.priority)}>{ticket.priority}</Badge>
+            <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+            <Badge className={`${statusBadge.color} flex items-center gap-1`}>
+                  {statusBadge.icon}
+                  {ticket.status}
+                </Badge>
             </div>
           </div>
         </CardHeader>

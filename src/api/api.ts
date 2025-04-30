@@ -376,3 +376,13 @@ export const getReassignListPending = async () => {
     console.error('Error fetching reassign list:', error);
   }
 }
+
+
+export const getcomments = async (ticketId: string) => {
+  try {
+    const response = await axiosInstance.get(`/agent/myTicket/comments/${ticketId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+  }
+}

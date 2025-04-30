@@ -32,7 +32,6 @@ const navigate = useNavigate();
         const response = await MyTicketDetails(id);
 
         setTicketData(response.data);
-        console.log(response.data, 'response.data');
         setLoading(false);
       } catch (error: any) {
         setError(error);
