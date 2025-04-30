@@ -12,28 +12,29 @@ import { useMasterDropdown } from "./master-dropdown-context"
 import { MasterDropdownDatatype } from "@/types"
 import { KeenIcon } from "@/components"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+    DialogClose
 } from "@/components/ui/dialog"
+import { Separator } from "@/components/ui/separator"
 
 export type Filters = {
-  status: string[];
-  priority: string[];
-  category: string[];
-  date: {
-    createdToday: boolean;
-    from: string;
-    to: string;
-  };
+    status: string[];
+    priority: string[];
+    category: string[];
+    date: {
+        createdToday: boolean;
+        from: string;
+        to: string;
+    };
 };
 
 interface SearchbarFiltersProps {
-  onFiltersChange: (filters: Filters) => void;
+    onFiltersChange: (filters: Filters) => void;
 }
 
 export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersProps) {
@@ -129,7 +130,7 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
     };
 
     return (
-        <div className="flex flex-col space-y-4 max-w-xl">
+        <div className="flex flex-col space-y-6 ">
             <div className="max-w-xl" id="container">
                 <div className="flex flex-row justify-between items-center gap-4">
                     <div className="relative flex-1 max-w-md">
@@ -149,14 +150,14 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                                 )}
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-fit p-4">
+                        <DialogContent className="max-w-fit p-6">
                             <DialogHeader>
                                 <DialogTitle>Filter Options</DialogTitle>
                             </DialogHeader>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 py-4">
+
+                            <div className="flex flex-row gap-6 py-4">
                                 <div className="space-y-3">
-                                    <h4 className="font-medium text-sm">Status</h4>
+                                    <h4 className="font-bold text-sm">Status</h4>
                                     <div className="space-y-2">
                                         {statuses.map((status) => (
                                             <div key={status._id} className="flex items-center space-x-2">
@@ -175,9 +176,10 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                                         ))}
                                     </div>
                                 </div>
+                                <Separator orientation="vertical" />
 
                                 <div className="space-y-3">
-                                    <h4 className="font-medium text-sm">Priority</h4>
+                                    <h4 className="font-bold text-sm">Priority</h4>
                                     <div className="space-y-2">
                                         {priorities.map((priority) => (
                                             <div key={priority._id} className="flex items-center space-x-2">
@@ -196,9 +198,9 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                                         ))}
                                     </div>
                                 </div>
-
+                                <Separator orientation="vertical" />
                                 <div className="space-y-3">
-                                    <h4 className="font-medium text-sm">Category</h4>
+                                    <h4 className="font-bold text-sm">Category</h4>
                                     <div className="space-y-2">
                                         {categories.map((category) => (
                                             <div key={category._id} className="flex items-center space-x-2">
@@ -217,9 +219,9 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                                         ))}
                                     </div>
                                 </div>
-
+                                <Separator orientation="vertical" />
                                 <div className="space-y-3">
-                                    <h4 className="font-medium text-sm">Date</h4>
+                                    <h4 className="font-bold text-sm">Date</h4>
                                     <div className="space-y-2">
                                         <div className="flex items-center space-x-2">
                                             <Checkbox

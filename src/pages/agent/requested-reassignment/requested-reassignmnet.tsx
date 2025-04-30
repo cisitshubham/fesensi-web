@@ -26,7 +26,7 @@ useEffect(() => {
 , []);
     
     return (
-        <div className="px-6 space-y-4">
+        <div className="px-6">
           
                 {tickets.map((ticket) => (
                        <Ticket key={ticket._id} ticket={ticket} />

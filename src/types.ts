@@ -108,10 +108,10 @@ export type MasterDropdownDatatype = {
 
 
 export type Notificationtype = {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
   createdAt: string;
+  _id: string;
+  notificationMessage: string;
+  notificationType: string;
+  updatedAt:string
   read: boolean;
 };
