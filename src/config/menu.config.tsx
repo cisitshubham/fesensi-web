@@ -89,6 +89,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/agent/bulk-reassignment'
       },
       {
+        title: 'Requested Reassignment',
+        icon: 'file-sheet',
+        path: '/agent/requested-reassignment'
+      },
+      {
         title: 'Draft Tickets',
         icon: 'pencil'
       },

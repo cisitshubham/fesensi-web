@@ -345,3 +345,21 @@ export const requestReassign = async (formData: FormData) => {
       console.error('Error fetching push notifications:', error);
     }
   }
+
+  export const getReassignList = async () => {
+    try {
+      const response = await axiosInstance.get('/agent/myTicket/RequestReassign/');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching reassign list:', error);
+    }
+  }
+
+ export const getReassignListPending = async () => {
+    try {
+      const response = await axiosInstance.get('/agent/myTicket/RequestReassign/pending');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching reassign list:', error);
+    }
+  }
