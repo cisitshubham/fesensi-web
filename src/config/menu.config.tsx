@@ -11,6 +11,9 @@ let role: string[] = [];
   role = res?.data?.role ?? [];
 })();
 
+// const res = await verifyRole();
+// const role = res?.data?.role ?? [];
+
 export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
   {
     title: 'Dashboard',

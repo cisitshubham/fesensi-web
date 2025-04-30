@@ -185,7 +185,7 @@ const navigate = useNavigate()
 
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
-          <Button onClick={handleResolve}>Reassign Ticket</Button>
+          <Button onClick={handleResolve}>Force Resolve</Button>
         </CardFooter>
       </Card>
     </div>
