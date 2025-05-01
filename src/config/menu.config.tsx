@@ -2,7 +2,6 @@
 import { type TMenuConfig } from '@/components/menu';
 import { verifyRole } from '@/api/api';
 import { title } from 'process';
-import { icon } from 'leaflet';
 import path from 'path';
 
 let role: string[] = [];

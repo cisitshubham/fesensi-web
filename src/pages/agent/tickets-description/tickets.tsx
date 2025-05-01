@@ -13,6 +13,7 @@ import { getPriorityColor,getStatusBadge } from '@/pages/global-components/GetSt
 import { closeTicket } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import Timer from '@/pages/global-components/timer';
 export default function Tickets() {
   const location = useLocation();
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
@@ -84,6 +85,7 @@ const statusBadge = getStatusBadge(ticket?.status || "")
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
+                  <Timer initialTime={50.45} />
                     <div className="text-sm text-muted-foreground">
                       Ticket #{ticketData.ticket_number}
                     </div>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type RoleContextType = {
   selectedRoles: string[];
@@ -8,7 +8,16 @@ type RoleContextType = {
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(() => {
+    // Initialize from localStorage if available
+    const savedRoles = localStorage.getItem('selectedRoles');
+    return savedRoles ? JSON.parse(savedRoles) : [];
+  });
+
+  // Save to localStorage whenever selectedRoles changes
+  useEffect(() => {
+    localStorage.setItem('selectedRoles', JSON.stringify(selectedRoles));
+  }, [selectedRoles]);
 
   return (
     <RoleContext.Provider value={{ selectedRoles, setSelectedRoles }}>
@@ -19,6 +28,8 @@ export const RoleProvider = ({ children }: { children: ReactNode }) => {
 
 export const useRole = () => {
   const context = useContext(RoleContext);
-  if (!context) throw new Error('useRole must be used within a RoleProvider');
+  if (context === undefined) {
+    throw new Error('useRole must be used within a RoleProvider');
+  }
   return context;
 };
