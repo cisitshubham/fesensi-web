@@ -14,13 +14,14 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getPriorityColor,getStatusBadge,GetStatusColor } from '@/pages/global-components/GetStatusColor';
+import { getPriorityColor,getStatusBadge,getPriorityBadge } from '@/pages/global-components/GetStatusColor';
 
 export default function UserTicketDetails() {
   const { id } = useParams<{ id: string }>();
   const [ticket, setTicket] = useState<Tickettype | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -86,7 +87,10 @@ export default function UserTicketDetails() {
             <p className="text-sm text-muted-foreground">{ticket.title || 'Untitled Ticket'}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-          <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+          <Badge className={`${getPriorityBadge(ticket.priority).color} flex items-center gap-1`}>
+            {getPriorityBadge(ticket.priority).icon}
+            {ticket.priority}
+          </Badge>
             <Badge className={`${statusBadge.color} flex items-center gap-1`}>
                   {statusBadge.icon}
                   {ticket.status}
@@ -129,15 +133,32 @@ export default function UserTicketDetails() {
               {ticket.attachments.map((attachment: { _id?: string; file_url: any }, idx) => (
                 <img
                   key={attachment._id || idx}
-                  src={attachment.file_url || '/media/avatars/placeholder.png'}
+                  src={attachment.file_url }
                   alt={`attachment-${idx}`}
-                  className="w-32 h-32 object-cover border rounded-md"
+                  className="w-32 h-32 object-cover border rounded-md cursor-pointer group-hover:scale-105"
+                  onClick={() => setSelectedImage(attachment.file_url)}
                 />
               ))}
             </div>
           </div>
         )}
       </CardContent>
+
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <img
+            src={selectedImage}
+            alt="Selected attachment"
+            className="max-w-full max-h-full"
+          />
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 text-white text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+      )}
 
       {ticket.latest_agent_comment?.comment_text && (
         <Card className='mx-6'>

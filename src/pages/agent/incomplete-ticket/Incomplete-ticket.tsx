@@ -56,7 +56,7 @@ export default function IncompleteTicket() {
       setTimeout(() => {
 
         navigate('/agent/mytickets');
-      }, 3000);
+      }, 1000);
     } catch (error) {
       console.error('Error marking ticket as incomplete:', error);
       setError(true);

@@ -101,7 +101,7 @@ export default function ReassignTicket() {
       setTimeout(() => {
 
         navigate('/agent/mytickets'); // Redirect to a success page or another route
-      }, 3000);
+      }, 1000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reassign ticket';
       toast.error('Failed to reassign ticket', { position: "top-center" });

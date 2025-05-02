@@ -1,11 +1,12 @@
 export type Tickettype = {
   resolutionTime?: number,
+  isticketclosed?: boolean,
   remainingHours?: number,
   remainingMinutes?: number,
   remainingSeconds?: number,
   isUserCommented: boolean;
   isAgentCommented: boolean;
-  
+
   isAgenForceResolve: boolean;
   isAgentViewButtonShow: boolean;
 

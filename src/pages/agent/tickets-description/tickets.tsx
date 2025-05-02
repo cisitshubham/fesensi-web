@@ -20,7 +20,7 @@ export default function Tickets() {
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
   const { id } = useParams();
   const navigate = useNavigate();
-  const [ticketData, setTicketData] = useState(ticket);
+  const [ticketData, setTicketData] = useState<Tickettype>(ticket);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [remainingHours, setRemainingHours] = useState(ticketData.remainingHours);
@@ -61,7 +61,7 @@ export default function Tickets() {
       toast.success('Ticket closed successfully!', { position: 'top-center' });
       setTimeout(() => {
         navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
-      }, 3000);
+      }, 1000);
     } catch (error) {
       console.error('Error closing ticket:', error);
       toast.error('Failed to close ticket!', { position: 'top-center' });
@@ -80,8 +80,7 @@ export default function Tickets() {
 
   const statusBadge = getStatusBadge(ticket?.status || '');
   const priorityBadge = getPriorityBadge(ticket.priority);
-  console.log(remainingHours, remainingMinutes, remainingSeconds);
-
+console.log(ticketData, 'ticketData');
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -98,7 +97,7 @@ export default function Tickets() {
                   <div>
                     <div className="text-sm text-muted-foreground">Ticket #{ticketData.ticket_number}</div>
                     <CardTitle className="text-2xl mt-1">{ticketData.title}</CardTitle>
-                  
+
                   </div>
                   <div className="flex gap-2">
                     <Badge className={'bg-slate-500'}>{ticketData.category}</Badge>
@@ -112,7 +111,9 @@ export default function Tickets() {
                     </Badge>
                   </div>
                 </div>
+                {ticket.status === TicketStatus.InProgress && (
                   <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
+                )}
               </CardHeader>
               <Separator className="mb-4" />
               <CardContent>
@@ -136,7 +137,8 @@ export default function Tickets() {
                             alt={`Ticket attachment ${index + 1}`}
                             width={300}
                             height={200}
-                            className="rounded-md object-cover aspect-video"
+                            className="rounded-md object-cover aspect-video cursor-pointer"
+                            onClick={() => window.open((attachment as any).file_url, '_blank')}
                           />
                         ))}
                       </div>
@@ -170,7 +172,7 @@ export default function Tickets() {
                     <span>Created By</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="font-medium">{(ticketData as any).assigned_to}</span>
+                    <span className="font-medium">{ticketData.creator}</span>
                   </div>
                 </div>
 
@@ -189,18 +191,7 @@ export default function Tickets() {
                   </>
                 )}
 
-                <Separator orientation="vertical" />
-
-                <div className="flex flex-col items-center text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>Escalated To</span>
-                  </div>
-                  {/* {ticket.escalatedTo ? ( */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="font-medium">{(ticketData as any).assigned_to}</span>
-                  </div>
-                </div>
+             
 
                 <Separator orientation="vertical" />
               </CardContent>
@@ -215,7 +206,8 @@ export default function Tickets() {
         {/* buttons  */}
 
         {/* update resolution  */}
-        {ticketData.status === TicketStatus.InProgress && ticketData.isUserCommented && (
+        {/* isAgentViewButtonShow==true pe dikhega  */}
+        {ticketData.status === TicketStatus.InProgress  && ticketData.isAgentViewButtonShow==true && (
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`,
@@ -227,7 +219,7 @@ export default function Tickets() {
         )}
 
         {/* force resolve */}
-        {ticketData.status === TicketStatus.InProgress && (
+        {ticketData.status === TicketStatus.InProgress  && ticketData.isAgenForceResolve == true && (
           <Link
             to={{
               pathname: `/agent/Force-resolve/${ticket._id}`,
@@ -239,13 +231,13 @@ export default function Tickets() {
         )}
 
         {/* close ticket  */}
-        {ticketData.status === TicketStatus.Resolved && (
+        {ticketData.status === TicketStatus.Resolved && ticketData.isticketclosed == true && (
           <Button onClick={handlecloseTicket} className="mt-6">
             Close Ticket
           </Button>
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && ticketData.isResolved == false && (
+        {ticketData.status === TicketStatus.Open && ticketData.isAgentViewButtonShow  == false && ticketData.isCustomerTicketEdit==false && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket',
@@ -259,7 +251,8 @@ export default function Tickets() {
           </Link>
         )}
         {/* Suggest Resolution  */}
-        {!ticketData.isResolved && (
+        {/* isAgentViewButtonShow==true pe dikhega  */}
+        {!ticketData.isResolved && ticketData.isAgentViewButtonShow == false  && (
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`,

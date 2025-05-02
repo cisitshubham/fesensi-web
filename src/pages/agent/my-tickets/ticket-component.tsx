@@ -8,7 +8,7 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { Tickettype } from '@/types';
+import { TicketStatus, Tickettype } from '@/types';
 import { Bell, Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
 import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import clsx from 'clsx';
@@ -81,7 +81,9 @@ export default function Ticket({ ticket }: TicketProps) {
                   <Clock className="w-3.5 h-3.5" />
                   <span>created at: {ticket.createdAt}</span>
                 </div>
-                <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
+                {ticket.status === TicketStatus.InProgress  && (
+                  <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
+                )}
               </div>
             </div>
           </div>

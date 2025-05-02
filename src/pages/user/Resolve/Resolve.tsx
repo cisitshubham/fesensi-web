@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { CloseTicketUser } from "@/api/api"
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { getStatusBadge,getPriorityColor } from "@/pages/global-components/GetStatusColor"
+import { getStatusBadge, getPriorityColor } from "@/pages/global-components/GetStatusColor"
 export default function UserResolveTicket() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -28,6 +28,7 @@ export default function UserResolveTicket() {
   const [comment_text, setFeedback] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -89,8 +90,8 @@ export default function UserResolveTicket() {
       setSubmitting(false);
     }
   };
-  
-  
+
+
   const statusBadge = getStatusBadge(ticket?.status || "")
   if (loading) {
     return (
@@ -130,11 +131,11 @@ export default function UserResolveTicket() {
               <CardTitle className="  text-sm text-muted-foreground mt-1">Ticket #{ticket.ticket_number}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2">
-            <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
-            <Badge className={`${statusBadge.color} flex items-center gap-1`}>
-                  {statusBadge.icon}
-                  {ticket.status}
-                </Badge>
+              <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+              <Badge className={`${statusBadge.color} flex items-center gap-1`}>
+                {statusBadge.icon}
+                {ticket.status}
+              </Badge>
             </div>
           </div>
         </CardHeader>
@@ -171,20 +172,32 @@ export default function UserResolveTicket() {
                 {ticket.attachments.map((attachment, idx) => (
                   <div key={attachment._id || idx} className="relative group">
                     <img
+                     onClick={() => setSelectedImage(attachment.file_url)}
                       src={attachment.file_url || "/placeholder.svg"}
                       alt={`attachment-${idx}`}
                       className="w-32 h-32 object-cover border rounded-md transition-transform group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-md">
-                      <Button variant="ghost" size="sm" className="text-white" asChild>
-                        <a href={attachment.file_url} target="_blank" rel="noopener noreferrer">
-                          View
-                        </a>
-                      </Button>
+
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          {selectedImage && (
+            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+              <img
+                src={selectedImage}
+                alt="Selected attachment"
+                className="max-w-full max-h-full"
+              />
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-4 right-4 text-white text-2xl"
+              >
+                &times;
+              </button>
             </div>
           )}
         </CardContent>
@@ -272,11 +285,11 @@ export default function UserResolveTicket() {
               <p>Your ticket has been successfully resolved. Thank you for your patience!</p>
               <p className="text-gray-500">Please rate your expierence</p>
               <CardFooter className="flex flex-row justify-between items-center mt-4">
-                <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>Rate</Button>
+                <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>Rate our service</Button>
                 <Button variant={"outline"} onClick={() => navigate(`/user/MyTickets/${ticket._id}`)}>Go to My Tickets</Button>
               </CardFooter>
-            </Card>  
-            </DialogContent>
+            </Card>
+          </DialogContent>
         </Dialog>
       )
       }

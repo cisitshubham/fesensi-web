@@ -38,6 +38,7 @@ export default function ActivityLogAndComments({
   agentComments: AgentComment[];
 }) {
 
+  console.log(activityLog, 'activityLog');
 
   return (
     <Card className="flex flex-col overflow-y-auto no-scrollbar max-h-[580px]">
@@ -52,7 +53,7 @@ export default function ActivityLogAndComments({
               <Card key={index}>
                 <CardHeader className="text-sm font-medium">{log.action}</CardHeader>
                 <CardContent>
-                  {/* <div className="text-sm text-gray-500">createdAt:{log.createdAt}</div> */}
+                  <div className="text-sm text-gray-500">createdAt:{log.createdAt}</div>
                   <div className="text-sm text-gray-700">{log.creator.first_name}</div>
                 </CardContent>
               </Card>

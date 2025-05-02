@@ -3,9 +3,9 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
-import type { Tickettype } from "@/types"
+import { TicketStatus, type Tickettype } from "@/types"
 import { Bell, Calendar, Clock, ArrowRight, Tag, User, MessageSquare } from "lucide-react"
-import { getStatusBadge,getPriorityColor } from "@/pages/global-components/GetStatusColor"
+import { getStatusBadge,getPriorityBadge } from "@/pages/global-components/GetStatusColor"
 
 interface TicketProps {
   ticket: Tickettype
@@ -48,7 +48,10 @@ export default function UserTicket({ ticket }: TicketProps) {
 
             {/* Right side content - New section */}
             <div className="flex flex-col gap-2 items-end min-w-[120px]">
-           <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+              <Badge className={`${getPriorityBadge(ticket.priority).color} flex items-center gap-1`}>
+                {getPriorityBadge(ticket.priority).icon}
+                {ticket.priority}
+              </Badge>
 
               <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
                 <div className="flex items-center gap-1.5">
@@ -58,10 +61,9 @@ export default function UserTicket({ ticket }: TicketProps) {
 
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>created at: {(ticket.createdAt)}</span>
+                  <span>created at: {ticket.createdAt}</span>
                 </div>
-
-           
+          
               </div>
             </div>
           </div>

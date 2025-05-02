@@ -1,5 +1,3 @@
-
-
 import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -30,6 +28,7 @@ export default function FeedbackPage() {
     const [comment, setComment] = useState<string>("")
     const [errors, setErrors] = useState<{ [key: string]: string }>({})
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [selectedEmojiLabel, setSelectedEmojiLabel] = useState<string>("");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -94,11 +93,11 @@ export default function FeedbackPage() {
     };
 
     const emojis = [
-        { value: 1, emoji: "😢" },
-        { value: 2, emoji: "😕" },
-        { value: 3, emoji: "😐" },
-        { value: 4, emoji: "🙂" },
-        { value: 5, emoji: "😄" },
+        { value: 1, emoji: "😢", label: "It was  worst" },
+        { value: 2, emoji: "😕", label: "It was bad" },
+        { value: 3, emoji: "😐", label: "It was okay" },
+        { value: 4, emoji: "🙂", label: "It was good " },
+        { value: 5, emoji: "😄", label: "It was excellent" },
     ]
 
     return (
@@ -111,19 +110,26 @@ export default function FeedbackPage() {
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <Card className="flex justify-between items-center mx-auto max-w-md p-4">
-                                {emojis.map((emoji) => (
-                                    <button
-                                        key={emoji.value}
-                                        type="button"
-                                        onClick={() => setSelectedRating(emoji.value)}
-                                        className={`flex flex-col items-center p-3 rounded-lg transition-all ${selectedRating === emoji.value ? "bg-primary/10 scale-150" : "hover:bg-muted"
-                                            }`}
-                                    >
-                                        <span className="text-4xl mb-1">{emoji.emoji}</span>
-                                    </button>
-                                ))}
+                            <Card className="flex flex-col justify-between items-center mx-auto max-w-md p-4">
+                                <div className="flex flex-row">
+                                    {emojis.map((emoji) => (
+                                        <button
+                                            key={emoji.value}
+                                            type="button"
+                                            onClick={() => {
+                                                setSelectedRating(emoji.value);
+                                                setSelectedEmojiLabel(emoji.label);
+                                            }}
+                                            className={`flex flex-col items-center p-3 rounded-lg transition-all ${selectedRating === emoji.value ? "bg-primary/10 scale-150" : "hover:bg-muted"
+                                                }`}
+                                        >
+                                            <span className="text-4xl mb-1">{emoji.emoji}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="">{selectedEmojiLabel}</div>
                             </Card>
+
                             {errors.selectedRating && <p className="text-red-500 text-sm">{errors.selectedRating}</p>}
                         </div>
 
@@ -136,11 +142,11 @@ export default function FeedbackPage() {
                                     <SelectValue placeholder="Select a category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                {feedbackCategories.map((reason: any) => (
-                                    <SelectItem key={reason._id || reason.title} value={String(reason._id)}>
-                                        {reason.title}
-                                    </SelectItem>
-                                ))}
+                                    {feedbackCategories.map((reason: any) => (
+                                        <SelectItem key={reason._id || reason.title} value={String(reason._id)}>
+                                            {reason.title}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}

@@ -119,7 +119,7 @@ const UpdateTicketForm = () => {
         });
       setTimeout(() => {
         navigate('/user/Mytickets'); // Redirect to the desired page after 3 seconds
-      }, 3000);
+      }, 1000);
       
       }
 
@@ -200,22 +200,33 @@ const UpdateTicketForm = () => {
           <div className="flex flex-col gap-4">
             <MenuLabel>Upload Files</MenuLabel>
             <div className="flex flex-row justify-between items-start gap-4 border rounded-lg p-4 bg-light-light  ">
-              {/* Left: Existing Attachments */}
+              {/* Existing Attachments with Remove Option */}
               <div className="flex flex-wrap gap-2">
                 {(ticket as any)?.attachments?.length ? (
-                  (ticket as any).attachments.map((file: any) => (
-                    <a
-                      key={file._id}
-                      href={file.file_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <img
-                        src={file.file_url}
-                        alt="Attachment"
-                        className="w-16 h-16 object-cover rounded-lg border hover:opacity-80 transition"
-                      />
-                    </a>
+                  (ticket as any).attachments.map((file: any, index: number) => (
+                    <div key={file._id} className="relative">
+                      <a
+                        href={file.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={file.file_url}
+                          alt="Attachment"
+                          className="w-16 h-16 object-cover rounded-lg border hover:opacity-80 transition"
+                        />
+                      </a>
+                      <button
+                        type="button"
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                        onClick={() => {
+                          const updatedAttachments = (ticket as any).attachments.filter((_: any, i: number) => i !== index);
+                          setTicket({ ...ticket, attachments: updatedAttachments });
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))
                 ) : (
                   <p className="text-gray-500 text-sm">No attachments available</p>

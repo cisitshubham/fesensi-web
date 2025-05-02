@@ -4,7 +4,6 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { MenuLabel } from '@/components';
 import { KeenIcon } from '@/components';
 import { MyTicketDetails } from '@/api/api';
@@ -58,15 +57,15 @@ const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispat
 
       {files.length > 0 ? (
         <div className="mt-2 text-sm text-gray-600">
-                {files.map((file, index) => (
-                    <div key={index} className="relative w-16 h-16">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt="Selected File"
-                        className="w-full h-full object-cover rounded-lg border"
-                      />
-                    </div>
-                  ))}
+          {files.map((file, index) => (
+            <div key={index} className="relative w-16 h-16">
+              <img
+                src={URL.createObjectURL(file)}
+                alt="Selected File"
+                className="w-full h-full object-cover rounded-lg border"
+              />
+            </div>
+          ))}
         </div>
       ) : (
         <p className="text-sm text-gray-500 mt-2">No files selected</p>
@@ -144,6 +143,7 @@ export default function ResolveTicket() {
 
       const formData = new FormData(event.currentTarget);
       formData.append('ticket_id', ticketData._id);
+      formData.append('resolution', resolution);
 
       files.forEach((file) => {
         console.log(file);
@@ -156,7 +156,7 @@ export default function ResolveTicket() {
         toast.success('Reason saved successfully', { position: "top-center" });
         setTimeout(() => {
           navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
-        }, 3000);
+        }, 1000);
       } else {
         toast.error('Failed to resolve ticket.', { position: "top-center" });
       }
@@ -198,7 +198,6 @@ export default function ResolveTicket() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-  
 
         <Separator className="mb-6" />
 
@@ -218,15 +217,45 @@ export default function ResolveTicket() {
         </div>
 
         <FileUpload files={files} setFiles={setFiles} />
+
+        {/* Display selected files with remove option */}
+        {files.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm font-medium mb-2">Selected Files</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {files.map((file, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Selected file ${index + 1}`}
+                    className="w-16 h-16 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                    onClick={() => {
+                      const updatedFiles = files.filter((_, i) => i !== index);
+                      setFiles(updatedFiles);
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
 
       <CardFooter>
-        <Button 
-          onClick={() => handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>)}
-          disabled={!resolution.trim()}
-        >
-          Send Resolution
-        </Button>
+        <form onSubmit={handleSubmit}>
+          <Button 
+            type="submit"
+            disabled={!resolution.trim() || loading}
+          >
+            Send Resolution
+          </Button>
+        </form>
       </CardFooter>
     </Card>
   );
