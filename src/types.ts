@@ -1,6 +1,6 @@
 export type Tickettype = {
   resolutionTime?: number,
-  isticketclosed?: boolean,
+  isTicketClosed?: boolean,
   remainingHours?: number,
   remainingMinutes?: number,
   remainingSeconds?: number,

@@ -7,10 +7,7 @@ interface ActivityLog {
   action: string;
   createdAt: string;
   details: string;
-  creator: {
-    _id: string;
-    first_name: string;
-  };
+  creator: string;
 }
 
 interface AgentComment {
@@ -54,7 +51,7 @@ export default function ActivityLogAndComments({
                 <CardHeader className="text-sm font-medium">{log.action}</CardHeader>
                 <CardContent>
                   <div className="text-sm text-gray-500">createdAt:{log.createdAt}</div>
-                  <div className="text-sm text-gray-700">{log.creator.first_name}</div>
+                  <div className="text-sm text-gray-700">{log.creator}</div>
                 </CardContent>
               </Card>
             ))}

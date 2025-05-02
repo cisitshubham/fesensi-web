@@ -286,7 +286,7 @@ export default function UserResolveTicket() {
               <p className="text-gray-500">Please rate your expierence</p>
               <CardFooter className="flex flex-row justify-between items-center mt-4">
                 <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>Rate our service</Button>
-                <Button variant={"outline"} onClick={() => navigate(`/user/MyTickets/${ticket._id}`)}>Go to My Tickets</Button>
+                <Button variant={"outline"} onClick={() => navigate(`/user/MyTickets/`)}>Go to My Tickets</Button>
               </CardFooter>
             </Card>
           </DialogContent>

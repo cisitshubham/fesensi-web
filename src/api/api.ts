@@ -361,7 +361,7 @@ export const GetPushNotifications = async () => {
 
 export const getReassignList = async () => {
   try {
-    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/');
+    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/pending');
     return response.data;
   } catch (error) {
     console.error('Error fetching reassign list:', error);
@@ -370,7 +370,7 @@ export const getReassignList = async () => {
 
 export const getReassignListPending = async () => {
   try {
-    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/pending');
+    const response = await axiosInstance.get('/agent/myTicket/RequestReassign/');
     return response.data;
   } catch (error) {
     console.error('Error fetching reassign list:', error);

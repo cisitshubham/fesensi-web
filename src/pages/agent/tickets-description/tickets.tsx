@@ -231,13 +231,13 @@ console.log(ticketData, 'ticketData');
         )}
 
         {/* close ticket  */}
-        {ticketData.status === TicketStatus.Resolved && ticketData.isticketclosed == true && (
+        { ticketData.isTicketClosed == true && (
           <Button onClick={handlecloseTicket} className="mt-6">
             Close Ticket
           </Button>
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && ticketData.isAgentViewButtonShow  == false && ticketData.isCustomerTicketEdit==false && (
+        {ticketData.status === TicketStatus.Open && ticketData.isAgentResolvedButtonShow  == false && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket',
@@ -252,7 +252,7 @@ console.log(ticketData, 'ticketData');
         )}
         {/* Suggest Resolution  */}
         {/* isAgentViewButtonShow==true pe dikhega  */}
-        {!ticketData.isResolved && ticketData.isAgentViewButtonShow == false  && (
+        {ticketData.status== TicketStatus.Open && ticketData.isAgentResolvedButtonShow == false  && (
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`,
