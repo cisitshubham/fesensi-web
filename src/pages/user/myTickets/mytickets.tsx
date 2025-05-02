@@ -22,7 +22,6 @@ export default function AgentTickets() {
 				
 			} catch (error:any) {
 				setError('Failed to load tickets.')
-				console.log(error);
 				setLoading(false)
 			}
 		}

@@ -52,7 +52,6 @@ export default function FeedbackPage() {
 
             // Call the addFeedback API
             const result = await addFeedback(formData);
-            console.log(result, "result")
 
             if (!result || !result.data) {
                 toast.error("Invalid response from server.", {

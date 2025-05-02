@@ -47,7 +47,6 @@ export default function UserTicketDetails() {
       setLoading(false);
     }
   }, [id]);
-  console.log(ticket, 'ticket');
 
   const statusBadge = getStatusBadge(ticket?.status || "")
   if (loading) {

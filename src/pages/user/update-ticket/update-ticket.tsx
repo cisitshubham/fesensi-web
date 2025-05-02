@@ -3,8 +3,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert } from '@/components';
 import { Button } from '@/components/ui/button';
 import { Container, MenuLabel } from '@/components';
-import { getDropdown, updateTicket, getTicketById } from '@/api/api';
-import { showToast } from '@/components/toast';
+import { getDropdown, updateTicket, getTicketById ,removeAttachment } from '@/api/api';
 import { Navbar } from '@/partials/navbar';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
@@ -81,6 +80,31 @@ const UpdateTicketForm = () => {
       fetchTicket();
     }
   }, [id]);
+
+const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) => {
+    try {			
+		const formData = new FormData();
+		formData.append('ticket_id', ticket_id);
+		formData.append('attachment_id', attachmentId);			 	
+	   const response = await removeAttachment(formData);
+	   
+	   if (response.success) {
+		toast.success('Attachment removed successfully', {
+					  position: 'top-center',
+					  action: 'updateTicket',
+					  cancel: true
+		});
+	}	      
+    } catch (error) {
+      toast.error('Failed to remove attachment. Please try again.', {
+        position: 'top-center',
+        action: 'updateTicket',
+        cancel: true
+      });
+    }
+  };	  
+
+	  	
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -219,11 +243,12 @@ const UpdateTicketForm = () => {
                       <button
                         type="button"
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
-                        onClick={() => {
-                          const updatedAttachments = (ticket as any).attachments.filter((_: any, i: number) => i !== index);
-                          setTicket({ ...ticket, attachments: updatedAttachments });
-                        }}
-                      >
+						onClick={() => {
+							handleRemoveAttachment(file._id, ticket._id);
+							const updatedAttachments = (ticket as any).attachments.filter((_: any, i: number) => i !== index);
+							setTicket({ ...ticket, attachments: updatedAttachments });
+						}}
+						>		
                         ×
                       </button>
                     </div>

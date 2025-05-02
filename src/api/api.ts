@@ -111,6 +111,18 @@ export const updateTicket = async (formData: FormData) => {
   }
 };
 
+export const removeAttachment = async (data:any) => {
+
+try {	
+	const response = await axiosInstance.post(`/tickets/ticket/deleteAttachements` , data);
+	return response.data;
+  } catch (error) {
+	console.error('Error removing attachment:', error);
+  }
+}
+
+
+
 export const getTicketById = async (ticketId: any) => {
   try {
     const response = await axiosInstance.get(`/tickets/ticket/${ticketId}`);
