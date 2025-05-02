@@ -82,7 +82,7 @@ export default function ResolveTicket() {
   const [status, setStatus] = useState<string>('');
   const [resolution, setResolution] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -153,12 +153,12 @@ export default function ResolveTicket() {
       const response = await updateResolution(formData);
 
       if (response.success) {
-        toast.success('Reason saved successfully', { position: "top-center" });
+        toast.success('Resolution was sent successfully', { position: "top-center" });
         setTimeout(() => {
           navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
         }, 1000);
       } else {
-        toast.error('Failed to resolve ticket.', { position: "top-center" });
+        toast.error('Failed to send resolution.', { position: "top-center" });
       }
     } catch (error) {
       console.error('Error resolving ticket:', error);
@@ -224,11 +224,12 @@ export default function ResolveTicket() {
             <h4 className="text-sm font-medium mb-2">Selected Files</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {files.map((file, index) => (
-                <div key={index} className="relative">
+                <div key={index} className="relative w-fit">
                   <img
                     src={URL.createObjectURL(file)}
                     alt={`Selected file ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded-lg border"
+                    className="w-16 h-16 object-cover rounded-lg border hover:scale-105 transition-transform duration-200 cursor-pointer "
+                    onClick={() => setSelectedImage(URL.createObjectURL(file))}
                   />
                   <button
                     type="button"
@@ -242,6 +243,21 @@ export default function ResolveTicket() {
                   </button>
                 </div>
               ))}
+              {selectedImage && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                  <img
+                    src={selectedImage}
+                    alt="Selected attachment"
+                    className="max-w-full max-h-full"
+                  />
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-4 right-4 text-white text-2xl"
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -249,7 +265,7 @@ export default function ResolveTicket() {
 
       <CardFooter>
         <form onSubmit={handleSubmit}>
-          <Button 
+          <Button
             type="submit"
             disabled={!resolution.trim() || loading}
           >

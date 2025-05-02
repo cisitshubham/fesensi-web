@@ -26,7 +26,7 @@ export default function Tickets() {
   const [remainingHours, setRemainingHours] = useState(ticketData.remainingHours);
   const [remainingMinutes, setRemainingMinutes] = useState(ticketData.remainingMinutes);
   const [remainingSeconds, setRemainingSeconds] = useState(ticketData.remainingSeconds);
-
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   useEffect(() => {
     const fetchTicketData = async () => {
       try {
@@ -80,7 +80,7 @@ export default function Tickets() {
 
   const statusBadge = getStatusBadge(ticket?.status || '');
   const priorityBadge = getPriorityBadge(ticket.priority);
-console.log(ticketData, 'ticketData');
+  console.log(ticketData, 'ticketData');
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -112,7 +112,7 @@ console.log(ticketData, 'ticketData');
                   </div>
                 </div>
                 {ticket.status === TicketStatus.InProgress && (
-                  <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
+                  <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={remainingSeconds ?? 0} />
                 )}
               </CardHeader>
               <Separator className="mb-4" />
@@ -138,9 +138,24 @@ console.log(ticketData, 'ticketData');
                             width={300}
                             height={200}
                             className="rounded-md object-cover aspect-video cursor-pointer"
-                            onClick={() => window.open((attachment as any).file_url, '_blank')}
+                            onClick={() => setSelectedImage((attachment as any).file_url)}
                           />
                         ))}
+                        {selectedImage && (
+                          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                            <img
+                              src={selectedImage}
+                              alt="Selected attachment"
+                              className="max-w-full max-h-full"
+                            />
+                            <button
+                              onClick={() => setSelectedImage(null)}
+                              className="absolute top-4 right-4 text-white text-2xl"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -191,7 +206,7 @@ console.log(ticketData, 'ticketData');
                   </>
                 )}
 
-             
+
 
                 <Separator orientation="vertical" />
               </CardContent>
@@ -207,7 +222,7 @@ console.log(ticketData, 'ticketData');
 
         {/* update resolution  */}
         {/* isAgentViewButtonShow==true pe dikhega  */}
-        {ticketData.status === TicketStatus.InProgress  && ticketData.isAgentViewButtonShow==true && (
+        {ticketData.status === TicketStatus.InProgress && ticketData.isAgentViewButtonShow == true && (
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`,
@@ -219,7 +234,7 @@ console.log(ticketData, 'ticketData');
         )}
 
         {/* force resolve */}
-        {ticketData.status === TicketStatus.InProgress  && ticketData.isAgenForceResolve == true && (
+        {ticketData.status === TicketStatus.InProgress && ticketData.isAgenForceResolve == true && (
           <Link
             to={{
               pathname: `/agent/Force-resolve/${ticket._id}`,
@@ -231,13 +246,13 @@ console.log(ticketData, 'ticketData');
         )}
 
         {/* close ticket  */}
-        { ticketData.isTicketClosed == true && (
+        {ticketData.isTicketClosed == true && (
           <Button onClick={handlecloseTicket} className="mt-6">
             Close Ticket
           </Button>
         )}
         {/* incomplete Ticket */}
-        {ticketData.status === TicketStatus.Open && ticketData.isAgentResolvedButtonShow  == false && (
+        {ticketData.status === TicketStatus.Open && ticketData.isAgentResolvedButtonShow == false && (
           <Link
             to={{
               pathname: '/agent/incomplete-ticket',
@@ -252,7 +267,7 @@ console.log(ticketData, 'ticketData');
         )}
         {/* Suggest Resolution  */}
         {/* isAgentViewButtonShow==true pe dikhega  */}
-        {ticketData.status== TicketStatus.Open && ticketData.isAgentResolvedButtonShow == false  && (
+        {ticketData.status == TicketStatus.Open && ticketData.isAgentResolvedButtonShow == false && (
           <Link
             to={{
               pathname: `/agent/ticket/resolve/${ticket._id}`,
