@@ -26,6 +26,13 @@ import { MasterDropdownDatatype } from '@/types';
 import { getPriorityColor } from '@/pages/global-components/GetStatusColor';
 import { forceResolve } from '@/api/api';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+// Define Zod schema for validation
+const forceResolveSchema = z.object({
+  resolvedPostId: z.string().min(1, 'Please select a resolution reason.'),
+  resolvedPostsComment: z.string().optional(),
+});
 
 export default function ForceResolve() {
   const [ticketData, setTicketData] = useState<Tickettype | null>(null);
@@ -34,7 +41,8 @@ export default function ForceResolve() {
   const [status, setStatus] = useState<string>('');
   const [selectedResolution, setSelectedResolution] = useState('');
   const [desc, setDesc] = useState('');
-const navigate = useNavigate()
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
   const { dropdownData } = useMasterDropdown();
   const location = useLocation();
   const { id } = useParams();
@@ -44,11 +52,22 @@ const navigate = useNavigate()
     setDesc(e.target.value);
   };
 
-
   const handleResolve = async () => {
-    if (!selectedResolution) {
-		toast.error('Please select a resolution reason.', { position: "top-center" });
-		return;
+    // Validate inputs
+    const validationResult = forceResolveSchema.safeParse({
+      resolvedPostId: selectedResolution,
+      resolvedPostsComment: desc,
+    });
+
+    if (!validationResult.success) {
+      const fieldErrors: Record<string, string> = {};
+      validationResult.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0]] = err.message;
+        }
+      });
+      setFieldErrors(fieldErrors);
+      return;
     }
 
     try {
@@ -59,25 +78,17 @@ const navigate = useNavigate()
       formData.append('resolvedPostsComment', desc);
       formData.append('ticket_id', ticketData?._id as any);
 
-      // Debugging formData content
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
       const response = await forceResolve(formData);
       if (response.success) {
-		toast.success('Ticket resolved successfully!', { position: "top-center" });
-    navigate('/agent/mytickets')
-			  
-	} else {
-		toast.error('Failed to resolve the ticket. Please try again.', { position: "top-center" });
-	}
-    }
-    catch (error) {
+        toast.success('Ticket resolved successfully!', { position: "top-center" });
+        navigate('/agent/mytickets');
+      } else {
+        toast.error('Failed to resolve the ticket. Please try again.', { position: "top-center" });
+      }
+    } catch (error) {
       console.error('Error resolving ticket:', error);
-	  toast.error('An error occurred while resolving the ticket.', { position: "top-center" });
-	}
-    finally {
+      toast.error('An error occurred while resolving the ticket.', { position: "top-center" });
+    } finally {
       setLoading(false);
     }
   };
@@ -94,7 +105,7 @@ const navigate = useNavigate()
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
-		toast.error('Failed to fetch ticket details.', { position: "top-center" });
+        toast.error('Failed to fetch ticket details.', { position: "top-center" });
         setError(message);
       } finally {
         setLoading(false);
@@ -103,7 +114,6 @@ const navigate = useNavigate()
 
     fetchTicket();
   }, [id, ticketFromState]);
-
 
   if (loading) {
     return <div className="text-center py-6">Loading ticket details...</div>;
@@ -122,7 +132,6 @@ const navigate = useNavigate()
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Current ticket information */}
           <div className="bg-muted p-4 rounded-md space-y-3">
             <div className="flex items-start justify-between">
               <div>
@@ -145,7 +154,6 @@ const navigate = useNavigate()
             </div>
           </div>
 
-          {/* Reassignment form */}
           <form className="space-y-4">
             <div className="space-y-2">
               <div className="space-y-2">
@@ -166,26 +174,28 @@ const navigate = useNavigate()
                     )}
                   </SelectContent>
                 </Select>
+                {fieldErrors.resolvedPostId && <p className="text-red-500 text-sm">{fieldErrors.resolvedPostId}</p>}
               </div>
             </div>
 
             <div className="space-y-2">
-              <label>Additional Notes</label>
+              <label htmlFor="notes">Additional Notes <span className="text-red-500">*</span></label>
               <Textarea
                 id="notes"
                 placeholder="Add any additional notes here."
                 rows={3}
                 onChange={handledesc}
                 value={desc}
+                required
               />
+              {fieldErrors.resolvedPostsComment && <p className="text-red-500 text-sm">{fieldErrors.resolvedPostsComment}</p>}
             </div>
-
           </form>
         </CardContent>
 
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
-          <Button onClick={handleResolve}>Force Resolve</Button>
+          <Button onClick={handleResolve} disabled={loading || !selectedResolution || !desc.trim()}>Force Resolve</Button>
         </CardFooter>
       </Card>
     </div>

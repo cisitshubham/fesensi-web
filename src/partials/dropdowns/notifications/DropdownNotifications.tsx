@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { useLanguage } from '@/i18n';
 import { KeenIcon } from '@/components';
-import { Menu, MenuItem, MenuSub, MenuToggle } from '@/components/menu';
+import {  MenuSub } from '@/components/menu';
 
 import { DropdownNotificationsAll } from './DropdownNotificationsAll';
-
 
 interface IDropdownNotificationProps {
   menuTtemRef: any;
@@ -12,10 +12,17 @@ interface IDropdownNotificationProps {
 const DropdownNotifications = ({ menuTtemRef }: IDropdownNotificationProps) => {
   const { isRTL } = useLanguage();
 
+  // State to trigger re-render
+  const [refreshKey, setRefreshKey] = useState<number>(0);
+
   const handleClose = () => {
     if (menuTtemRef.current) {
       menuTtemRef.current.hide(); // Call the closeMenu method to hide the submenu
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshKey((prev) => prev + 1);
   };
 
   const buildHeader = () => {
@@ -32,7 +39,7 @@ const DropdownNotifications = ({ menuTtemRef }: IDropdownNotificationProps) => {
   const buildTabs = () => {
     return (
       <div>
-        <DropdownNotificationsAll />
+        <DropdownNotificationsAll key={refreshKey} onRefresh={handleRefresh} />
       </div>
     );
   };

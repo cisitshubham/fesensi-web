@@ -13,6 +13,7 @@ import { Bell, Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
 import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import clsx from 'clsx';
 import Timer from '@/pages/global-components/timer';
+import { useState } from 'react';
 
 interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
@@ -24,7 +25,9 @@ interface TicketProps {
 export default function Ticket({ ticket }: TicketProps) {
   const statusBadge = getStatusBadge(ticket.status);
   const priorityBadge = getPriorityBadge(ticket.priority);
-
+  const [remainingHours, setRemainingHours] = useState(ticket.remainingHours);
+  const [remainingMinutes, setRemainingMinutes] = useState(ticket.remainingMinutes);
+  const [remainingSeconds, setRemainingSeconds] = useState(ticket.remainingSeconds);
   return (
     <Link
       to={{
@@ -78,13 +81,13 @@ export default function Ticket({ ticket }: TicketProps) {
                   <Clock className="w-3.5 h-3.5" />
                   <span>created at: {ticket.createdAt}</span>
                 </div>
-                <Timer initialTime={1.50}/>
+                <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
               </div>
             </div>
           </div>
         </CardContent>
 
-        <CardFooter className={clsx("px-5 py-3 bg-gray-50 flex justify-between items-center", priorityBadge.color)}>
+        <CardFooter className={clsx("px-5 py-3  flex justify-between items-center")}>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="w-4 h-4 mr-1.5" />
             <span>Due: {ticket.due_date}</span>

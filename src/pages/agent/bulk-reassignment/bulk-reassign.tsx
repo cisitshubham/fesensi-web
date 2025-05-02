@@ -153,7 +153,7 @@ export default function BulkReassign() {
 
                     <div className="mt-4">
                         <label htmlFor="reassign-reason" className="block text-sm font-medium text-gray-700">
-                            Select Reassignment Reason
+                            Select Reassignment Reason <span className="text-red-500">*</span>
                         </label>
                         <Select value={selectedReason} onValueChange={(value) => setSelectedReason(value)}>
                             <SelectTrigger className="w-full" aria-label="Select Reason">
@@ -168,7 +168,15 @@ export default function BulkReassign() {
                             </SelectContent>
                         </Select>
 
-                        <Textarea onChange={(e) => setdescription(e.target.value)} />
+                        <label htmlFor="reassign-description" className="block text-sm font-medium text-gray-700 mt-4">
+                            Description <span className="text-red-500">*</span>
+                        </label>
+                        <Textarea
+                            id="reassign-description"
+                            onChange={(e) => setdescription(e.target.value)}
+                            required
+                            className="mt-1 block w-full"
+                        />
                     </div>
 
                     <DialogFooter className="mt-4">
@@ -176,7 +184,7 @@ export default function BulkReassign() {
                             Cancel
                         </Button>
                         <Button
-                            disabled={!selectedReason}
+                            disabled={!selectedReason || !description.trim()}
                             onClick={() => {
                                 console.log("Reassigning tickets:", handleSubmit(), "Reason:", selectedReason);
                                 handleDialogClose();

@@ -181,7 +181,7 @@ export default function ReassignTicket() {
 
             <CardFooter className="flex justify-between">
               <Button variant="outline" type="button" onClick={() => navigate(-1)}>Cancel</Button>
-              <Button type="submit">Reassign Ticket</Button>
+              <Button type="submit" disabled={!selectedResolution || !desc.trim()}>Reassign Ticket</Button>
             </CardFooter>
           </form>
         </CardContent>

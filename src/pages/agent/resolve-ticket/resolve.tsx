@@ -11,25 +11,7 @@ import { MyTicketDetails } from '@/api/api';
 import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
-
-
-
-
-const getBadgeClass = (badgeStatus: string, currentStatus: string) => {
-  const selected = badgeStatus === currentStatus;
-  return `cursor-pointer text-sm px-3 py-1 rounded-full transition-colors duration-200 ${selected
-      ? badgeStatus === 'in-progress'
-        ? 'bg-blue-500 text-white'
-        : badgeStatus === 'resolved'
-          ? 'bg-green-500 text-white'
-          : 'bg-red-500 text-white'
-      : badgeStatus === 'in-progress'
-        ? 'bg-blue-100 text-blue-700'
-        : badgeStatus === 'resolved'
-          ? 'bg-green-100 text-green-700'
-          : 'bg-red-100 text-red-700'
-    }`;
-};
+import { z } from 'zod';
 
 const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispatch<React.SetStateAction<File[]>> }) => {
   const [dragging, setDragging] = useState(false);
@@ -100,6 +82,7 @@ export default function ResolveTicket() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('');
   const [resolution, setResolution] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -128,7 +111,14 @@ export default function ResolveTicket() {
     fetchTicket();
   }, [id, ticketFromState]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  // Define Zod schema for validation
+  const resolutionSchema = z.object({
+    resolution: z.string().min(1, 'Resolution is required'),
+    files: z.array(z.instanceof(File)).optional(),
+  });
+
+  // Update handleSubmit to include validation
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!ticketData) {
@@ -137,10 +127,22 @@ export default function ResolveTicket() {
     }
 
     try {
+      // Validate inputs
+      const validationResult = resolutionSchema.safeParse({ resolution, files });
+      if (!validationResult.success) {
+        const fieldErrors: Record<string, string> = {};
+        validationResult.error.errors.forEach((err) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0]] = err.message;
+          }
+        });
+        setFieldErrors(fieldErrors);
+        return;
+      }
+
       setLoading(true);
 
-      const formData = new FormData();
-      formData.append('resolution', resolution); // Assuming `resolution` is a state variable for the textarea input
+      const formData = new FormData(event.currentTarget);
       formData.append('ticket_id', ticketData._id);
 
       files.forEach((file) => {
@@ -151,7 +153,6 @@ export default function ResolveTicket() {
       const response = await updateResolution(formData);
 
       if (response.success) {
-        // navigate('/'); // Redirect after successful resolution
         toast.success('Reason saved successfully', { position: "top-center" });
         setTimeout(() => {
           navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
@@ -201,18 +202,31 @@ export default function ResolveTicket() {
 
         <Separator className="mb-6" />
 
-        <Textarea
-          placeholder="Enter the resolution"
-          className="mb-4"
-          value={resolution}
-          onChange={(e) => setResolution(e.target.value)}
-        />
+        <div className="flex flex-col gap-2">
+          <label htmlFor="resolution" className="text-sm font-medium">
+            Resolution <span className="text-red-500">*</span>
+          </label>
+          <Textarea
+            id="resolution"
+            placeholder="Enter the resolution"
+            className="mb-4"
+            value={resolution}
+            onChange={(e) => setResolution(e.target.value)}
+            required
+          />
+          {fieldErrors.resolution && <p className="text-red-500 text-sm">{fieldErrors.resolution}</p>}
+        </div>
 
         <FileUpload files={files} setFiles={setFiles} />
       </CardContent>
 
       <CardFooter>
-        <Button onClick={handleSubmit}>Send Resolution</Button>
+        <Button 
+          onClick={() => handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>)}
+          disabled={!resolution.trim()}
+        >
+          Send Resolution
+        </Button>
       </CardFooter>
     </Card>
   );

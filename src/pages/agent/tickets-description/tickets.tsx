@@ -1,7 +1,7 @@
 'use client';
-import { Link,  useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Tickettype, TicketStatus } from '@/types';
-import { AlertCircle, Clock, FileText,  User, Users } from 'lucide-react';
+import { AlertCircle, Clock, FileText, User, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -9,19 +9,23 @@ import { Button } from '@/components/ui/button';
 import ActivityLogAndComments from './activity-log-and-comments';
 import { useEffect, useState } from 'react';
 import { MyTicketDetails } from '@/api/api';
-import { getPriorityColor,getStatusBadge } from '@/pages/global-components/GetStatusColor';
+import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import { closeTicket } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Timer from '@/pages/global-components/timer';
+
 export default function Tickets() {
   const location = useLocation();
   const ticket: Tickettype = location.state.ticket; // Retrieve the ticket data from state
-  const { id } = useParams(); 
-const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [ticketData, setTicketData] = useState(ticket);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [remainingHours, setRemainingHours] = useState(ticketData.remainingHours);
+  const [remainingMinutes, setRemainingMinutes] = useState(ticketData.remainingMinutes);
+  const [remainingSeconds, setRemainingSeconds] = useState(ticketData.remainingSeconds);
 
   useEffect(() => {
     const fetchTicketData = async () => {
@@ -33,6 +37,9 @@ const navigate = useNavigate();
         const response = await MyTicketDetails(id);
 
         setTicketData(response.data);
+        setRemainingHours(response.data.remainingHours); // Ensure default value
+        setRemainingMinutes(response.data.remainingMinutes); // Ensure default value
+        setRemainingSeconds(response.data.remainingSeconds); // Ensure default value
         setLoading(false);
       } catch (error: any) {
         setError(error);
@@ -43,38 +50,42 @@ const navigate = useNavigate();
     fetchTicketData();
   }, []);
 
-console.log(ticketData, 'ticketData');
-  
-
-const handlecloseTicket = async () => {
+  const handlecloseTicket = async () => {
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append('ticket_id', ticketData._id as any);
       await closeTicket(formData); // Assuming this function is defined elsewhere
       setLoading(false);
-    //   navigate('/')
-	toast.success('Ticket closed successfully!', { position: "top-center" });
-  setTimeout(() => {
-    navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
-  }, 3000);
-    }
-    catch (error) {
+      //   navigate('/')
+      toast.success('Ticket closed successfully!', { position: 'top-center' });
+      setTimeout(() => {
+        navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds
+      }, 3000);
+    } catch (error) {
       console.error('Error closing ticket:', error);
-	  toast.error('Failed to close ticket!', { position: "top-center" });
+      toast.error('Failed to close ticket!', { position: 'top-center' });
       setLoading(false);
     }
   };
+  // Ensure default values for remainingHours, remainingMinutes, and remainingSeconds
 
   // Function to get initials from name
-
 
   const activityLog = (ticketData.activity_log || []).map((log: any) => ({
     ...log,
     creator: log.creator || { _id: 'unknown', first_name: 'Unknown' }, // Provide a default creator
   }));
-  const agentComments = ticketData.agentComment ? [ticketData.agentComment] : []; // Replace with actual comments data
-const statusBadge = getStatusBadge(ticket?.status || "")
+  const agentComments = ticketData.agentComment ? [ticketData.agentComment] : [];
+
+  const statusBadge = getStatusBadge(ticket?.status || '');
+  const priorityBadge = getPriorityBadge(ticket.priority);
+  console.log(remainingHours, remainingMinutes, remainingSeconds);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto px-6 ">
       <div className="flex flex-col  md:flex-row gap-6">
@@ -85,21 +96,23 @@ const statusBadge = getStatusBadge(ticket?.status || "")
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                  <Timer initialTime={50.45} />
-                    <div className="text-sm text-muted-foreground">
-                      Ticket #{ticketData.ticket_number}
-                    </div>
+                    <div className="text-sm text-muted-foreground">Ticket #{ticketData.ticket_number}</div>
                     <CardTitle className="text-2xl mt-1">{ticketData.title}</CardTitle>
+                  
                   </div>
                   <div className="flex gap-2">
                     <Badge className={'bg-slate-500'}>{ticketData.category}</Badge>
                     <Badge className={`${statusBadge.color} flex items-center gap-1`}>
-                  {statusBadge.icon}
-                  {ticket.status}
-                </Badge>
-                    <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+                      {statusBadge.icon}
+                      {ticket.status}
+                    </Badge>
+                    <Badge className={`${priorityBadge.color} flex items-center gap-1`}>
+                      {priorityBadge.icon}
+                      {ticket.priority}
+                    </Badge>
                   </div>
                 </div>
+                  <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
               </CardHeader>
               <Separator className="mb-4" />
               <CardContent>
@@ -114,9 +127,7 @@ const statusBadge = getStatusBadge(ticket?.status || "")
                   {/* Ticket images */}
                   {ticketData.attachments && ticketData.attachments.length > 0 && (
                     <div className="mt-6">
-                      <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                        Attachments
-                      </h3>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Attachments</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {ticketData.attachments.map((attachment, index) => (
                           <img
@@ -159,7 +170,6 @@ const statusBadge = getStatusBadge(ticket?.status || "")
                     <span>Created By</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-          
                     <span className="font-medium">{(ticketData as any).assigned_to}</span>
                   </div>
                 </div>
@@ -173,7 +183,6 @@ const statusBadge = getStatusBadge(ticket?.status || "")
                         <span>Assigned To</span>
                       </div>
                       <div className="flex items-center gap-2 mt-2">
-       
                         <span className="font-medium">{(ticketData as any).assigned_to}</span>
                       </div>
                     </div>
@@ -189,17 +198,8 @@ const statusBadge = getStatusBadge(ticket?.status || "")
                   </div>
                   {/* {ticket.escalatedTo ? ( */}
                   <div className="flex items-center gap-2 mt-2">
-                    {/* <Avatar>
-                        <AvatarImage
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.escalatedTo)}&background=random`}
-                        />
-					  <AvatarFallback>{getInitials((ticketData as any).assigned_to)}</AvatarFallback>
-                      </Avatar> */}
                     <span className="font-medium">{(ticketData as any).assigned_to}</span>
                   </div>
-                  {/* ) : (
-                    // <span className="mt-2 text-gray-500">N/A</span>
-                  )} */}
                 </div>
 
                 <Separator orientation="vertical" />
@@ -212,16 +212,13 @@ const statusBadge = getStatusBadge(ticket?.status || "")
         </div>
       </div>
       <div className="flex justify-center mt-6 gap-5">
-
-
-{/* buttons  */}
-
+        {/* buttons  */}
 
         {/* update resolution  */}
-        {ticketData.status === TicketStatus.InProgress && ticketData.isUserCommented &&(
+        {ticketData.status === TicketStatus.InProgress && ticketData.isUserCommented && (
           <Link
             to={{
-              pathname: `/agent/ticket/resolve/${ticket._id}`
+              pathname: `/agent/ticket/resolve/${ticket._id}`,
             }}
             className="block"
           >
@@ -230,10 +227,10 @@ const statusBadge = getStatusBadge(ticket?.status || "")
         )}
 
         {/* force resolve */}
-			  {ticketData.status === TicketStatus.InProgress  && (
+        {ticketData.status === TicketStatus.InProgress && (
           <Link
             to={{
-              pathname: `/agent/Force-resolve/${ticket._id}`
+              pathname: `/agent/Force-resolve/${ticket._id}`,
             }}
             className="block"
           >
@@ -243,14 +240,15 @@ const statusBadge = getStatusBadge(ticket?.status || "")
 
         {/* close ticket  */}
         {ticketData.status === TicketStatus.Resolved && (
-            <Button onClick={handlecloseTicket} className="mt-6">Close Ticket</Button>
-          
+          <Button onClick={handlecloseTicket} className="mt-6">
+            Close Ticket
+          </Button>
         )}
         {/* incomplete Ticket */}
-			  {ticketData.status === TicketStatus.Open && ticketData.isUserCommented==false  && (
+        {ticketData.status === TicketStatus.Open && ticketData.isResolved == false && (
           <Link
             to={{
-              pathname: '/agent/incomplete-ticket'
+              pathname: '/agent/incomplete-ticket',
             }}
             state={{ ticket }} // Pass the complete ticket data as state
             className="block"
@@ -264,25 +262,13 @@ const statusBadge = getStatusBadge(ticket?.status || "")
         {!ticketData.isResolved && (
           <Link
             to={{
-              pathname: `/agent/ticket/resolve/${ticket._id}`
+              pathname: `/agent/ticket/resolve/${ticket._id}`,
             }}
             className="block"
           >
             <Button className="mt-6">Suggest Resolution</Button>
           </Link>
         )}
-        {/* Request Reassignment */}
-        {/* {(ticketData.status === TicketStatus.Open ||
-          ticketData.status === TicketStatus.InProgress) && (
-          <Link
-            to={{
-              pathname: `/agent/reassign-ticket/${ticket._id}`
-            }}
-            className="block"
-          >
-            <Button className="mt-6">Request Reassignment</Button>
-          </Link>
-        )} */}
       </div>
     </div>
   );

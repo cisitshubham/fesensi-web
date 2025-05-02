@@ -378,3 +378,11 @@ export const getReassignListPending = async () => {
 }
 
 
+export const deleteNotification = async (notificationId: string) => {
+  try {
+    const response = await axiosInstance.post(`/users/delete/pushNotification/${notificationId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+  }
+}

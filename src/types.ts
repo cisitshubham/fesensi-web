@@ -1,12 +1,21 @@
 export type Tickettype = {
+  resolutionTime?: number,
+  remainingHours?: number,
+  remainingMinutes?: number,
+  remainingSeconds?: number,
   isUserCommented: boolean;
   isAgentCommented: boolean;
+  
   isAgenForceResolve: boolean;
+  isAgentViewButtonShow: boolean;
+
+  isAgentResolvedButtonShow: boolean;
   isResolved: boolean;
+  
   category: string;
   IsCumstomerCommneted: boolean;
   creator: string | number | boolean;
-  _id: string ;
+  _id: string;
   ticket_number: number;
   status: TicketStatus;
   due_date: string;
@@ -112,6 +121,6 @@ export type Notificationtype = {
   _id: string;
   notificationMessage: string;
   notificationType: string;
-  updatedAt:string
+  updatedAt: string
   read: boolean;
 };

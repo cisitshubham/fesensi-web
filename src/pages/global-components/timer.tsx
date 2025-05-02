@@ -25,23 +25,25 @@ function useTimer(initialTime: number) {
 }
 
 interface TimerProps {
-  initialTime: number; // Time in hours and minutes (e.g., 1.5 for 1 hour and 30 minutes)
+  hours: number; // Hours to initialize the timer
+  minutes: number; // Minutes to initialize the timer
+  seconds: number; // Seconds to initialize the timer
 }
 
-export default function Timer({ initialTime }: TimerProps) {
-  const timeInSeconds = Math.floor(initialTime) * 3600 + Math.round((initialTime % 1) * 60) * 60;
-  const { hours, minutes, seconds } = useTimer(timeInSeconds);
-
+export default function Timer({ hours = 0, minutes = 0, seconds = 0 }: TimerProps) {
+  const timeInSeconds = hours * 3600 + minutes * 60 + seconds;
+  const { hours: timerHours, minutes: timerMinutes, seconds: timerSeconds } = useTimer(timeInSeconds);
+console.log(timerHours, timerMinutes, timerSeconds);
   const formatNumber = (num: number) => num.toString().padStart(2, "0");
 
   return (
-    <Card className="max-h-fit p-1">
-      <div className="flex text-sm items-center justify-center gap-1" aria-label="Countdown Timer">
-        <TimeUnit value={formatNumber(hours)} label="Hours" />
+    <Card className="bg-red-500 text-white rounded-full max-h-fit w-fit p-1">
+      <div className="flex text-sm px-2 items-center justify-center gap-1" aria-label="Countdown Timer">
+        <TimeUnit value={formatNumber(timerHours)} label="Hours" />
         <TimeSeparator />
-        <TimeUnit value={formatNumber(minutes)} label="Minutes" />
+        <TimeUnit value={formatNumber(timerMinutes)} label="Minutes" />
         <TimeSeparator />
-        <TimeUnit value={formatNumber(seconds)} label="Seconds" />
+        <TimeUnit value={formatNumber(timerSeconds)} label="Seconds" />
       </div>
     </Card>
   );
@@ -49,8 +51,8 @@ export default function Timer({ initialTime }: TimerProps) {
 
 function TimeUnit({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center" aria-label={label}>
-      <div className="text-sm font-bold bg-slate-200 dark:bg-slate-700 rounded-lg p-1 w-fit text-center text-gray-600 dark:text-gray-500">
+    <div className="flex flex-col items-center px-1" aria-label={label}>
+      <div className="text-sm font-bold  text-center ">
         {value}
       </div>
     </div>
@@ -58,5 +60,5 @@ function TimeUnit({ value, label }: { value: string; label: string }) {
 }
 
 function TimeSeparator() {
-  return <div className="text-sm font-bold text-slate-400 dark:text-slate-500 pb-1">:</div>;
+  return <div className="text-sm font-bold  pb-1">:</div>;
 }
