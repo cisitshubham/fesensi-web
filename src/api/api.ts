@@ -29,11 +29,9 @@ export const updateProfile = async (imageFile: File) => {
 };
 
 export const updatepassword = async (formData:any) => {
-console.log(formData)
   try {
-    const response = await axiosInstance.post('/users/forget-password', formData);
-    console.log(response.data);
-    return response.data;
+	const response = await axiosInstance.post('/users/reset-password', formData);
+    return response;
   }
   catch (error) {
     console.error('Error updating password:', error);
