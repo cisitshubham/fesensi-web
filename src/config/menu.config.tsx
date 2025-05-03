@@ -14,15 +14,16 @@ let role: string[] = [];
 // const role = res?.data?.role ?? [];
 
 export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
-  {
-    title: 'Dashboard',
-    icon: 'element-11',
-    path: '/'
-  },
+
 
   // Customer Tabs
   ...(roles.includes('CUSTOMER')
     ? [
+      {
+        title: 'Dashboard',
+        icon: 'element-11',
+        path: '/'
+      },
       {
         title: 'Tickets',
         icon: 'document',
@@ -72,6 +73,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
   // Aegent Tabs
   ...(roles.includes('AGENT')
     ? [
+      {
+        title: 'Dashboard',
+        icon: 'element-11',
+        path: '/'
+      },
       {
         title: 'My Tickets',
         icon: 'file-sheet',
@@ -131,6 +137,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
   // admin Tabs
   ...(roles.includes('ADMIN')
     ? [
+      {
+        title: 'Dashboard',
+        icon: 'element-11',
+        path: '/'
+      },
       {
         title: 'All Users',
         icon: 'users',

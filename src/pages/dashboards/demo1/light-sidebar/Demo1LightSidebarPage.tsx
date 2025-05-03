@@ -29,6 +29,7 @@ const Demo1LightSidebarPage = () => {
       setSelectedRoles([]); // Clear the array if the role is already selected
     } else {
       setSelectedRoles([role]); // Set the array to only contain the selected role
+      localStorage.setItem('selectedRole', role); // Store the selected role in local storage
     }
   };
 
@@ -43,22 +44,39 @@ const Demo1LightSidebarPage = () => {
     };
 
     getUser();
-  }, []);
+  }, []); // Removed dependencies to ensure fresh data is fetched every time
 
   const roles = user?.role || []; 
 
   useEffect(() => {
-    if (roles.some((role: { role_name: string; }) => role.role_name === 'ADMIN')) {
-      setSelectedRoles(['ADMIN']);
-    } else if (
-      roles.length === 1 &&
-      (roles.some((role: { role_name: string; }) => role.role_name === 'CUSTOMER') || roles.some((role: { role_name: string; }) => role.role_name === 'USER'))
-    ) {
-      setSelectedRoles(roles.map((role: { role_name: any; }) => role.role_name));
-    } else if (roles.some((role: { role_name: string; }) => role.role_name === 'AGENT')) {
-      setSelectedRoles(['AGENT']); // Ensure AGENT role is handled
+    const storedRoles = localStorage.getItem('selectedRoles');
+  
+    let parsedRoles: string[] = [];
+    try {
+      parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
+    } catch {
+      parsedRoles = [];
+    }
+  
+    if (parsedRoles.length > 0) {
+      setSelectedRoles(parsedRoles);
+    } else {
+      // Run your fallback logic
+      if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+        setSelectedRoles(['ADMIN']);
+      } else if (
+        roles.length === 1 &&
+        (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
+         roles.some((role: { role_name: string }) => role.role_name === 'USER'))
+      ) {
+        setSelectedRoles(roles.map((role: { role_name: any }) => role.role_name));
+      } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+        setSelectedRoles(['AGENT']);
+      }
     }
   }, [roles]);
+  
+  
 
   const isDropdownReadonly = roles.length === 1;
   return (

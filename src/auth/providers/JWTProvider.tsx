@@ -83,9 +83,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       });
       if (data?.token) {
         localStorage.setItem('token', data.token);
+      
       }
       saveAuth(data.data.tokens);
       setCurrentUser(data.data.user);
+      window.location.href = '/';
     } catch (error) {
       saveAuth(undefined);
       throw new Error(`Error ${error}`);
@@ -142,6 +144,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const logout = () => {
     saveAuth(undefined);
     setCurrentUser(undefined);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('selectedRoles');
   };
 
   return (
