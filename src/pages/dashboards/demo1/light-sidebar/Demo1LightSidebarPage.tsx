@@ -7,13 +7,17 @@ import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { Demo1LightSidebarContent } from './';
 import { fetchUser } from '@/api/api';
-
+import Tenure from '@/pages/charts/tenure';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import Donut from '@/pages/charts/donut';
+import Pie from '@/pages/charts/pie';
 import { useRole } from '@/pages/global-components/role-context';
+import { Card } from '@/components/ui/card';
+import BarChart from '@/pages/charts/bar-chart';
+import LineChart from '@/pages/charts/line-chart';
 
 const Demo1LightSidebarPage = () => {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -46,18 +50,18 @@ const Demo1LightSidebarPage = () => {
     getUser();
   }, []); // Removed dependencies to ensure fresh data is fetched every time
 
-  const roles = user?.role || []; 
+  const roles = user?.role || [];
 
   useEffect(() => {
     const storedRoles = localStorage.getItem('selectedRoles');
-  
+
     let parsedRoles: string[] = [];
     try {
       parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
     } catch {
       parsedRoles = [];
     }
-  
+
     if (parsedRoles.length > 0) {
       setSelectedRoles(parsedRoles);
     } else {
@@ -67,7 +71,7 @@ const Demo1LightSidebarPage = () => {
       } else if (
         roles.length === 1 &&
         (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
-         roles.some((role: { role_name: string }) => role.role_name === 'USER'))
+          roles.some((role: { role_name: string }) => role.role_name === 'USER'))
       ) {
         setSelectedRoles(roles.map((role: { role_name: any }) => role.role_name));
       } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
@@ -75,8 +79,8 @@ const Demo1LightSidebarPage = () => {
       }
     }
   }, [roles]);
-  
-  
+
+
 
   const isDropdownReadonly = roles.length === 1;
   return (
@@ -122,6 +126,20 @@ const Demo1LightSidebarPage = () => {
       <Container>
         <Demo1LightSidebarContent date={date} />
       </Container>
+      <Card className="flex flex-col gap-4 p-5 lg:p-7.5 lg:pt-4 mx-8 mt-4 h-fit 
+      ">
+        <Tenure />
+        <div className=" flex flex-row gap-4 mb-1 justify-between">
+          <Donut />
+          <Pie />
+        </div>
+        <div className="flex flex-row gap-4 mb-1 justify-between">
+          <BarChart />
+          <LineChart />
+        </div>
+
+      </Card>
+
     </Fragment>
   );
 };

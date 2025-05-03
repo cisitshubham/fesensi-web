@@ -25,35 +25,22 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/'
       },
       {
-        title: 'Tickets',
+        title: "Create Ticket",
+        icon: "plus",
+        path:"/user/create-ticket"
+      },
+      {
+        title: 'MyTickets',
         icon: 'document',
         path: '/user/MyTickets'
       },
+
       {
         title: 'knowledge base',
         icon: 'book-open'
 
       },
-      {
-        title: 'Draft Tickets',
-        icon: 'pencil'
-      },
-      {
-        title: 'Escalated tickets',
-        icon: 'flag'
-      },
-      {
-        title: 'SLA Status',
-        icon: 'timer'
-      },
-      {
-        title: 'Archived Tickets',
-        icon: 'file-down'
-      },
-      {
-        title: 'Contact Support',
-        icon: 'abstract-32'
-      },
+
       {
         title: 'Announcements',
         icon: 'notification-status'
@@ -66,7 +53,12 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
       {
         title: 'Trust Level',
         icon: 'like-shapes'
-      }
+      },
+
+      {
+        title: 'Contact Support',
+        icon: 'abstract-32'
+      },
     ]
     : []),
 
@@ -83,11 +75,7 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         icon: 'file-sheet',
         path: '/agent/mytickets'
       },
-      {
-        title: 'knowledge base',
-        icon: 'book-open'
 
-      },
       {
         title: 'Bulk Reassignment',
         icon: 'file-sheet',
@@ -99,10 +87,6 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/agent/requested-reassignment'
       },
       {
-        title: 'Draft Tickets',
-        icon: 'pencil'
-      },
-      {
         title: 'Escalated tickets',
         icon: 'flag'
       },
@@ -110,27 +94,23 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'SLA Status',
         icon: 'timer'
       },
-      {
-        title: 'Archived Tickets',
-        icon: 'file-down'
-      },
-      {
-        title: 'Contact Support',
-        icon: 'abstract-32'
-      },
+
+
       {
         title: 'Announcements',
         icon: 'notification-status'
 
       },
       {
-        title: 'Rate Us/Feedback',
-        icon: 'star'
+        title: 'knowledge base',
+        icon: 'book-open'
+
       },
       {
-        title: 'Trust Level',
-        icon: 'like-shapes'
+        title: 'Contact Support',
+        icon: 'abstract-32'
       }
+
     ]
     : []),
 
@@ -143,12 +123,22 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/'
       },
       {
-        title: 'All Users',
+        title: 'Analytics',
+        icon: 'compass',
+        path: '/admin/analytics'
+      },
+      {
+        title: 'Users',
         icon: 'users',
         path: '/admin/allUsers'
       },
       {
-        title: 'Permissions and Roles',
+        title: 'Roles & Permissions',
+        icon: 'shield',
+        path: '/admin/roles'
+      },
+      {
+        title: 'Masters (Dropdown)',
         icon: 'shield',
         path: '/admin/roles'
       },
@@ -167,11 +157,18 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         icon: 'setting',
         path: '/admin/configurations'
       },
+
       {
-        title: 'Analytics',
-        icon: 'compass',
-        path: '/admin/analytics'
+        title: 'knowledge base',
+        icon: 'book-open'
+
+      },
+      {
+        title: 'Contact Support',
+        icon: 'abstract-32'
+        // contact to super admin
       }
+
     ]
     : [])
 ];

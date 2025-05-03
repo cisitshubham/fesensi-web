@@ -2,6 +2,7 @@ import { KeenIcon, Menu, MenuItem } from '@/components';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n';
 import { getTicketByCategory, getTicketByStatus } from '@/api/api';
+import Donut from '@/pages/charts/donut';
 
 interface IHighlightsRow {
   icon: string;
@@ -219,6 +220,8 @@ const Highlights = ({ limit, date }: IHighlightsProps) => {
             return renderItem(item, index);
           })}
         </div>
+
+
 
         <div className="border-b border-gray-300"></div>
         <div className="grid gap-3">{rows.slice(0, limit).map(renderRow)}</div>

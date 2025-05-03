@@ -7,6 +7,8 @@ import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { useLayout } from '@/providers';
 import { AxiosError } from 'axios';
+import { updatepassword } from '@/api/api';
+import { formatDate } from 'date-fns';
 
 const passwordSchema = Yup.object().shape({
   newPassword: Yup.string()
@@ -17,9 +19,24 @@ const passwordSchema = Yup.object().shape({
     .required('Please confirm your new password')
 });
 
+
+
+
+const passswordSchema = Yup.object().shape({
+  otp: Yup.string()
+    .min(6, 'OTP must be at least 6 characters')
+    .max(6, 'OTP must be at most 6 characters')
+    .required('OTP is required'),
+  newPassword: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('New password is required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('newPassword')], 'Passwords must match')
+    .required('Please confirm your new password')
+});
+
 const ResetPasswordChange = () => {
-  const { currentLayout } = useLayout();
-  const { changePassword } = useAuthContext();
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState<boolean | undefined>(undefined);
@@ -37,37 +54,40 @@ const ResetPasswordChange = () => {
       setLoading(true);
       setHasErrors(undefined);
 
-      const email = new URLSearchParams(window.location.search).get('email');
+      const formdata = new FormData();
 
-      if (!email) {
-        setHasErrors(true);
-        setStatus('Email properties are required');
-        setLoading(false);
-        setSubmitting(false);
-        return;
+      const data={
+        otp: values.otp,
+        password: values.newPassword,
+        confirm_password: values.confirmPassword
       }
-
       try {
-        await changePassword(email, values.newPassword, values.confirmPassword, values.otp);
-        setHasErrors(false);
-        navigate(
-          currentLayout?.name === 'auth-branded'
-            ? '/auth/reset-password/changed'
-            : '/auth/classic/reset-password/changed'
+        const response = await updatepassword(
+          data
         );
-      } catch (error) {
-        if (error instanceof AxiosError && error.response) {
-          setStatus(error.response.data.message);
-        } else {
-          setStatus('Password reset failed. Please try again.');
+        if (response.success == true) {
+          setStatus('Password updated successfully!');
+          setLoading(false);
+          setSubmitting(false);
+          navigate('/');
         }
-        setHasErrors(true);
-      } finally {
+      }
+      catch (error) {
         setLoading(false);
         setSubmitting(false);
+        setHasErrors(true);
+        setStatus('Invalid OTP or password. Please try again.');
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data?.message || 'An error occurred';
+          setStatus(errorMessage);
+        } else {
+          setStatus('An unexpected error occurred. Please try again later.');
+
+
+        }
       }
     }
-  });
+  }); // Closing parenthesis added here
 
   return (
     <div className="card max-w-[370px] w-full">
