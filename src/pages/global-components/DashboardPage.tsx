@@ -170,6 +170,26 @@ export default function  DashboardPage  () {
     );
   };
 
+  const [statusData, setStatusData] = useState<number[]>([]);
+  const [statusLabels, setStatusLabels] = useState<string[]>([]);
+  const [priorityData, setPriorityData] = useState<number[]>([]);
+  const [priorityLabels, setPriorityLabels] = useState<string[]>([]);
+  const [ticketVolumeData, setTicketVolumeData] = useState<number[]>([]);
+  const [ticketVolumeLabels, setTicketVolumeLabels] = useState<string[]>([]);
+  const[categoryData, setCategoryData] = useState<number[]>([]);
+  const[categoryLabels, setCategoryLabels] = useState<string[]>([]);
+
+  const handleDataUpdate = (data: any) => {
+    setStatusData(data.statusData);
+    setStatusLabels(data.statusLabels);
+    setPriorityData(data.priorityData);
+    setPriorityLabels(data.priorityLabels);
+    setTicketVolumeData(data.ticketVolumeData);
+    setTicketVolumeLabels(data.ticketVolumeLabels);
+    setCategoryData(data.categoryData);
+    setCategoryLabels(data.categoryLabels);
+  };
+
   return (
     <Fragment>
       <Container>
@@ -214,7 +234,7 @@ export default function  DashboardPage  () {
 
 
         {/* Existing Dashboard Content */}
-        <Tenure />
+        <Tenure onDataUpdate={handleDataUpdate} />
         <div className=" flex flex-row gap-4">
         <div className="grid grid-cols-2  gap-4 mb-6">
           <Card className="p-4 aspect-square">
@@ -291,10 +311,10 @@ export default function  DashboardPage  () {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Donut />
-          <Pie />
-          <LineChart />
-          <BarChart />
+          <Donut series={statusData} labels={statusLabels} />
+          <Pie series={priorityData} labels={priorityLabels} />
+          <LineChart series={ticketVolumeData} labels={ticketVolumeLabels} />
+          <BarChart series={categoryData} labels={categoryLabels} />
         </div>
       </Container>
     </Fragment>

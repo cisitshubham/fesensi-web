@@ -1,11 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DashboardData } from '@/pages/charts/data_manipulations';
 
-export default function Tenure() {
+export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
+
+  useEffect(() => {
+    const today = new Date();
+    const formatDate = (date: Date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${year}-${month}-${day}`;
+    };
+
+    if (selectedButton === 'Today') {
+      setFromDate(formatDate(today));
+      setToDate(formatDate(today));
+    } else if (selectedButton === 'Weekly') {
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+      setFromDate(formatDate(oneWeekAgo));
+      setToDate(formatDate(today));
+    } else if (selectedButton === 'Fortnightly') {
+      const twoWeeksAgo = new Date(today);
+      twoWeeksAgo.setDate(today.getDate() - 14);
+      setFromDate(formatDate(twoWeeksAgo));
+      setToDate(formatDate(today));
+    }
+  }, [selectedButton]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await DashboardData(fromDate, toDate);
+        console.log('Fetched data:', data); // Log the fetched data for debugging
+        if (data) { // Ensure the API response indicates success
+          onDataUpdate(data);
+        } else {
+          console.error('API did not return success:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    if (fromDate && toDate) {
+      fetchData();
+    }
+  }, [fromDate, toDate]);
 
   const handleButtonClick = (button: React.SetStateAction<string>) => {
     setSelectedButton(button);

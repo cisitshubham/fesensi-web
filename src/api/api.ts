@@ -296,9 +296,9 @@ export const addFeedback = async (formData: FormData) => {
 
 // agent 
 
-export const ChartData = async () => {
+export const ChartData = async (formData:FormData) => {
   try {
-    const response = await axiosInstance.get('/agent/myTickets/Dashboard/charts');
+    const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts',formData);
     return response.data;
   }
   catch (error) {
