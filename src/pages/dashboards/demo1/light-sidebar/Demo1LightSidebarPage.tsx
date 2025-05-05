@@ -126,19 +126,7 @@ const Demo1LightSidebarPage = () => {
       <Container>
         <Demo1LightSidebarContent date={date} />
       </Container>
-      <Card className="flex flex-col gap-4 p-5 lg:p-7.5 lg:pt-4 mx-8 mt-4 h-fit 
-      ">
-        <Tenure />
-        <div className=" flex flex-row gap-4 mb-1 justify-between">
-          <Donut />
-          <Pie />
-        </div>
-        <div className="flex flex-row gap-4 mb-1 justify-between">
-          <BarChart />
-          <LineChart />
-        </div>
 
-      </Card>
 
     </Fragment>
   );

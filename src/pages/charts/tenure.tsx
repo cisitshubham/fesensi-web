@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+
 export default function Tenure() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -11,47 +12,47 @@ export default function Tenure() {
   };
 
   return (
-    <Card style={{ padding: '20px' }} className='w-full flex flex-row justify-between shadow-lg'>
-      <div style={{ marginBottom: '10px' }} className='my-auto'>
+    <Card className="p-5 w-full flex flex-row justify-between shadow-lg my-4">
+      <div className="mb-2 my-auto">
         <Button
           variant={selectedButton === 'Today' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Today')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Today
         </Button>
         <Button
           variant={selectedButton === 'Weekly' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Weekly')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Weekly
         </Button>
         <Button
           variant={selectedButton === 'Fortnightly' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Fortnightly')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Fortnightly
         </Button>
       </div>
-      <div className='text-center my-auto'>
-        <label style={{ marginRight: '10px' }}>
+      <div className="text-center my-auto">
+        <label className="mr-2">
           From:
           <input
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            style={{ marginLeft: '5px' }}
+            className="ml-1"
           />
         </label>
-        <label style={{ marginLeft: '20px' }}>
+        <label className="ml-5">
           To:
           <input
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            style={{ marginLeft: '5px' }}
+            className="ml-1"
           />
         </label>
       </div>

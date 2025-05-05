@@ -138,37 +138,34 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/admin/roles'
       },
       {
-        title: 'Masters (Dropdown)',
+        title: 'Masters',
         icon: 'shield',
-        path: '/admin/roles'
+        children: [
+          {
+            title: 'Categories',
+            icon: 'folder',
+            path: '/admin/categories'
+          },
+          {
+            title: 'Force Reasons',
+            icon: 'lock-3',
+            path: '/admin/force-reasons'
+          },
+          {
+            title: 'Configuration',
+            icon: 'setting',
+            path: '/admin/configurations'
+          }
+        ]
       },
-      {
-        title: 'Categories',
-        icon: 'folder',
-        path: '/admin/categories'
-      },
-      {
-        title: 'Force Reasons',
-        icon: 'lock-3',
-        path: '/admin/force-reasons'
-      },
-      {
-        title: 'Configuration',
-        icon: 'setting',
-        path: '/admin/configurations'
-      },
-
       {
         title: 'knowledge base',
         icon: 'book-open'
-
       },
       {
         title: 'Contact Support',
         icon: 'abstract-32'
-        // contact to super admin
       }
-
     ]
     : [])
 ];

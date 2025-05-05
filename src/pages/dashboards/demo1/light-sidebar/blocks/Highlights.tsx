@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n';
 import { getTicketByCategory, getTicketByStatus } from '@/api/api';
 import Donut from '@/pages/charts/donut';
-
+import { Card } from '@mui/material';
+import Pie from '@/pages/charts/pie';
+import LineChart from '@/pages/charts/line-chart';
+import Tenure from '@/pages/charts/tenure';
+import { BarChart } from 'lucide-react';
 interface IHighlightsRow {
   icon: string;
   text: string;
@@ -180,12 +184,12 @@ const Highlights = ({ limit, date }: IHighlightsProps) => {
   };
 
   return (
-    <div className="card h-full">
-      <div className="card-body flex flex-col gap-4 p-5 lg:p-7.5 lg:pt-4">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-normal text-gray-700">Ticket Progression</span>
-          <div className="flex items-center gap-2.5">
-            <span className="text-3xl font-semibold text-gray-900">
+    <div className="card h-full flex shadow-lg rounded-lg">
+      <div className="card-body flex flex-col gap-6 p-6 lg:p-8 lg:pt-5">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
+          <div className="flex items-center gap-3">
+            <span className="text-3xl font-bold text-gray-900">
               Total Tickets: {ticketStatusTotal || 0}
             </span>
             <span className="badge badge-outline badge-success badge-sm">
@@ -194,38 +198,37 @@ const Highlights = ({ limit, date }: IHighlightsProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 mb-1.5">
+        <div className="flex items-center gap-1 mb-2">
           {ticketCounts.resolved > 0 && (
             <div
-              className="bg-success h-2 rounded-sm"
+              className="bg-success h-2 rounded-md"
               style={{ width: `${resolvedPercentage}%` }}
             ></div>
           )}
           {ticketCounts.inProgress > 0 && (
             <div
-              className="bg-info h-2 rounded-sm"
+              className="bg-info h-2 rounded-md"
               style={{ width: `${inProgressPercentage}%` }}
             ></div>
           )}
           {ticketCounts.open > 0 && (
             <div
-              className="bg-primary h-2 rounded-sm"
+              className="bg-primary h-2 rounded-md"
               style={{ width: `${openPercentage}%` }}
             ></div>
           )}
         </div>
 
-        <div className="flex items-center flex-wrap gap-4 mb-1">
+        <div className="flex items-center flex-wrap gap-5 mb-2">
           {items.map((item, index) => {
             return renderItem(item, index);
           })}
         </div>
 
-
-
-        <div className="border-b border-gray-300"></div>
-        <div className="grid gap-3">{rows.slice(0, limit).map(renderRow)}</div>
+        <div className="border-b border-gray-300 my-4"></div>
+        <div className="grid gap-4">{rows.slice(0, limit).map(renderRow)}</div>
       </div>
+
     </div>
   );
 };

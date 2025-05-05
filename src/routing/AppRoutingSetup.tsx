@@ -112,12 +112,13 @@ import ForceResolve from '@/pages/agent/force-Resolve/force-resolve';
 import BulkReassign from '@/pages/agent/bulk-reassignment/bulk-reassign';
 import RequestedReassignment from '@/pages/agent/requested-reassignment/requested-reassignmnet';
 import FeedbackPage from '@/pages/user/feedback/feedback-main';
+import DashboardPage from '@/pages/global-components/DashboardPage';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
       <Route element={<RequireAuth />}>
         <Route element={<Demo1Layout />}>
-          <Route path="/" element={<DefaultPage />} />
+          <Route path="/" element={<DashboardPage />} />
           <Route path="/dark-sidebar" element={<Demo1DarkSidebarPage />} />
           <Route path="/public-profile/profiles/default" element={<ProfileDefaultPage />} />
           <Route path="/public-profile/profiles/creator" element={<ProfileCreatorPage />} />
