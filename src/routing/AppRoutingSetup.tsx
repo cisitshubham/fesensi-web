@@ -91,28 +91,39 @@ import { Filter } from '@/pages/TicketFiter';
 
 // manual imports
 import AgentTickets from '@/pages/agent/my-tickets/my-tickets';
-import Tickets from '@/pages/agent/tickets-description/tickets';
-import IncompleteTicket from '@/pages/agent/incomplete-ticket/Incomplete-ticket';
+import Tickets from '@/pages/agent/flow/tickets-description/tickets';
+import IncompleteTicket from '@/pages/agent/flow/incomplete-ticket/Incomplete-ticket';
 import AdminUsersPage from '@/pages/admin/userlist/userslist';
 import UserDetailPage from '@/pages/admin/userlist/userdetailpage';
 import CreateCategory from '@/pages/admin/Categories/createCategory';
 import RolesAndPermissions from '@/pages/admin/RolesAndPermissions/rolesAndPermissions';
 import PermissionsToggle from '@/pages/admin/configuration/config';
-import ResolveTicket from '@/pages/agent/resolve-ticket/resolve';
+import ResolveTicket from '@/pages/agent/flow/resolve-ticket/resolve';
 import CreateReasons from '@/pages/admin/force_reasons/force-reasons';
 import AnalyticsPage from '@/pages/admin/analytics/analytics';
 import UserTickets from '@/pages/user/myTickets/mytickets';
-import UserTicketDetails from '@/pages/user/update-ticket/update-ticket';
 import UserTTicketDetails from '@/pages/user/Ticket/Ticket';
 import UserResolveTicket from '@/pages/user/Resolve/Resolve';
 import UserUpdateTicketForm from '@/pages/user/update-ticket/update-ticket';
 import UserCreateTicketForm from '@/pages/user/createTicket/CreateTicket';
 import ReassignTicket from '@/pages/agent/Request-Reassignment/reassign';
-import ForceResolve from '@/pages/agent/force-Resolve/force-resolve';
+import ForceResolve from '@/pages/agent/flow/force-Resolve/force-resolve';
 import BulkReassign from '@/pages/agent/bulk-reassignment/bulk-reassign';
 import RequestedReassignment from '@/pages/agent/requested-reassignment/requested-reassignmnet';
 import FeedbackPage from '@/pages/user/feedback/feedback-main';
 import DashboardPage from '@/pages/global-components/DashboardPage';
+import KnowledgeBasePageAdmin from '@/pages/admin/knowledgeBase/knowledgebase';
+import SupportPageAdmin from '@/pages/admin/support/Support-page-admin';
+import KnowledgeBasePageUser from '@/pages/user/knowledgeBase/knowledgeBase';
+import AnnouncementsUser from '@/pages/user/announcements/announcements';
+import RateUsUser from '@/pages/user/rate-us/rate_us';
+import TrustPgeUser from '@/pages/user/trust/trust';
+import SupportPageUser from '@/pages/user/support/support';
+import EscalatedAgent from '@/pages/agent/escalted-tickets/escalated';
+import SlastatusAgent from '@/pages/agent/sla/slastatus';
+import AnnouncementsAgent from '@/pages/agent/announcements/announcements';
+import KnowledgebaseAgent from '@/pages/agent/knowledgebase/knowledgebas';
+import SupportPageAgent from '@/pages/agent/suppport/support';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -239,6 +250,13 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/Force-resolve/:id" element={<ForceResolve />} />
           <Route path="/agent/bulk-reassignment" element={<BulkReassign />} />
           <Route path="/agent/requested-reassignment" element={<RequestedReassignment />} />
+          <Route path="/agent/escalated-tickets" element={<EscalatedAgent />} />
+          <Route path="/agent/Sla-Status" element={<SlastatusAgent />} />
+          <Route path="/agent/announcements" element={<AnnouncementsAgent />} />
+          <Route path="/agent/knowledgeBase" element={<KnowledgebaseAgent />} />
+          <Route path="/agent/Support" element={<SupportPageAgent />} />
+
+
 
           {/* admin */}
           <Route path="/admin/allUsers" element={<AdminUsersPage />} />
@@ -248,6 +266,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/configurations" element={<PermissionsToggle />} />
           <Route path="/admin/force-reasons" element={<CreateReasons />} />
           <Route path="/admin/analytics" element={<AnalyticsPage />} />
+          <Route path="/admin/knowledgeBase" element={<KnowledgeBasePageAdmin />} />
+          <Route path="/admin/Support" element={<SupportPageAdmin />} />
 
 
 
@@ -258,6 +278,11 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/ticket/resolution/:id" element={<UserResolveTicket />} />
           <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
           <Route path="user/feedback/:id" element={<FeedbackPage/>} />
+          <Route path="user/knowledgeBase" element={<KnowledgeBasePageUser/>} />
+          <Route path="user/announcements" element={<AnnouncementsUser/>} />
+          <Route path="/user/rate-us" element={<RateUsUser/>} />
+          <Route path="/user/Trust" element={<TrustPgeUser/>} />
+          <Route path="/user/Support" element={<SupportPageUser/>} />
 
 
         </Route>

@@ -12,7 +12,7 @@ export default function Tenure() {
   };
 
   return (
-    <Card className="p-5 w-full flex flex-row justify-between shadow-lg my-4">
+    <Card className="p-5 w-full flex flex-row justify-between shadow-md my-4">
       <div className="mb-2 my-auto">
         <Button
           variant={selectedButton === 'Today' ? 'default' : 'outline'}
@@ -36,7 +36,7 @@ export default function Tenure() {
           Fortnightly
         </Button>
       </div>
-      <div className="text-center my-auto">
+      <div className="text-center my-auto flex lg:flex-row flex-col">
         <label className="mr-2">
           From:
           <input

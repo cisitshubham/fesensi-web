@@ -37,27 +37,32 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 
       {
         title: 'knowledge base',
-        icon: 'book-open'
+        icon: 'book-open',
+        path: '/user/knowledgeBase'
 
       },
 
       {
         title: 'Announcements',
-        icon: 'notification-status'
+        icon: 'notification-status',
+        path: '/user/announcements'
 
       },
       {
         title: 'Rate Us/Feedback',
-        icon: 'star'
+        icon: 'star',
+        path: '/user/rate-us'
       },
       {
         title: 'Trust Level',
-        icon: 'like-shapes'
+        icon: 'like-shapes',
+        path: '/user/Trust'
       },
 
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
+        icon: 'abstract-32',
+        path: '/user/Support'
       },
     ]
     : []),
@@ -88,27 +93,32 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
       },
       {
         title: 'Escalated tickets',
-        icon: 'flag'
+        icon: 'flag',
+        path: '/agent/escalated-tickets'
       },
       {
         title: 'SLA Status',
-        icon: 'timer'
+        icon: 'timer',
+        path: '/agent/sla-status'
       },
 
 
       {
         title: 'Announcements',
-        icon: 'notification-status'
+        icon: 'notification-status',
+        path: '/agent/announcements'
 
       },
       {
         title: 'knowledge base',
-        icon: 'book-open'
+        icon: 'book-open',
+        path: '/agent/knowledgeBase'
 
       },
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
+        icon: 'abstract-32',
+        path: '/agent/Support'
       }
 
     ]
@@ -154,17 +164,19 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
           {
             title: 'Configuration',
             icon: 'setting',
-            path: '/admin/configurations'
+            path: '/admin/configurations',
           }
         ]
       },
       {
         title: 'knowledge base',
-        icon: 'book-open'
+        icon: 'book-open',
+        path: '/admin/knowledgeBase',
       },
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
+        icon: 'abstract-32',
+        path: '/admin/Support'
       }
     ]
     : [])
