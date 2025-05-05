@@ -296,6 +296,17 @@ export const addFeedback = async (formData: FormData) => {
 
 // agent 
 
+export const ChartData = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/myTickets/Dashboard/charts');
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error fetching chart data:', error);
+  }
+  return null;
+}
+
 
 export const MyTickets = async (filters: any) => {
   try {

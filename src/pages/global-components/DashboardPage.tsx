@@ -11,10 +11,10 @@ import { addDays } from 'date-fns';
 
 // Import your chart components
 import Tenure from '@/pages/charts/tenure';
-import Donut from '@/pages/charts/donut';
-import Pie from '@/pages/charts/pie';
-import BarChart from '@/pages/charts/bar-chart';
-import LineChart from '@/pages/charts/line-chart';
+import Donut from '@/pages/charts/StatusDonut';
+import Pie from '@/pages/charts/PriorityPie';
+import BarChart from '@/pages/charts/category-bar-chart';
+import LineChart from '@/pages/charts/Volume-line-chart';
 
 export default function  DashboardPage  () {
   const [date, setDate] = useState<DateRange | undefined>({

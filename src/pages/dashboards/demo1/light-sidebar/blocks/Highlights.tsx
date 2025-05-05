@@ -2,10 +2,10 @@ import { KeenIcon, Menu, MenuItem } from '@/components';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n';
 import { getTicketByCategory, getTicketByStatus } from '@/api/api';
-import Donut from '@/pages/charts/donut';
+import Donut from '@/pages/charts/StatusDonut';
 import { Card } from '@mui/material';
-import Pie from '@/pages/charts/pie';
-import LineChart from '@/pages/charts/line-chart';
+import Pie from '@/pages/charts/PriorityPie';
+import LineChart from '@/pages/charts/Volume-line-chart';
 import Tenure from '@/pages/charts/tenure';
 import { BarChart } from 'lucide-react';
 interface IHighlightsRow {

@@ -12,12 +12,12 @@ import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Donut from '@/pages/charts/donut';
-import Pie from '@/pages/charts/pie';
+import Donut from '@/pages/charts/StatusDonut';
+import Pie from '@/pages/charts/PriorityPie';
 import { useRole } from '@/pages/global-components/role-context';
 import { Card } from '@/components/ui/card';
-import BarChart from '@/pages/charts/bar-chart';
-import LineChart from '@/pages/charts/line-chart';
+import BarChart from '@/pages/charts/category-bar-chart';
+import LineChart from '@/pages/charts/Volume-line-chart';
 
 const Demo1LightSidebarPage = () => {
   const [date, setDate] = useState<DateRange | undefined>({
