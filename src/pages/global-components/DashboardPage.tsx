@@ -3,11 +3,18 @@ import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { fetchUser, getTicketByStatus, getTicketByCategory } from '@/api/api';
 import { useRole } from '@/pages/global-components/role-context';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
+import { KeenIcon } from '@/components';
 
 // Import your chart components
 import Tenure from '@/pages/charts/tenure';
@@ -16,7 +23,18 @@ import Pie from '@/pages/charts/PriorityPie';
 import BarChart from '@/pages/charts/category-bar-chart';
 import LineChart from '@/pages/charts/Volume-line-chart';
 
-export default function  DashboardPage  () {
+interface ChartData {
+  statusData: number[];
+  statusLabels: string[];
+  priorityData: number[];
+  priorityLabels: string[];
+  ticketVolumeData: number[];
+  ticketVolumeLabels: string[];
+  categoryData: number[];
+  categoryLabels: string[];
+}
+
+export default function DashboardPage() {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(2025, 0, 20),
     to: addDays(new Date(2025, 0, 20), 20)
@@ -80,6 +98,7 @@ export default function  DashboardPage  () {
   const isDropdownReadonly = roles.length === 1;
 
   const [ticketCounts, setTicketCounts] = useState({
+    closed: 0,
     resolved: 0,
     inProgress: 0,
     open: 0,
@@ -97,16 +116,18 @@ export default function  DashboardPage  () {
         let resolved = 0;
         let inProgress = 0;
         let open = 0;
+        let closed = 0;
 
-        response.data.counts.forEach((item: { status: string; count: number; }) => {
+        response.data.counts.forEach((item: { status: string; count: number }) => {
           if (item.status === 'RESOLVED') resolved = item.count;
           if (item.status === 'IN-PROGRESS') inProgress = item.count;
           if (item.status === 'OPEN') open = item.count;
+          if (item.status === 'CLOSED') closed = item.count;
         });
 
-        const total = resolved + inProgress + open || 1;
+        const total = resolved + inProgress + open + closed || 1;
 
-        setTicketCounts({ resolved, inProgress, open, total });
+        setTicketCounts({ closed, resolved, inProgress, open, total });
         setTicketStatusTotal(response.data.totalCount);
         setTicketStatusTotalPercentage(response.data.percentageChange);
       } catch (error) {
@@ -170,24 +191,20 @@ export default function  DashboardPage  () {
     );
   };
 
-  const [statusData, setStatusData] = useState<number[]>([]);
-  const [statusLabels, setStatusLabels] = useState<string[]>([]);
-  const [priorityData, setPriorityData] = useState<number[]>([]);
-  const [priorityLabels, setPriorityLabels] = useState<string[]>([]);
-  const [ticketVolumeData, setTicketVolumeData] = useState<number[]>([]);
-  const [ticketVolumeLabels, setTicketVolumeLabels] = useState<string[]>([]);
-  const[categoryData, setCategoryData] = useState<number[]>([]);
-  const[categoryLabels, setCategoryLabels] = useState<string[]>([]);
+  // Chart data states
+  const [chartData, setChartData] = useState<ChartData>({
+    statusData: [],
+    statusLabels: [],
+    priorityData: [],
+    priorityLabels: [],
+    ticketVolumeData: [],
+    ticketVolumeLabels: [],
+    categoryData: [],
+    categoryLabels: []
+  });
 
-  const handleDataUpdate = (data: any) => {
-    setStatusData(data.statusData);
-    setStatusLabels(data.statusLabels);
-    setPriorityData(data.priorityData);
-    setPriorityLabels(data.priorityLabels);
-    setTicketVolumeData(data.ticketVolumeData);
-    setTicketVolumeLabels(data.ticketVolumeLabels);
-    setCategoryData(data.categoryData);
-    setCategoryLabels(data.categoryLabels);
+  const handleDataUpdate = (data: ChartData) => {
+    setChartData(data);
   };
 
   return (
@@ -203,12 +220,11 @@ export default function  DashboardPage  () {
             ) : (
               <Select onValueChange={(value) => handleRoleToggle(value)}>
                 <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
-                  <SelectValue placeholder={
-                    selectedRoles.length > 0
-                      ? selectedRoles.join(', ')
-                      : 'Select Roles'
-                  }>
-                  </SelectValue>
+                  <SelectValue
+                    placeholder={
+                      selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'
+                    }
+                  ></SelectValue>
                 </SelectTrigger>
                 <SelectContent className="mt-2 shadow-lg rounded-md">
                   {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
@@ -231,93 +247,126 @@ export default function  DashboardPage  () {
       </Container>
 
       <Container>
-
-
-        {/* Existing Dashboard Content */}
         <Tenure onDataUpdate={handleDataUpdate} />
+
         <div className=" flex flex-row gap-4">
-        <div className="grid grid-cols-2  gap-4 mb-6">
-          <Card className="p-4 aspect-square">
-            <h3 className="text-lg font-semibold mb-2">Total Tickets</h3>
-            <p className="text-2xl font-bold">{ticketCounts.total}</p>
-          </Card>
-          <Card className="p-4 aspect-square">
-            <h3 className="text-lg font-semibold mb-2">Open Tickets</h3>
-            <p className="text-2xl font-bold">{ticketCounts.open}</p>
-          </Card>
-          <Card className="p-4 aspect-square">
-            <h3 className="text-lg font-semibold mb-2">Resolved Tickets</h3>
-            <p className="text-2xl font-bold">{ticketCounts.resolved}</p>
-          </Card>
-          <Card className="p-4 aspect-square">
-            <h3 className="text-lg font-semibold mb-2">In-Progress Tickets</h3>
-            <p className="text-2xl font-bold">{ticketCounts.inProgress}</p>
-          </Card>
-        </div>
-        <div className="flex items-center gap-1 mb-2 w-full">
-        <Card className="card-body flex flex-col gap-6 p-6 lg:p-8 lg:pt-5">
-        <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
-          <div className="flex items-center gap-3">
-            <span className="text-3xl font-bold text-gray-900">
-              Total Tickets: {ticketStatusTotal || 0}
-            </span>
-            <span className="badge badge-outline badge-success badge-sm">
-              {ticketStatusTotalPercentage || 0}%
-            </span>
+          <div className="grid grid-cols-2  gap-4 mb-6">
+            <Card className="p-4 aspect-square">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 bg-primary/20 rounded-lg">
+                  <KeenIcon icon="arrows-circle" className="text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold">OPEN</h3>
+              </div>
+              <p className="text-2xl font-bold">{ticketCounts.open}</p>
+            </Card>
+            <Card className="p-4 aspect-square">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 bg-info/20 rounded-lg">
+                  <KeenIcon icon="watch" className="text-info" />
+                </div>
+                <h3 className="text-lg font-semibold">IN-PROGRESS</h3>
+              </div>
+              <p className="text-2xl font-bold">{ticketCounts.inProgress}</p>
+            </Card>
+            <Card className="p-4 aspect-square">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 bg-success/20 rounded-lg">
+                  <KeenIcon icon="check-circle" className="text-success" />
+                </div>
+                <h3 className="text-lg font-semibold">RESOLVED</h3>
+              </div>
+              <p className="text-2xl font-bold">{ticketCounts.resolved}</p>
+            </Card>
+            <Card className="p-4 aspect-square">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 bg-success/20 rounded-lg">
+                  <KeenIcon icon="like" className="text-success" />
+                </div>
+                <h3 className="text-lg font-semibold">CLOSED</h3>
+              </div>
+              <p className="text-2xl font-bold">{ticketCounts.closed}</p>
+            </Card>
+          </div>
+          <div className="flex items-center gap-1 mb-2 w-full">
+            <Card className="card-body flex flex-col gap-6 p-6 lg:p-8 lg:pt-5">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl font-bold text-gray-900">
+                    Total Tickets: {ticketStatusTotal || 0}
+                  </span>
+                  <span className="badge badge-outline badge-success badge-sm">
+                    {ticketStatusTotalPercentage || 0}%
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 mb-2">
+                {ticketCounts.resolved > 0 && (
+                  <div
+                    className="bg-success h-2 rounded-md"
+                    style={{ width: `${resolvedPercentage}%` }}
+                  ></div>
+                )}
+                {ticketCounts.inProgress > 0 && (
+                  <div
+                    className="bg-info h-2 rounded-md"
+                    style={{ width: `${inProgressPercentage}%` }}
+                  ></div>
+                )}
+                {ticketCounts.open > 0 && (
+                  <div
+                    className="bg-primary h-2 rounded-md"
+                    style={{ width: `${openPercentage}%` }}
+                  ></div>
+                )}
+              </div>
+
+              <div className="flex items-center flex-wrap gap-5 mb-2">
+                {[
+                  { badgeColor: 'bg-success', label: 'Resolved' },
+                  { badgeColor: 'bg-info', label: 'In Progress' },
+                  { badgeColor: 'bg-primary', label: 'Open' }
+                ].map((item, index) => {
+                  return (
+                    <div key={index} className="flex items-center gap-1.5">
+                      <span className={`badge badge-dot size-2 ${item.badgeColor}`}></span>
+                      <span className="text-sm font-normal text-gray-800">{item.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="border-b border-gray-300 my-4"></div>
+              {categories.map(renderCategory)}
+            </Card>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 mb-2">
-          {ticketCounts.resolved > 0 && (
-            <div
-              className="bg-success h-2 rounded-md"
-              style={{ width: `${resolvedPercentage}%` }}
-            ></div>
-          )}
-          {ticketCounts.inProgress > 0 && (
-            <div
-              className="bg-info h-2 rounded-md"
-              style={{ width: `${inProgressPercentage}%` }}
-            ></div>
-          )}
-          {ticketCounts.open > 0 && (
-            <div
-              className="bg-primary h-2 rounded-md"
-              style={{ width: `${openPercentage}%` }}
-            ></div>
-          )}
-        </div>
-
-        <div className="flex items-center flex-wrap gap-5 mb-2">
-          {[
-            { badgeColor: 'bg-success', label: 'Resolved' },
-            { badgeColor: 'bg-info', label: 'In Progress' },
-            { badgeColor: 'bg-primary', label: 'Open' },
-          ].map((item, index) => {
-            return (
-              <div key={index} className="flex items-center gap-1.5">
-                <span className={`badge badge-dot size-2 ${item.badgeColor}`}></span>
-                <span className="text-sm font-normal text-gray-800">{item.label}</span>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="border-b border-gray-300 my-4"></div>
-        {categories.map(renderCategory)}
-      </Card>
-        </div>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Donut series={statusData} labels={statusLabels} />
-          <Pie series={priorityData} labels={priorityLabels} />
-          <LineChart series={ticketVolumeData} labels={ticketVolumeLabels} />
-          <BarChart series={categoryData} labels={categoryLabels} />
+          <Donut
+            series={chartData.statusData}
+            labels={chartData.statusLabels}
+            key={`donut-${chartData.statusData.join('-')}`}
+          />
+          <Pie
+            series={chartData.priorityData}
+            labels={chartData.priorityLabels}
+            key={`pie-${chartData.priorityData.join('-')}`}
+          />
+          <LineChart
+            series={chartData.ticketVolumeData}
+            labels={chartData.ticketVolumeLabels}
+            key={`line-${chartData.ticketVolumeData.join('-')}`}
+          />
+          <BarChart
+            series={chartData.categoryData}
+            labels={chartData.categoryLabels}
+            key={`bar-${chartData.categoryData.join('-')}`}
+          />
         </div>
       </Container>
     </Fragment>
   );
-};
-
+}

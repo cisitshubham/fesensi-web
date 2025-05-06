@@ -82,22 +82,25 @@ const Signup = () => {
   };
 
   return (
-    <div className="card max-w-[370px] w-full lg:h-[34rem] lg:overflow-y-scroll no-scrollbar">
+    <div className=" max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
       <form
         className="card-body flex flex-col gap-5 p-10"
         noValidate
         onSubmit={formik.handleSubmit}
       >
-        <div className="text-center mb-2 flex flex-col items-center justify-center gap-2">
+        <div className="text-center text-5xl mb-16 flex  items-center justify-center gap-2">
           <img
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
-            className="h-[32px] max-w-none  "
+            className="h-[60px] max-w-none  "
             alt=""
           />
-          <h3 className="text-lg font-semibold text-gray-900 leading-none mb-2">Sign up</h3>
+          <h1 className="bg-gradient-to-t from-[#314DCA] to-[#5A77FA] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
+            <p className="font-thin">|</p> Fesensi
+          </h1>
         </div>
-
-        <div className="grid grid-cols-2 gap-2.5">
+        <h1 className="text-2xl font-semibold text-primary-active">Sign up</h1>
+        <div className=" text-sm">Create an account to explore all our features </div>
+        {/* <div className="grid grid-cols-2 gap-2.5">
           <Link to={'/auth/login'} className="btn btn-light btn-sm justify-center">
             Sign In
           </Link>
@@ -105,7 +108,7 @@ const Signup = () => {
           <Link to={'/auth/signup'} className="btn btn-sm btn-input disabled justify-center">
             Sign Up
           </Link>
-        </div>
+        </div> */}
 
         {formik.status && <Alert variant="danger">{formik.status}</Alert>}
         <div className="flex flex-col gap-1">
@@ -251,6 +254,10 @@ const Signup = () => {
         >
           {loading ? 'Please wait...' : 'Sign Up'}
         </button>
+        <div className="mt-4">Have an account? <Link to={'/auth/login'} className="text-blue-500">
+          Sign In
+        </Link></div>
+    
       </form>
     </div>
   );

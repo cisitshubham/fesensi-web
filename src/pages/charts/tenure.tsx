@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { DashboardData } from '@/pages/charts/data_manipulations';
+import { fetchDashboardData } from '@/pages/charts/data_manipulations';
+import { useRole } from '@/pages/global-components/role-context';
 
 export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
+  const { selectedRoles } = useRole();
 
   useEffect(() => {
     const today = new Date();
@@ -36,9 +38,11 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await DashboardData(fromDate, toDate);
-        console.log('Fetched data:', data); // Log the fetched data for debugging
-        if (data) { // Ensure the API response indicates success
+        if (!selectedRoles.length) return;
+        
+        const data = await fetchDashboardData(fromDate, toDate, selectedRoles[0]);
+        console.log('Fetched data:', data);
+        if (data) {
           onDataUpdate(data);
         } else {
           console.error('API did not return success:', data);
@@ -51,7 +55,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
     if (fromDate && toDate) {
       fetchData();
     }
-  }, [fromDate, toDate]);
+  }, [fromDate, toDate, selectedRoles]);
 
   const handleButtonClick = (button: React.SetStateAction<string>) => {
     setSelectedButton(button);

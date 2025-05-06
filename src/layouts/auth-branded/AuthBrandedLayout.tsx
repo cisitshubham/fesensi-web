@@ -13,37 +13,42 @@ const Layout = () => {
       <style>
         {`
           .branded-bg {
-            background-image: url('${toAbsoluteUrl('/media/images/2600x1600/bg-1.png')}');
+            background-image: url('${toAbsoluteUrl('/media/images/2600x1600/bg.png')}');
           }
           .dark .branded-bg {
-            background-image: url('${toAbsoluteUrl('/media/images/2600x1600/bg-2-dark.png')}');
+            background-image: url('${toAbsoluteUrl('/media/images/2600x1600/bg.png')}');
           }
         `}
       </style>
 
-      <div className="grid lg:grid-cols-2 grow">
-        <div className="lg:rounded-xl lg:border lg:border-gray-200 lg:m-5 order-1 bg-top xxl:bg-center xl:bg-cover bg-no-repeat branded-bg">
-          <div className="flex flex-col items-center justify-center p-8 lg:p-12 gap-3 mt-52">
-            <Link to="/">
+      <div className="grid lg:grid-cols-5 grow">
+        <div className="flex justify-center items-center p-8 lg:p-10 lg:col-span-2 order-1">
+          <Outlet />
+        </div>
+
+        <div className=" lg:border lg:border-gray-200 lg:col-span-3 order-2 bg-top xxl:bg-center xl:bg-cover bg-no-repeat branded-bg relative min-h-screen">
+          <div className="flex flex-col items-center justify-center lg:p-12 gap-3 mt-52">
+            {/* <Link to="/">
               <img
                 src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
                 className="h-[100px] max-w-none"
                 alt="FESENSI Logo"
               />
-            </Link>
-
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-semibold text-blue-700">FESENSI</h3>
-              <div className="text-base font-medium text-gray-600">
-                <span className="text-white-700 font-semibold">AI DRIVEN TECH SUPPORT</span>
-                <br />
-              </div>
+            </Link> */}
+            <div className="flex flex-col text-white">
+              <h1 className="text-5xl font-bold">Welcome To </h1>
+              <span className="font-normal text-5xl">FESENSI</span>
+              <span className="font-semibold mt-5">AI DRIVEN TECH SUPPORT</span>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-center items-center p-8 lg:p-10 order-2">
-          <Outlet />
+          <div className="absolute bottom-0 w-full flex justify-between items-center p-8 text-sm text-white">
+            <div>copyright</div>
+            <div className="flex gap-4">
+              <Link to="/docs" className="hover:text-primary-active">Docs</Link>
+              <Link to="/support" className="hover:text-primary-active">Support</Link>
+              <Link to="/faq" className="hover:text-primary-active">FAQ</Link>
+            </div>
+          </div>
         </div>
       </div>
     </Fragment>

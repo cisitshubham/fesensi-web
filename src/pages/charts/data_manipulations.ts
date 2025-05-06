@@ -1,16 +1,33 @@
-import { ChartData } from "@/api/api";
+import { ChartDataAgent, ChartDataAdmin } from "@/api/api";
 
-async function DashboardData(fromDate: string, toDate: string) {
+interface ChartResponse {
+    success: boolean;
+    data: {
+        statusCharts: Record<string, number>;
+        categoryCharts: Record<string, number>;
+        priorityCharts: Record<string, number>;
+        ticketsbyVolume: Record<string, number>;
+    };
+}
+
+export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
     try {
         const formData = new FormData();
         formData.append("fromDate", fromDate);
         formData.append("toDate", toDate);
 
-        const response = await ChartData(formData);
-        console.log("Response from ChartData:", response);
+        let apiResponse;
+        if (role === "ADMIN") {
+            console.log("admin")
+            apiResponse = await ChartDataAdmin(formData);
+        } else if (role === "AGENT") {
+            apiResponse = await ChartDataAgent(formData);
+        }
 
-        if (response.success) { 
-            const fetchedData = response.data;
+        console.log("Response from ChartData:", apiResponse);
+
+        if (apiResponse && apiResponse.success) {
+            const fetchedData = apiResponse.data;
             const statusCharts = fetchedData.statusCharts;
             const statusData = Object.values(statusCharts);
             const statusLabels = Object.keys(statusCharts);
@@ -27,9 +44,18 @@ async function DashboardData(fromDate: string, toDate: string) {
             const ticketVolumeData = Object.values(ticketsByVolume);
             const ticketVolumeLabels = Object.keys(ticketsByVolume);
 
-            return { statusData, statusLabels, categoryData, categoryLabels, priorityData, priorityLabels, ticketVolumeData, ticketVolumeLabels };
+            return {
+                statusData,
+                statusLabels,
+                categoryData,
+                categoryLabels,
+                priorityData,
+                priorityLabels,
+                ticketVolumeData,
+                ticketVolumeLabels
+            };
         } else {
-            console.error("API did not return success:", response);
+            console.error("API did not return success:", apiResponse);
             return null;
         }
     } catch (error) {
@@ -37,5 +63,3 @@ async function DashboardData(fromDate: string, toDate: string) {
         throw error;
     }
 }
-
-export { DashboardData };

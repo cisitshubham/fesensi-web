@@ -97,6 +97,20 @@ export const getTicketByCategory = async () => {
   }
 };
 
+
+
+export const ChartDataAdmin = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error fetching chart data:', error);
+  }
+  return null;
+}
+
+
 export const createTicket = async (formData: FormData) => {
   try {
     const response = await axiosInstance.post('/tickets/raise-ticket', formData);
@@ -296,7 +310,7 @@ export const addFeedback = async (formData: FormData) => {
 
 // agent 
 
-export const ChartData = async (formData:FormData) => {
+export const ChartDataAgent = async (formData:FormData) => {
   try {
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts',formData);
     return response.data;
