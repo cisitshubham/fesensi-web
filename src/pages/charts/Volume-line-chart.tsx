@@ -10,8 +10,7 @@ interface LineChartProps {
 }
 
 export default function LineChart({ series, labels }: LineChartProps) {
-  console.log("Series:", series); // Log the series data
-  console.log("Labels:", labels); // Log the labels data
+
   const [chartState, setChartState] = React.useState({
     series: [
       {

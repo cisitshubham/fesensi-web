@@ -52,7 +52,8 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
                 priorityData,
                 priorityLabels,
                 ticketVolumeData,
-                ticketVolumeLabels
+                ticketVolumeLabels,
+                ticketsbyCategory: fetchedData.ticketsbyCategory
             };
         } else {
             console.error("API did not return success:", apiResponse);

@@ -40,9 +40,9 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
   }, [series, labels]);
 
   return (
-    <div className="w-full">
-      <div id="chart">
-        <Card className="w-full">
+    <div className="w-full h-full">
+      <div id="chart" className="h-full">
+        <Card className="w-full h-full">
           <div className="font-bold text-center text-xl mt-4">Ticket by status</div>
 
           <CardContent>

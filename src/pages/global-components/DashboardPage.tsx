@@ -1,7 +1,8 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
-import { fetchUser, getTicketByStatus, getTicketByCategory } from '@/api/api';
+import { fetchUser } from '@/api/api';
+import { fetchDashboardData } from '@/pages/charts/data_manipulations';
 import { useRole } from '@/pages/global-components/role-context';
 import {
   Select,
@@ -11,17 +12,17 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
-import { KeenIcon } from '@/components';
-
-// Import your chart components
 import Tenure from '@/pages/charts/tenure';
 import Donut from '@/pages/charts/StatusDonut';
 import Pie from '@/pages/charts/PriorityPie';
 import BarChart from '@/pages/charts/category-bar-chart';
 import LineChart from '@/pages/charts/Volume-line-chart';
+import TicketStatusCards from '@/pages/charts/TicketStatusCards';
+import TicketProgression from '@/pages/charts/TicketProgression';
+
+type CategoryType = 'Hardware' | 'Internet/Network' | 'Cloud Technologies' | 'Software' | 'Others';
 
 interface ChartData {
   statusData: number[];
@@ -32,6 +33,41 @@ interface ChartData {
   ticketVolumeLabels: string[];
   categoryData: number[];
   categoryLabels: string[];
+  ticketsbyCategory: {
+    overallPercentageChange: string;
+    totalTicketCount: number;
+    totalLastMonthCount: number;
+    counts: Array<{
+      category: string;
+      ticketCount: number;
+      lastMonthCount: number;
+      percentageChange: string;
+    }>;
+  };
+}
+
+interface CategoryCount {
+  category: CategoryType;
+  ticketCount: number;
+  lastMonthCount: number;
+  percentageChange: string;
+}
+
+interface DashboardResponse {
+  statusData: number[];
+  statusLabels: string[];
+  categoryData: number[];
+  categoryLabels: string[];
+  priorityData: number[];
+  priorityLabels: string[];
+  ticketVolumeData: number[];
+  ticketVolumeLabels: string[];
+  ticketsbyCategory: {
+    overallPercentageChange: string;
+    totalTicketCount: number;
+    totalLastMonthCount: number;
+    counts: CategoryCount[];
+  };
 }
 
 export default function DashboardPage() {
@@ -95,6 +131,23 @@ export default function DashboardPage() {
     }
   }, [roles]);
 
+
+
+
+
+
+
+
+
+// role handle ------------------------------------------
+
+
+
+
+
+
+
+
   const isDropdownReadonly = roles.length === 1;
 
   const [ticketCounts, setTicketCounts] = useState({
@@ -108,64 +161,17 @@ export default function DashboardPage() {
   const [ticketStatusTotal, setTicketStatusTotal] = useState(0);
   const [ticketStatusTotalPercentage, setTicketStatusTotalPercentage] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getTicketByStatus();
+  const [categories, setCategories] = useState<CategoryCount[]>([]);
 
-        let resolved = 0;
-        let inProgress = 0;
-        let open = 0;
-        let closed = 0;
-
-        response.data.counts.forEach((item: { status: string; count: number }) => {
-          if (item.status === 'RESOLVED') resolved = item.count;
-          if (item.status === 'IN-PROGRESS') inProgress = item.count;
-          if (item.status === 'OPEN') open = item.count;
-          if (item.status === 'CLOSED') closed = item.count;
-        });
-
-        const total = resolved + inProgress + open + closed || 1;
-
-        setTicketCounts({ closed, resolved, inProgress, open, total });
-        setTicketStatusTotal(response.data.totalCount);
-        setTicketStatusTotalPercentage(response.data.percentageChange);
-      } catch (error) {
-        console.error('Error fetching ticket categories:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const resolvedPercentage = (ticketCounts.resolved / ticketCounts.total) * 100;
-  const inProgressPercentage = (ticketCounts.inProgress / ticketCounts.total) * 100;
-  const openPercentage = (ticketCounts.open / ticketCounts.total) * 100;
-
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getTicketByCategory();
-        setCategories(response.data.counts);
-      } catch (error) {
-        console.error('Error fetching ticket categories:', error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const categoryIcons: Record<string, string> = {
-    Hardware: 'setting-2',
+  const categoryIcons: Record<CategoryType, string> = {
+    'Hardware': 'setting-2',
     'Internet/Network': 'data',
     'Cloud Technologies': 'cloud-change',
-    Software: 'soft',
-    Others: 'technology-4'
+    'Software': 'soft',
+    'Others': 'technology-4'
   };
 
-  const renderCategory = (category: any, index: number) => {
+  const renderCategory = (category: CategoryCount, index: number) => {
     return (
       <div key={index} className="flex items-center justify-between ">
         <div className="flex items-center">
@@ -179,7 +185,7 @@ export default function DashboardPage() {
           <span className="lg:text-right">{category.ticketCount}</span>
 
           <span className="lg:text-right flex items-center gap-1  justify-end">
-            {category.percentageChange >= 0 ? (
+            {parseFloat(category.percentageChange) >= 0 ? (
               <span className="text-success">▲</span>
             ) : (
               <span className="text-danger">▼</span>
@@ -200,12 +206,63 @@ export default function DashboardPage() {
     ticketVolumeData: [],
     ticketVolumeLabels: [],
     categoryData: [],
-    categoryLabels: []
+    categoryLabels: [],
+    ticketsbyCategory: {
+      overallPercentageChange: '',
+      totalTicketCount: 0,
+      totalLastMonthCount: 0,
+      counts: []
+    }
   });
 
   const handleDataUpdate = (data: ChartData) => {
     setChartData(data);
+    setCategories(data.ticketsbyCategory.counts as CategoryCount[]);
+
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchDashboardData(
+          date?.from?.toISOString() || new Date().toISOString(),
+          date?.to?.toISOString() || new Date().toISOString(),
+          selectedRoles[0] || 'ADMIN'
+        );
+
+        if (response) {
+          const { statusData, statusLabels, ticketsbyCategory } = response as DashboardResponse;
+          
+          // Update ticket counts from statusData and statusLabels
+          const statusMap = statusLabels.reduce((acc, label, index) => {
+            acc[label] = statusData[index];
+            return acc;
+          }, {} as Record<string, number>);
+
+          setTicketCounts({
+            resolved: statusMap['RESOLVED'] || 0,
+            inProgress: statusMap['IN-PROGRESS'] || 0,
+            open: statusMap['OPEN'] || 0,
+            closed: statusMap['CLOSED'] || 0,
+            total: statusData.reduce((a: number, b: number) => a + b, 0) || 1
+          });
+
+          // Update total and percentage from ticketsbyCategory
+          setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
+          setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
+          setCategories(ticketsbyCategory.counts);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    fetchData();
+  }, [date, selectedRoles]);
+
+  const resolvedPercentage = (ticketCounts.resolved / ticketCounts.total) * 100;
+  const inProgressPercentage = (ticketCounts.inProgress / ticketCounts.total) * 100;
+  const openPercentage = (ticketCounts.open / ticketCounts.total) * 100;
 
   return (
     <Fragment>
@@ -249,102 +306,25 @@ export default function DashboardPage() {
       <Container>
         <Tenure onDataUpdate={handleDataUpdate} />
 
-        <div className=" flex flex-row gap-4">
-          <div className="grid grid-cols-2  gap-4 mb-6">
-            <Card className="p-4 aspect-square">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-primary/20 rounded-lg">
-                  <KeenIcon icon="arrows-circle" className="text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold">OPEN</h3>
-              </div>
-              <p className="text-2xl font-bold">{ticketCounts.open}</p>
-            </Card>
-            <Card className="p-4 aspect-square">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-info/20 rounded-lg">
-                  <KeenIcon icon="watch" className="text-info" />
-                </div>
-                <h3 className="text-lg font-semibold">IN-PROGRESS</h3>
-              </div>
-              <p className="text-2xl font-bold">{ticketCounts.inProgress}</p>
-            </Card>
-            <Card className="p-4 aspect-square">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-success/20 rounded-lg">
-                  <KeenIcon icon="check-circle" className="text-success" />
-                </div>
-                <h3 className="text-lg font-semibold">RESOLVED</h3>
-              </div>
-              <p className="text-2xl font-bold">{ticketCounts.resolved}</p>
-            </Card>
-            <Card className="p-4 aspect-square">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-success/20 rounded-lg">
-                  <KeenIcon icon="like" className="text-success" />
-                </div>
-                <h3 className="text-lg font-semibold">CLOSED</h3>
-              </div>
-              <p className="text-2xl font-bold">{ticketCounts.closed}</p>
-            </Card>
+        <div className="flex flex-col gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            <TicketStatusCards ticketCounts={ticketCounts} />
           </div>
-          <div className="flex items-center gap-1 mb-2 w-full">
-            <Card className="card-body flex flex-col gap-6 p-6 lg:p-8 lg:pt-5">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-gray-900">
-                    Total Tickets: {ticketStatusTotal || 0}
-                  </span>
-                  <span className="badge badge-outline badge-success badge-sm">
-                    {ticketStatusTotalPercentage || 0}%
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1 mb-2">
-                {ticketCounts.resolved > 0 && (
-                  <div
-                    className="bg-success h-2 rounded-md"
-                    style={{ width: `${resolvedPercentage}%` }}
-                  ></div>
-                )}
-                {ticketCounts.inProgress > 0 && (
-                  <div
-                    className="bg-info h-2 rounded-md"
-                    style={{ width: `${inProgressPercentage}%` }}
-                  ></div>
-                )}
-                {ticketCounts.open > 0 && (
-                  <div
-                    className="bg-primary h-2 rounded-md"
-                    style={{ width: `${openPercentage}%` }}
-                  ></div>
-                )}
-              </div>
-
-              <div className="flex items-center flex-wrap gap-5 mb-2">
-                {[
-                  { badgeColor: 'bg-success', label: 'Resolved' },
-                  { badgeColor: 'bg-info', label: 'In Progress' },
-                  { badgeColor: 'bg-primary', label: 'Open' }
-                ].map((item, index) => {
-                  return (
-                    <div key={index} className="flex items-center gap-1.5">
-                      <span className={`badge badge-dot size-2 ${item.badgeColor}`}></span>
-                      <span className="text-sm font-normal text-gray-800">{item.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="border-b border-gray-300 my-4"></div>
-              {categories.map(renderCategory)}
-            </Card>
+          
+          <div className="w-full">
+            <TicketProgression
+              ticketStatusTotal={ticketStatusTotal}
+              ticketStatusTotalPercentage={ticketStatusTotalPercentage}
+              resolvedPercentage={resolvedPercentage}
+              inProgressPercentage={inProgressPercentage}
+              openPercentage={openPercentage}
+              categories={categories}
+              renderCategory={renderCategory}
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <Donut
             series={chartData.statusData}
             labels={chartData.statusLabels}

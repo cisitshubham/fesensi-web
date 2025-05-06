@@ -125,3 +125,45 @@ export type Notificationtype = {
   updatedAt: string
   read: boolean;
 };
+
+
+
+export type ChartsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    statusCharts: {
+      RESOLVED: number;
+      CLOSED: number;
+      OPEN: number;
+      'IN-PROGRESS': number;
+    };
+    categoryCharts: {
+      Hardware: number;
+      'Internet/Network': number;
+      'Cloud Technologies': number;
+      Others: number;
+      Software: number;
+    };
+    priorityCharts: {
+      CRITICAL: number;
+      HIGH: number;
+      MEDIUM: number;
+      LOW: number;
+    };
+    ticketsbyVolume: {
+      [date: string]: number; // Example: "2025-05-01": 0
+    };
+    ticketsbyCategory: {
+      overallPercentageChange: string;
+      totalTicketCount: number;
+      totalLastMonthCount: number;
+      counts: Array<{
+        category: 'Hardware' | 'Internet/Network' | 'Cloud Technologies' | 'Others' | 'Software';
+        ticketCount: number;
+        lastMonthCount: number;
+        percentageChange: string;
+      }>;
+    };
+  };
+};
