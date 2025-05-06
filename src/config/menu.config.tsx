@@ -165,7 +165,16 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             title: 'Configuration',
             icon: 'setting',
             path: '/admin/configurations',
-          }
+          },
+          {
+            title: 'reassign options'
+          },
+          {
+            title: 'priority options',
+          },
+          
+
+
         ]
       },
       {
