@@ -43,15 +43,7 @@ export default function LineChart({ series, labels }: LineChartProps) {
           opacity: 0.5,
         },
       },
-      markers: {
-        size: 4,
-        colors: ["#3B82F6"],
-        strokeColors: "#fff",
-        strokeWidth: 2,
-        hover: {
-          size: 6,
-        },
-      },
+  
       xaxis: {
         categories: labels,
       },
@@ -97,7 +89,7 @@ export default function LineChart({ series, labels }: LineChartProps) {
           <ReactApexChart
             options={chartState.options}
             series={chartState.series}
-            type="line"
+            type="area"
             height={350}
           />
         </CardContent>
