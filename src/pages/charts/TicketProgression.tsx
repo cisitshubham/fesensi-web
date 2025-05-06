@@ -21,12 +21,12 @@ export default function TicketProgression({
   renderCategory
 }: TicketProgressionProps) {
   return (
-    <Card className="card-body flex flex-col gap-6 p-6 lg:p-8 lg:pt-5">
+    <Card className="card-body flex flex-col gap-1 p-6 lg:p-8 lg:pt-5">
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
         <div className="flex items-center gap-3">
           <span className="text-3xl font-bold text-gray-900">
-            Total Tickets: {ticketStatusTotal || 0}
+            Total: {ticketStatusTotal || 0}
           </span>
           <span className="badge badge-outline badge-success badge-sm">
             {ticketStatusTotalPercentage || 0}%

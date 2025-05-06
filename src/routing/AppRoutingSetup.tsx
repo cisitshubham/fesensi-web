@@ -90,40 +90,41 @@ import {
 import { Filter } from '@/pages/TicketFiter';
 
 // manual imports
-import AgentTickets from '@/pages/agent/my-tickets/my-tickets';
-import Tickets from '@/pages/agent/flow/tickets-description/tickets';
-import IncompleteTicket from '@/pages/agent/flow/incomplete-ticket/Incomplete-ticket';
-import AdminUsersPage from '@/pages/admin/userlist/userslist';
-import UserDetailPage from '@/pages/admin/userlist/userdetailpage';
-import CreateCategory from '@/pages/admin/Categories/createCategory';
-import RolesAndPermissions from '@/pages/admin/RolesAndPermissions/rolesAndPermissions';
-import PermissionsToggle from '@/pages/admin/configuration/config';
-import ResolveTicket from '@/pages/agent/flow/resolve-ticket/resolve';
-import CreateReasons from '@/pages/admin/force_reasons/force-reasons';
-import AnalyticsPage from '@/pages/admin/analytics/analytics';
-import UserTickets from '@/pages/user/myTickets/mytickets';
-import UserTTicketDetails from '@/pages/user/Ticket/Ticket';
-import UserResolveTicket from '@/pages/user/Resolve/Resolve';
-import UserUpdateTicketForm from '@/pages/user/update-ticket/update-ticket';
-import UserCreateTicketForm from '@/pages/user/createTicket/CreateTicket';
-import ReassignTicket from '@/pages/agent/Request-Reassignment/reassign';
-import ForceResolve from '@/pages/agent/flow/force-Resolve/force-resolve';
-import BulkReassign from '@/pages/agent/bulk-reassignment/bulk-reassign';
-import RequestedReassignment from '@/pages/agent/requested-reassignment/requested-reassignmnet';
-import FeedbackPage from '@/pages/user/feedback/feedback-main';
+import AgentTickets from '@/pages/agent/sidebar/my-tickets/my-tickets';
+import Tickets from '@/pages/agent/flow/tickets';
+import IncompleteTicket from '@/pages/agent/flow/Incomplete-ticket';
+import AdminUsersPage from '@/pages/admin/sidebar/userlist/userslist';
+import UserDetailPage from '@/pages/admin/sidebar/userlist/userdetailpage';
+import CreateCategory from '@/pages/admin/sidebar/Categories/createCategory';
+import RolesAndPermissions from '@/pages/admin/sidebar/RolesAndPermissions/rolesAndPermissions';
+import PermissionsToggle from '@/pages/admin/sidebar/configuration/config';
+import ResolveTicket from '@/pages/agent/flow/resolve';
+import CreateReasons from '@/pages/admin/sidebar/force_reasons/force-reasons';
+import AnalyticsPage from '@/pages/admin/sidebar/analytics/analytics';
+
+import UserTickets from '@/pages/user/sidebar/mytickets';
+import UserTTicketDetails from '@/pages/user/flow/Ticket';
+import UserResolveTicket from '@/pages/user/flow/Resolve';
+import UserUpdateTicketForm from '@/pages/user/flow/update-ticket';
+import UserCreateTicketForm from '@/pages/user/sidebar/CreateTicket';
+import ReassignTicket from '@/pages/agent/sidebar/Request-Reassignment/reassign';
+import ForceResolve from '@/pages/agent/flow/force-resolve';
+import BulkReassign from '@/pages/agent/sidebar/bulk-reassignment/bulk-reassign';
+import RequestedReassignment from '@/pages/agent/sidebar/requested-reassignment/requested-reassignmnet';
+import FeedbackPage from '@/pages/user/flow/feedback-main';
 import DashboardPage from '@/pages/global-components/DashboardPage';
-import KnowledgeBasePageAdmin from '@/pages/admin/knowledgeBase/knowledgebase';
-import SupportPageAdmin from '@/pages/admin/support/Support-page-admin';
-import KnowledgeBasePageUser from '@/pages/user/knowledgeBase/knowledgeBase';
-import AnnouncementsUser from '@/pages/user/announcements/announcements';
-import RateUsUser from '@/pages/user/rate-us/rate_us';
-import TrustPgeUser from '@/pages/user/trust/trust';
-import SupportPageUser from '@/pages/user/support/support';
-import EscalatedAgent from '@/pages/agent/escalted-tickets/escalated';
-import SlastatusAgent from '@/pages/agent/sla/slastatus';
-import AnnouncementsAgent from '@/pages/agent/announcements/announcements';
-import KnowledgebaseAgent from '@/pages/agent/knowledgebase/knowledgebas';
-import SupportPageAgent from '@/pages/agent/suppport/support';
+import KnowledgeBasePageAdmin from '@/pages/admin/sidebar/knowledgeBase/knowledgebase';
+import SupportPageAdmin from '@/pages/admin/sidebar/support/Support-page-admin';
+import KnowledgeBasePageUser from '@/pages/user/sidebar/knowledgeBase';
+import AnnouncementsUser from '@/pages/user/sidebar/announcements';
+import RateUsUser from '@/pages/user/sidebar/rate_us';
+import TrustPgeUser from '@/pages/user/sidebar/trust';
+import SupportPageUser from '@/pages/user/sidebar/support';
+import EscalatedAgent from '@/pages/agent/sidebar/escalted-tickets/escalated';
+import SlastatusAgent from '@/pages/agent/sidebar/sla/slastatus';
+import AnnouncementsAgent from '@/pages/agent/sidebar/announcements/announcements';
+import KnowledgebaseAgent from '@/pages/agent/sidebar/knowledgebase/knowledgebas';
+import SupportPageAgent from '@/pages/agent/sidebar/suppport/support';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -287,6 +288,27 @@ const AppRoutingSetup = (): ReactElement => {
 
         </Route>
       </Route>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       <Route path="error/*" element={<ErrorsRouting />} />
       <Route path="auth/*" element={<AuthPage />} />
       <Route path="*" element={<Navigate to="/error/404" />} />

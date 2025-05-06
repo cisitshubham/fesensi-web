@@ -23,6 +23,15 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
       },
       labels: labels,
       colors: labels.map(label => getColorFromPriority(label as TicketPriority)),
+      title: {  
+        text: "Tickets by Priority",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+        },
+      },
+
       responsive: [
         {
           breakpoint: 480,
@@ -54,11 +63,10 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
   return (
     <div id="chart" className="w-full">
       <Card className="w-full p-4">
-        <div className="font-bold text-center text-xl mt-4">Ticket by priority</div>
 
         <CardContent>
           <ReactApexChart
-            options={state.options}
+            options={{...state.options, title: {...state.options.title, align: "center" as "center"}}}
             series={state.series}
             type="pie"
             width={480}

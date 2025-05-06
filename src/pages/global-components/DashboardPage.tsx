@@ -247,7 +247,6 @@ export default function DashboardPage() {
             total: statusData.reduce((a: number, b: number) => a + b, 0) || 1
           });
 
-          // Update total and percentage from ticketsbyCategory
           setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
           setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
           setCategories(ticketsbyCategory.counts);
@@ -306,8 +305,8 @@ export default function DashboardPage() {
       <Container>
         <Tenure onDataUpdate={handleDataUpdate} />
 
-        <div className="flex flex-col gap-4 w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        <div className="flex flex-col lg:flex-row gap-6 ">
+          <div className="grid grid-cols-2 w-1/3  gap-4 ">
             <TicketStatusCards ticketCounts={ticketCounts} />
           </div>
           
@@ -325,6 +324,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <LineChart
+            series={chartData.ticketVolumeData}
+            labels={chartData.ticketVolumeLabels}
+            key={`line-${chartData.ticketVolumeData.join('-')}`}
+          />
           <Donut
             series={chartData.statusData}
             labels={chartData.statusLabels}
@@ -334,11 +338,6 @@ export default function DashboardPage() {
             series={chartData.priorityData}
             labels={chartData.priorityLabels}
             key={`pie-${chartData.priorityData.join('-')}`}
-          />
-          <LineChart
-            series={chartData.ticketVolumeData}
-            labels={chartData.ticketVolumeLabels}
-            key={`line-${chartData.ticketVolumeData.join('-')}`}
           />
           <BarChart
             series={chartData.categoryData}

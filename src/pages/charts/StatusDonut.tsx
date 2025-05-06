@@ -22,6 +22,14 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
    
       labels: labels,
       colors: labels.map(label => getColorFromStatus(label as TicketStatus)),
+      title: {
+        text: "Tickets by Status",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+        },
+      },
       responsive: [
         {
           breakpoint: 480,
@@ -55,11 +63,16 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
     <div className="w-full h-full">
       <div id="chart" className="h-full">
         <Card className="w-full h-full p-4">
-          <div className="font-bold text-center text-xl mt-4">Ticket by status</div>
 
           <CardContent>
             <ReactApexChart
-              options={state.options}
+              options={{
+                ...state.options,
+                title: {
+                  ...state.options.title,
+                  align: "center" as "center"
+                }
+              }}
               series={state.series}
               type="donut"
               width={480}
