@@ -18,7 +18,7 @@ import Tenure from '@/pages/charts/tenure';
 import Donut from '@/pages/charts/StatusDonut';
 import Pie from '@/pages/charts/PriorityPie';
 import BarChart from '@/pages/charts/category-bar-chart';
-import LineChart from '@/pages/charts/Volume-line-chart';
+import LineChart from '@/pages/charts/Volume-area-chart';
 import TicketStatusCards from '@/pages/charts/TicketStatusCards';
 import TicketProgression from '@/pages/charts/TicketProgression';
 

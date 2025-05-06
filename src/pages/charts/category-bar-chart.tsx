@@ -13,7 +13,7 @@ export default function BarChart({ series, labels }: { series: number[]; labels:
         type: "bar" as "bar",
         height: 350,
         toolbar: {
-          show: false
+          show: true
         }
       },
       plotOptions: {
@@ -60,7 +60,7 @@ export default function BarChart({ series, labels }: { series: number[]; labels:
 
   return (
     <div className="w-full">
-      <Card className="w-full">
+      <Card className="w-full p-4">
         <CardContent>
           <ReactApexChart 
             options={{...state.options, title: {...state.options.title, align: 'center' as 'center'}}}

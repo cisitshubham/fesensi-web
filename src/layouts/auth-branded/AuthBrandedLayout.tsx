@@ -36,7 +36,7 @@ const Layout = () => {
               />
             </Link> */}
             <div className="flex flex-col text-white">
-              <h1 className="text-5xl font-bold">Welcome To </h1>
+              <h1 className="text-7xl font-bold">Welcome To </h1>
               <span className="font-normal text-5xl">FESENSI</span>
               <span className="font-semibold mt-5">AI DRIVEN TECH SUPPORT</span>
             </div>

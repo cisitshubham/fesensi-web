@@ -17,7 +17,7 @@ import Pie from '@/pages/charts/PriorityPie';
 import { useRole } from '@/pages/global-components/role-context';
 import { Card } from '@/components/ui/card';
 import BarChart from '@/pages/charts/category-bar-chart';
-import LineChart from '@/pages/charts/Volume-line-chart';
+import LineChart from '@/pages/charts/Volume-area-chart';
 
 const Demo1LightSidebarPage = () => {
   const [date, setDate] = useState<DateRange | undefined>({

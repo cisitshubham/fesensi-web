@@ -2,17 +2,27 @@ import { ApexOptions } from "apexcharts";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { Card, CardContent } from "@/components/ui/card";
+import { getPriorityBadge } from "../global-components/GetStatusColor";
+import { TicketPriority } from "@/types";
 
 export default function Pie({ series, labels }: { series: number[]; labels: string[] }) {
+  const getColorFromPriority = (priority: TicketPriority) => {
+    const badge = getPriorityBadge(priority);
+    return badge.hex;
+  };
+
   const [state, setState] = React.useState({
     series: series,
     options: {
       chart: {
         width: 380,
         type: "pie" as "pie",
+        toolbar: {
+          show: true
+        },
       },
       labels: labels,
-      colors: [" #D32F2F", "#F57C00", "#FBC02D", "#388E3C"],
+      colors: labels.map(label => getColorFromPriority(label as TicketPriority)),
       responsive: [
         {
           breakpoint: 480,
@@ -36,13 +46,14 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
       options: {
         ...prevState.options,
         labels: labels,
+        colors: labels.map(label => getColorFromPriority(label as TicketPriority)),
       },
     }));
   }, [series, labels]);
 
   return (
     <div id="chart" className="w-full">
-      <Card className="w-full ">
+      <Card className="w-full p-4">
         <div className="font-bold text-center text-xl mt-4">Ticket by priority</div>
 
         <CardContent>

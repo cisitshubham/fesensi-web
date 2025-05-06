@@ -1,14 +1,5 @@
-import { ChartDataAgent, ChartDataAdmin } from "@/api/api";
+import { ChartDataAgent, ChartDataAdmin,ChartDataCustomer } from "@/api/api";
 
-interface ChartResponse {
-    success: boolean;
-    data: {
-        statusCharts: Record<string, number>;
-        categoryCharts: Record<string, number>;
-        priorityCharts: Record<string, number>;
-        ticketsbyVolume: Record<string, number>;
-    };
-}
 
 export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
     try {
@@ -22,6 +13,8 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
             apiResponse = await ChartDataAdmin(formData);
         } else if (role === "AGENT") {
             apiResponse = await ChartDataAgent(formData);
+        } else if (role === "CUSTOMER" || role === "USER") {
+            apiResponse = await ChartDataCustomer(formData);
         }
 
         console.log("Response from ChartData:", apiResponse);

@@ -21,12 +21,13 @@ export default function LineChart({ series, labels }: LineChartProps) {
     options: {
       chart: {
         height: 350,
+       
         type: "line" as "line", 
         zoom: {
           enabled: false,
         },
         toolbar: {
-          show: false,
+          show: true,
         },
       },
       dataLabels: {
@@ -84,7 +85,7 @@ export default function LineChart({ series, labels }: LineChartProps) {
 
   return (
     <div className="w-full">
-      <Card className="w-full">
+      <Card className="w-full p-4">
         <CardContent>
           <ReactApexChart
             options={chartState.options}

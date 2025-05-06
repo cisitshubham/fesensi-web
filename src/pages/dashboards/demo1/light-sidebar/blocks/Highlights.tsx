@@ -5,7 +5,7 @@ import { getTicketByCategory, getTicketByStatus } from '@/api/api';
 import Donut from '@/pages/charts/StatusDonut';
 import { Card } from '@mui/material';
 import Pie from '@/pages/charts/PriorityPie';
-import LineChart from '@/pages/charts/Volume-line-chart';
+import LineChart from '@/pages/charts/Volume-area-chart';
 import Tenure from '@/pages/charts/tenure';
 import { BarChart } from 'lucide-react';
 interface IHighlightsRow {

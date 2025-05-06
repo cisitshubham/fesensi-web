@@ -20,7 +20,7 @@ export default function AgentTickets() {
 				setTickets(response.data)				
 				setLoading(false)
 				
-			} catch (error:any) {
+			} catch (error) {
 				setError('Failed to load tickets.')
 				setLoading(false)
 			}
