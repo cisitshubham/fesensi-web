@@ -43,6 +43,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
       try {
         if (!selectedRoles.length || !fromDate || !toDate) return;
         
+        console.log(fromDate, toDate, selectedRoles[0]);
         const data = await fetchDashboardData(fromDate, toDate, selectedRoles[0]);
         if (data) {
           onDataUpdate(data);

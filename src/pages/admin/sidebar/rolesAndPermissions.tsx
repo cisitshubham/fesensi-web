@@ -4,12 +4,29 @@ import { Fragment, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { PageNavbar } from "@/pages/account"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, Save, Shield, Users, CheckCircle2, XCircle, ChevronRight, AlertCircle, ChevronDown } from "lucide-react"
+import {
+  Search,
+  Save,
+  Shield,
+  Users,
+  CheckCircle2,
+  XCircle,
+  ChevronRight,
+  AlertCircle,
+  ChevronDown,
+} from "lucide-react"
 import { GetPermissionsList, UpdatePermissions } from "@/api/api"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import type { Permission } from "@/types"
@@ -33,7 +50,6 @@ interface SelectedRole {
   status: string
   createdAt: string
   updatedAt: string
-  __v: number
 }
 
 export type RolePermissions = {
@@ -48,7 +64,7 @@ interface RolesAndPermissionsProps {
   onPermissionsChange?: (permissions: RolePermissions) => void
 }
 
-export default function RolesAndPermissions({ onPermissionsChange = () => { } }: RolesAndPermissionsProps) {
+export default function RolesAndPermissions({ onPermissionsChange = () => {} }: RolesAndPermissionsProps) {
   const [permissionsList, setPermissionsList] = useState<Permission[]>([])
   const [rolesList, setRolesList] = useState<Role[]>([])
   const [selectedPermissions, setSelectedPermissions] = useState<Record<string, boolean>>({})
@@ -66,31 +82,28 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
       try {
         setIsLoading(true)
         const response = await GetPermissionsList()
-        const permissions = response.data
+        const permissions = response?.data ?? []
         setPermissionsList(permissions)
 
-        const roles: Role[] = Array.from(new Set(permissions.map((p: Permission) => p.role))).map((value: unknown) => {
-          const roleId = value as string
-          return {
-            _id: roleId,
-            name: roleId,
+        const roles: Role[] = Array.from(new Set(permissions.map((p: Permission) => p.role))).map(
+          (roleId: unknown) => ({
+            _id: roleId as string,
+            name: roleId as string,
             description: "",
-          }
-        })
+          }),
+        )
         setRolesList(roles)
 
         if (roles.length > 0 && !activeRoleId) {
           setActiveRoleId(roles[0]._id)
         }
 
-        const initialCheckboxState = permissions.reduce(
-          (acc: Record<string, boolean>, p: Permission) => {
-            acc[p._id] = initialSelectedPermissions.includes(p._id)
-            return acc
-          },
-          {} as Record<string, boolean>,
-        )
-        setSelectedPermissions(initialCheckboxState)
+        // Initialize selected permissions
+        const initialState = permissions.reduce((acc: Record<string, boolean>, p: Permission) => {
+          acc[p._id] = initialSelectedPermissions.includes(p._id)
+          return acc
+        }, {})
+        setSelectedPermissions(initialState)
       } catch (error) {
         console.error("Error fetching permissions:", error)
         toast.error("Failed to fetch permissions")
@@ -111,66 +124,55 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
     }
   }
 
-  // Group permissions by role
-  const permissionsByRole = rolesList.reduce(
-    (acc, role) => {
-      acc[role._id] = permissionsList.filter((p) => p.role === role._id)
-      return acc
-    },
-    {} as Record<string, Permission[]>,
-  )
+  const permissionsByRole = rolesList.reduce((acc, role) => {
+    acc[role._id] = permissionsList.filter((p) => p.role === role._id)
+    return acc
+  }, {} as Record<string, Permission[]>)
 
-  // Filter permissions based on search query
   const filteredPermissions =
     activeRoleId && permissionsByRole[activeRoleId]
       ? permissionsByRole[activeRoleId].filter((p) =>
-        searchQuery
-          ? p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.method.toLowerCase().includes(searchQuery.toLowerCase())
-          : true,
-      )
+          searchQuery
+            ? p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              p.method.toLowerCase().includes(searchQuery.toLowerCase())
+            : true,
+        )
       : []
 
-  // Handlers
-  const handleSelectAll = (roleId: string) => {
-    const rolePermissions = permissionsByRole[roleId] || []
-    const areAllSelected = rolePermissions.every((p) => selectedPermissions[p._id])
+  const notifyPermissionsChange = (roleId: string, permissions: Record<string, boolean>) => {
+    const selected = Object.keys(permissions).filter((key) => permissions[key])
+    const all = Object.keys(permissions)
 
-    const updatedState = { ...selectedPermissions }
-    rolePermissions.forEach((p) => {
-      updatedState[p._id] = !areAllSelected
+    onPermissionsChange({
+      roleId,
+      permissions: {
+        selected,
+        all,
+      },
     })
-
-    setSelectedPermissions(updatedState)
-    notifyPermissionsChange(selectedRole?._id || "", updatedState)
-    setHasChanges(true)
   }
 
   const handlePermissionToggle = (permissionId: string) => {
     setSelectedPermissions((prev) => {
-      const updated = {
-        ...prev,
-        [permissionId]: !prev[permissionId],
-      }
-      notifyPermissionsChange(selectedRole?._id || "", updated)
+      const updated = { ...prev, [permissionId]: !prev[permissionId] }
+      if (selectedRole) notifyPermissionsChange(selectedRole._id, updated)
       setHasChanges(true)
       return updated
     })
   }
 
-  const notifyPermissionsChange = (roleId: string, permissions: Record<string, boolean>) => {
-    const selectedPermissions = Object.keys(permissions).filter((key) => permissions[key])
-    const allPermissions = Object.keys(permissions)
+  const handleSelectAll = (roleId: string) => {
+    const rolePermissions = permissionsByRole[roleId] ?? []
+    const allSelected = rolePermissions.every((p) => selectedPermissions[p._id])
 
-    const permissionsData: RolePermissions = {
-      roleId,
-      permissions: {
-        selected: selectedPermissions,
-        all: allPermissions,
-      },
-    }
+    const updatedState = { ...selectedPermissions }
+    rolePermissions.forEach((p) => {
+      updatedState[p._id] = !allSelected
+    })
 
-    onPermissionsChange(permissionsData)
+    setSelectedPermissions(updatedState)
+    if (selectedRole) notifyPermissionsChange(selectedRole._id, updatedState)
+    setHasChanges(true)
   }
 
   const handleUpdatePermissions = async () => {
@@ -178,18 +180,14 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
 
     const formData = new FormData()
     formData.append("roleId", selectedRole._id)
-    const updatedPermissions = Object.keys(selectedPermissions).filter((key) => selectedPermissions[key])
-
-    // Send each permission ID separately
-    updatedPermissions.forEach((permissionId) => {
-      formData.append("permissions[]", permissionId)
-    })
+    Object.keys(selectedPermissions)
+      .filter((key) => selectedPermissions[key])
+      .forEach((permissionId) => formData.append("permissions[]", permissionId))
 
     try {
-      const response = await UpdatePermissions(formData)
+      await UpdatePermissions(formData)
       toast.success("Permissions updated successfully")
       setHasChanges(false)
-      console.log(response)
     } catch (error) {
       toast.error("Failed to update permissions")
       console.error(error)
@@ -198,38 +196,34 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
 
   const handleResetPermissions = () => {
     if (!selectedRole) return
-    
-    const initialCheckboxState = permissionsList.reduce(
-      (acc: Record<string, boolean>, p: Permission) => {
-        acc[p._id] = initialSelectedPermissions.includes(p._id)
-        return acc
-      },
-      {} as Record<string, boolean>,
-    )
-    setSelectedPermissions(initialCheckboxState)
+
+    const resetState = permissionsList.reduce((acc: Record<string, boolean>, p: Permission) => {
+      acc[p._id] = initialSelectedPermissions.includes(p._id)
+      return acc
+    }, {})
+
+    setSelectedPermissions(resetState)
     setHasChanges(false)
   }
 
-  // Count selected permissions for each role
   const getSelectedCount = (roleId: string) => {
-    const permissions = permissionsByRole[roleId] || []
-    return permissions.filter((p) => selectedPermissions[p._id]).length
+    const rolePermissions = permissionsByRole[roleId] ?? []
+    return rolePermissions.filter((p) => selectedPermissions[p._id]).length
   }
 
   return (
     <Fragment>
       <PageNavbar />
 
-      <div className="mx-auto py-6 max-w-7xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-bold ">Roles & Permissions</h1>
+      <div className="mx-auto max-w-7xl">
+        <Card className="flex flex-row items-center text-center justify-center w-full mb-4">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold">Manage role permissions and access control</p>
+          </CardContent>
+     
+        </Card>
+      
 
-          </div>
-
-
-        </div>
-{/* prescreen */}
         {!selectedRole ? (
           <Card className="border-dashed border-primary/20">
             <CardContent className="flex flex-col items-center justify-center py-12">
@@ -238,12 +232,12 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
               <p className="text-muted-foreground text-center max-w-md mb-6">
                 Choose a role from the list below to view and manage its permissions.
               </p>
-              <div className="flex flex-row items-center justify-between gap-4 w-full max-w-3xl">
+              <div className="flex flex-row items-center justify-center gap-4 flex-wrap">
                 {masterdropdown.dropdownData.roles.map((role: SelectedRole) => (
                   <Button
                     key={role._id}
                     variant="outline"
-                    className="h-auto py-4 flex flex-col items-center justify-center gap-2 hover:bg-primary/10 hover:text-primary transition-colors"
+                    className="h-auto py-4 flex flex-col items-center justify-center gap-2"
                     onClick={() => handleRoleChange(role._id)}
                   >
                     <Users className="h-6 w-6" />
@@ -258,7 +252,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
             {/* Sidebar */}
             <div className="md:col-span-1">
               <Card>
-                <CardHeader className="pb-3">
+                <CardHeader>
                   <CardTitle className="text-lg">Role Categories</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -268,13 +262,16 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
                         <Button
                           key={role._id}
                           variant={activeRoleId === role._id ? "outline" : "ghost"}
-                          className="w-full justify-start mb-1 relative"
+                          className="w-full justify-start mb-1"
                           onClick={() => setActiveRoleId(role._id)}
                         >
-                          <div className="flex items-center w-full">
-                            <span className="truncate ">{role.name}</span>
-                            <Badge variant="outline" className="ml-auto bg-primary/10 text-primary border-primary/20">
-                              {getSelectedCount(role._id)}/{permissionsByRole[role._id]?.length || 0}
+                          <div className="flex items-center w-full justify-between">
+                            <span className="truncate">{role.name}</span>
+                            <Badge
+                              variant="outline"
+                              className="ml-auto bg-primary/10 text-primary border-primary/20"
+                            >
+                              {getSelectedCount(role._id)}/{permissionsByRole[role._id]?.length ?? 0}
                             </Badge>
                             {activeRoleId === role._id && <ChevronRight className="h-4 w-4 ml-1 text-primary" />}
                           </div>
@@ -288,75 +285,58 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
 
             {/* Main Content */}
             <div className="md:col-span-3">
-              <Card className="mb-6">
-                <CardHeader className="pb-3">
-                  <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                    <div>
-                      <CardTitle className="text-xl flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        {selectedRole && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="outline" className="gap-2">
-                                {selectedRole.role_name}
-                                <ChevronDown className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-[200px]">
-                              {masterdropdown.dropdownData.roles.map((role: SelectedRole) => (
-                                <DropdownMenuItem
-                                  key={role._id}
-                                  onClick={() => handleRoleChange(role._id)}
-                                  className="cursor-pointer"
-                                >
-                                  {role.role_name}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </CardTitle>
-                    </div>
+              <Card className="mb-4">
+                <CardHeader>
+                  <div className="flex flex-col md:flex-row justify-between gap-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5" />
+                      {selectedRole && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="gap-2">
+                              {selectedRole.role_name}
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-[200px]">
+                            {masterdropdown.dropdownData.roles.map((role: SelectedRole) => (
+                              <DropdownMenuItem
+                                key={role._id}
+                                onClick={() => handleRoleChange(role._id)}
+                                className="cursor-pointer"
+                              >
+                                {role.role_name}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </CardTitle>
 
                     <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
-                        size="sm"
-                        onClick={() => handleSelectAll(activeRoleId || "")}
+                        onClick={() => handleSelectAll(activeRoleId ?? "")}
                         disabled={!activeRoleId}
-                        className="h-9"
                       >
-                        {activeRoleId && permissionsByRole[activeRoleId]?.every((p) => selectedPermissions[p._id])
+                        {activeRoleId &&
+                        permissionsByRole[activeRoleId]?.every((p) => selectedPermissions[p._id])
                           ? "Deselect All"
                           : "Select All"}
                       </Button>
-                      {selectedRole && (
-                        <>
-                          <Button
-                            variant="outline"
-                            onClick={handleResetPermissions}
-                            disabled={!selectedRole || !hasChanges}
-                            className="gap-2"
-                          >
-                            Reset
-                          </Button>
-                          <Button
-                            variant={hasChanges ? "default" : "outline"}
-                            onClick={handleUpdatePermissions}
-                            disabled={!selectedRole || !hasChanges}
-                            className="gap-2"
-                          >
-                            <Save className="h-4 w-4" />
-                            Save Changes
-                          </Button>
-                        </>
-                      )}
+                      <Button variant="outline" onClick={handleResetPermissions} disabled={!hasChanges}>
+                        Reset
+                      </Button>
+                      <Button variant={hasChanges ? "default" : "outline"} onClick={handleUpdatePermissions} disabled={!hasChanges}>
+                        <Save className="h-4 w-4 mr-1" />
+                        Save Changes
+                      </Button>
                     </div>
                   </div>
                 </CardHeader>
               </Card>
-
-              <div className="relative mb-6">
+{/* 
+              <div className="relative mb-4">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search permissions..."
@@ -364,30 +344,31 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-              </div>
+              </div> */}
 
               {filteredPermissions.length === 0 ? (
                 <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
+                  <CardContent className="flex flex-col items-center justify-center ">
                     <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-xl font-medium mb-2">No Permissions Found</h3>
                     <p className="text-muted-foreground text-center max-w-md">
                       {searchQuery
-                        ? "No permissions match your search criteria. Try a different search term."
-                        : "There are no permissions available for this role category."}
+                        ? "No permissions match your search criteria."
+                        : "No permissions available for this role."}
                     </p>
                   </CardContent>
                 </Card>
               ) : (
                 <Card>
                   <CardContent className="p-0">
-                    <ScrollArea className="h-[calc(100vh-350px)]">
-                      <div className="divide-y">
+                    <ScrollArea className="h-[calc(100vh-380px)] p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {filteredPermissions.map((permission) => (
                           <div
                             key={permission._id}
-                            className={`p-4 hover:bg-muted/50 transition-colors ${selectedPermissions[permission._id] ? "bg-muted/30" : ""
-                              }`}
+                            className={`p-4 rounded-md border ${
+                              selectedPermissions[permission._id] ? "bg-muted/30 border-primary" : "border-muted"
+                            } transition-colors`}
                           >
                             <div className="flex justify-between items-center">
                               <div className="space-y-1">
@@ -400,7 +381,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
                                   )}
                                 </div>
                                 <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-                                  {permission.method}
+                                  {permission.method.toUpperCase()}
                                 </Badge>
                               </div>
                               <Checkbox
@@ -418,16 +399,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => { } }:
                       <div className="text-sm text-muted-foreground">
                         Showing {filteredPermissions.length} permissions
                       </div>
-                      {hasChanges && (
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                            Unsaved changes
-                          </Badge>
-                          <Button size="sm" onClick={handleUpdatePermissions} className="h-8">
-                            Save
-                          </Button>
-                        </div>
-                      )}
+
                     </div>
                   </CardFooter>
                 </Card>

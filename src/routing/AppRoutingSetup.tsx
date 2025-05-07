@@ -125,6 +125,7 @@ import SlastatusAgent from '@/pages/agent/sidebar/sla/slastatus';
 import AnnouncementsAgent from '@/pages/agent/sidebar/announcements/announcements';
 import KnowledgebaseAgent from '@/pages/agent/sidebar/knowledgebase/knowledgebas';
 import SupportPageAgent from '@/pages/agent/sidebar/suppport/support';
+import AnnouncementsAdmin from '@/pages/admin/sidebar/announcements';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -269,6 +270,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/analytics" element={<AnalyticsPage />} />
           <Route path="/admin/knowledgeBase" element={<KnowledgeBasePageAdmin />} />
           <Route path="/admin/Support" element={<SupportPageAdmin />} />
+          <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
 
 
 
