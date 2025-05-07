@@ -102,9 +102,9 @@ export default function AnnouncementsAdmin() {
 
   return (
     <div className="flex flex-row gap-8 p-6 max-w-7xl mx-auto">
-      <div className="w-1/2 bg-white rounded-lg shadow-sm border p-6">
+      <div className="w-3/5  rounded-lg shadow-sm border p-6 max-h-fit">
         <h1 className="text-2xl font-semibold mb-6 text-gray-800">Create Announcement</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 max-h-fit">
           <div className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium text-gray-700">
@@ -153,7 +153,7 @@ export default function AnnouncementsAdmin() {
         </form>
       </div>
       
-      <div className="w-1/2">
+      <div className="w-2/5">
         <AnnouncementsView 
           ref={announcementsViewRef}
           announcements={announcements}

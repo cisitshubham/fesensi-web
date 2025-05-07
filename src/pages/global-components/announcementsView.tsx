@@ -53,7 +53,7 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
   }
 
   return (
-    <Card className="p-6 bg-white rounded-lg shadow-sm border">
+    <Card className="p-6  rounded-lg shadow-sm border">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">Announcements</h2>
         <span className="text-sm text-gray-500">{announcements.length} total</span>

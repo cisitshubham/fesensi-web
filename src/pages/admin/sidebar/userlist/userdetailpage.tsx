@@ -190,7 +190,7 @@ export default function UserDetailPage() {
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full  transition-transform ${
                     user.role?.includes("admin") ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
@@ -333,7 +333,7 @@ export default function UserDetailPage() {
       {/* Admin Role Confirmation Dialog */}
       <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
         <DialogOverlay className="fixed inset-0 bg-black/30" />
-        <DialogContent className="fixed top-1/2 left-1/2 w-full max-w-md p-6 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg">
+        <DialogContent className="fixed top-1/2 left-1/2 w-full max-w-md p-6 -translate-x-1/2 -translate-y-1/2  rounded-lg shadow-lg">
           <DialogTitle className="text-lg font-semibold">
             {pendingAdminChange ? "Grant Admin Role" : "Remove Admin Role"}
           </DialogTitle>

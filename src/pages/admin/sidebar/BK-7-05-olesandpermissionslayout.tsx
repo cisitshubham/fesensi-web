@@ -213,7 +213,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => {} }: 
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {rolesList.map((role) => (
-                <div key={role._id} className="bg-white p-4 rounded-lg border shadow-sm">
+                <div key={role._id} className=" p-4 rounded-lg border shadow-sm">
                   <h2 className="text-lg font-semibold mb-4">{role.name}</h2>
 
                   <div className="flex items-center gap-2 mb-3">
