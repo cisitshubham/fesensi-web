@@ -54,13 +54,8 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
       }
     };
 
-    // Add a small debounce to prevent rapid consecutive calls
-    const timeoutId = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [fromDate, toDate, selectedRoles, onDataUpdate]);
+    fetchData();
+  }, [fromDate, toDate, selectedRoles]);
 
   const handleButtonClick = (button: React.SetStateAction<string>) => {
     setSelectedButton(button);

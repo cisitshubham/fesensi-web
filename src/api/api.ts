@@ -237,6 +237,8 @@ export const GetPermissionsList = async () => {
 
 export const UpdatePermissions = async (formData: FormData) => {
   try {
+    console.log("roleId", formData.get('roleId'))
+    console.log("permissions", formData.get('permissions'))
     const response = await axiosInstance.post('/admin/assign/permissions', formData);
     return response.data;
   } catch (error) {

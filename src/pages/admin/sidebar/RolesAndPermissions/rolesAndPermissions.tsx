@@ -15,7 +15,6 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select';
-import { CardActionArea } from '@mui/material';
 import { Button } from '@/components/ui/button';
 import { UpdatePermissions } from '@/api/api';
 
@@ -116,10 +115,10 @@ export default function RolesAndPermissions() {
   };
 
   const handleUpdatePermissions = async () => {
+    const updatedPermissions = Object.keys(selectedPermissions).filter((key) => selectedPermissions[key]);
     const formData = new FormData();
-    formData.append('role_id', selectedRole?.role_name || '');
-    formData.append('permissions', JSON.stringify(selectedPermissions));
-	console.log(selectedPermissions)
+    formData.append('roleId', selectedRole?._id || '');
+    formData.append('permissions', JSON.stringify(updatedPermissions));
     const response = await UpdatePermissions(formData);
     console.log(response);
   };
