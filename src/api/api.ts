@@ -225,6 +225,24 @@ export const createRoles = async (formData: FormData) => {
   return null;
 };
 
+export const GetPermissionsList = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/assigned/permissions');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching permissions list:', error);
+  }
+};
+
+
+export const UpdatePermissions = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/assign/permissions', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating permissions:', error);
+  }
+};
 export const GetUserTickets = async () => {
   try {
     const response = await axiosInstance.get('/tickets/ticket-list');

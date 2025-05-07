@@ -97,6 +97,15 @@ export type MasterDropdownDatatype = {
     _id: string;
     name: string;
   }[];
+  roles: {
+    _id: string;
+    role_name: string;
+    permissions: string[];
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }[];
   categories: {
     _id: string;
     title: string;
@@ -111,7 +120,19 @@ export type MasterDropdownDatatype = {
   }[];
   AdminUsers: {
     _id: string;
+    email: string;
     first_name: string;
+    status: boolean;
+    profile_img: string | null;
+    role: {
+      _id: string;
+      role_name: string;
+    }[];
+    categories: {
+      _id: string;
+      title: string;
+    }[];
+    level: string | null;
   }[];
 };
 
@@ -125,6 +146,24 @@ export type Notificationtype = {
   updatedAt: string
   read: boolean;
 };
+
+
+
+
+
+
+export type AdminUserState = {
+  _id: string;
+  name: string;
+  email: string;
+  level: string;
+  role: string[];
+  categories: string[];
+  profile_img: string;
+  status: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 
 
@@ -167,3 +206,13 @@ export type ChartsResponse = {
     };
   };
 };
+
+export type Permission = {
+  _id: string;
+  name: string;
+  method: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

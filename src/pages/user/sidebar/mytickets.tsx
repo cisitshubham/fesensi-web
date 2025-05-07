@@ -5,6 +5,7 @@ import { GetUserTickets } from '@/api/api';
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import UserTicket from './ticket-component';
 
 
 export default function UserTickets() {
@@ -34,7 +35,7 @@ export default function UserTickets() {
 		<Link to={"/user/create-ticket"}>
 		<Button variant={'default'}>Create Ticket</Button></Link>
       {tickets.map((ticket) => (
-        <Ticket key={ticket._id} ticket={ticket} />
+        <UserTicket key={ticket._id} ticket={ticket} />
       ))}
     </div>
   );

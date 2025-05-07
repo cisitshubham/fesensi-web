@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { toAbsoluteUrl } from '@/utils';
 import useBodyClasses from '@/hooks/useBodyClasses';
 import { AuthBrandedLayoutProvider } from './AuthBrandedLayoutProvider';
+import { Footer } from '@/layouts/demo1/footer/Footer';
 
 const Layout = () => {
   // Applying body classes to manage the background color in dark mode
@@ -27,7 +28,7 @@ const Layout = () => {
         </div>
 
         <div className=" lg:border lg:border-gray-200 lg:col-span-3 order-2 bg-top xxl:bg-center xl:bg-cover bg-no-repeat branded-bg relative min-h-screen">
-          <div className="flex flex-col items-center justify-center lg:p-12 gap-3 mt-52">
+          <div className="flex flex-col  justify-center lg:p-12 gap-3 mt-52">
             {/* <Link to="/">
               <img
                 src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
@@ -35,19 +36,14 @@ const Layout = () => {
                 alt="FESENSI Logo"
               />
             </Link> */}
-            <div className="flex flex-col text-white">
-              <h1 className="text-7xl font-bold">Welcome To </h1>
-              <span className="font-normal text-5xl">FESENSI</span>
-              <span className="font-semibold mt-5">AI DRIVEN TECH SUPPORT</span>
+            <div className="flex flex-col pl-8 text-white">
+              <h1 className="text-7xl ">Welcome To </h1>
+              <span className=" text-7xl font-bold " >FESENSI</span>
+              <span className="font-semibold mt-5 tracking-[4px]">AI DRIVEN TECH SUPPORT</span>
             </div>
           </div>
-          <div className="absolute bottom-0 w-full flex justify-between items-center p-8 text-sm text-white">
-            <div>copyright</div>
-            <div className="flex gap-4">
-              <Link to="/docs" className="hover:text-primary-active">Docs</Link>
-              <Link to="/support" className="hover:text-primary-active">Support</Link>
-              <Link to="/faq" className="hover:text-primary-active">FAQ</Link>
-            </div>
+          <div className="absolute  bottom-0 w-full flex justify-between items-center p-8 text-sm text-white">
+            <Footer></Footer>
           </div>
         </div>
       </div>

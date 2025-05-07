@@ -257,7 +257,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [date, selectedRoles]);
+  }, [selectedRoles]);
 
   const resolvedPercentage = (ticketCounts.resolved / ticketCounts.total) * 100;
   const inProgressPercentage = (ticketCounts.inProgress / ticketCounts.total) * 100;

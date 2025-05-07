@@ -46,19 +46,19 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
       {statusConfig.map(({ key, label, icon, status }) => {
         const badge = getStatusBadge(status);
         return (
-          <Card key={key} className="p-2 flex flex-col justify-between aspect-square h-auto w-auto">
+          <Card key={key} className={clsx("p-2 flex flex-col justify-between aspect-square h-auto w-auto", badge.color,badge.border)}>
             <div className="flex items-center gap-2 mb-2">
               <div
                 className={clsx(
-                  'p-2  rounded-lg flex items-center justify-center aspect-square',
-                  badge.color
+                  'p-2  rounded-lg flex items-center justify-center aspect-square'
+                 
                 )}
               >
                 <KeenIcon icon={icon} className=""/>
               </div>
               <h3 className="text-sm font-semibold">{label}</h3>
             </div>
-            <p className="text-2xl font-bold text-center">{ticketCounts[key]}</p>
+            <Card className={clsx("text-2xl font-bold text-white text-center",badge.darkbg)}>{ticketCounts[key]}</Card>
           </Card>
         );
       })}

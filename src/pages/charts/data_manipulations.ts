@@ -1,4 +1,4 @@
-import { ChartDataAgent, ChartDataAdmin,ChartDataCustomer } from "@/api/api";
+import { ChartDataAgent, ChartDataAdmin, ChartDataCustomer } from "@/api/api";
 
 
 export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
