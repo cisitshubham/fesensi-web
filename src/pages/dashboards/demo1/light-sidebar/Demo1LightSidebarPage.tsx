@@ -12,12 +12,12 @@ import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Donut from '@/pages/charts/donut';
-import Pie from '@/pages/charts/pie';
+import Donut from '@/pages/charts/StatusDonut';
+import Pie from '@/pages/charts/PriorityPie';
 import { useRole } from '@/pages/global-components/role-context';
 import { Card } from '@/components/ui/card';
-import BarChart from '@/pages/charts/bar-chart';
-import LineChart from '@/pages/charts/line-chart';
+import BarChart from '@/pages/charts/category-bar-chart';
+import LineChart from '@/pages/charts/Volume-area-chart';
 
 const Demo1LightSidebarPage = () => {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -126,19 +126,7 @@ const Demo1LightSidebarPage = () => {
       <Container>
         <Demo1LightSidebarContent date={date} />
       </Container>
-      <Card className="flex flex-col gap-4 p-5 lg:p-7.5 lg:pt-4 mx-8 mt-4 h-fit 
-      ">
-        <Tenure />
-        <div className=" flex flex-row gap-4 mb-1 justify-between">
-          <Donut />
-          <Pie />
-        </div>
-        <div className="flex flex-row gap-4 mb-1 justify-between">
-          <BarChart />
-          <LineChart />
-        </div>
 
-      </Card>
 
     </Fragment>
   );

@@ -23,7 +23,7 @@ const loginSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  email: localStorage.getItem('email') || 'example@email.com',
+  email: localStorage.getItem('email') || '',
   password: '',
   remember: false
 };
@@ -68,55 +68,39 @@ const Login = () => {
   };
 
   return (
-    <div className="card max-w-[390px] w-full">
+    <div className="max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
       <form
         className="card-body flex flex-col gap-5 p-10"
         onSubmit={formik.handleSubmit}
         noValidate
       >
-        <div className="text-center mb-2 flex flex-col items-center justify-center gap-2">
+        <div className="text-center text-5xl mb-16 flex items-center justify-center gap-2">
           <img
             src={toAbsoluteUrl('/media/app/fesensi/logo.svg')}
-            className="h-[32px] max-w-none"
+            className="h-[60px] max-w-none"
             alt=""
           />
-          <h3 className="text-lg font-semibold text-gray-900 leading-none mb-2">Sign In</h3>
+          <h1 className="bg-gradient-to-t from-[#314DCA] to-[#5A77FA] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
+            <p className="font-thin">|</p> Fesensi
+          </h1>
         </div>
-
-        <div className="grid grid-cols-2 gap-2.5">
-          <Link
-            to={currentLayout?.name === 'auth-branded' ? '/auth/login' : '/auth/classic/login'}
-            className="btn btn-sm justify-center disabled btn-input"
-          >
-            Sign In
-          </Link>
-
-          <Link
-            to={currentLayout?.name === 'auth-branded' ? '/auth/signup' : '/auth/classic/signup'}
-            className="btn btn-sm btn-light justify-center"
-          >
-            Sign Up
-          </Link>
-        </div>
-
-        <Alert variant="primary">
-          Use <span className="font-semibold text-gray-900">only a valid</span> email ID and a
-          strong password of{' '}
-          <span className="font-semibold text-gray-900">minimum 8 characters</span>.
-        </Alert>
+        <h1 className="text-2xl font-semibold text-primary-active">Sign in</h1>
+        <div className="text-sm">Welcome back! Please enter your details</div>
 
         {formik.status && <Alert variant="danger">{formik.status}</Alert>}
 
         <div className="flex flex-col gap-1">
-          <label className="form-label text-gray-900">Email</label>
           <label className="input">
             <input
-              placeholder="Enter username"
+              placeholder="Email"
+              type="email"
               autoComplete="off"
               {...formik.getFieldProps('email')}
-              className={clsx('form-control', {
-                'is-invalid': formik.touched.email && formik.errors.email
-              })}
+              className={clsx(
+                'form-control bg-transparent',
+                { 'is-invalid': formik.touched.email && formik.errors.email },
+                { 'is-valid': formik.touched.email && !formik.errors.email }
+              )}
             />
           </label>
           {formik.touched.email && formik.errors.email && (
@@ -146,9 +130,11 @@ const Login = () => {
               placeholder="Enter Password"
               autoComplete="off"
               {...formik.getFieldProps('password')}
-              className={clsx('form-control', {
-                'is-invalid': formik.touched.password && formik.errors.password
-              })}
+              className={clsx(
+                'form-control bg-transparent',
+                { 'is-invalid': formik.touched.password && formik.errors.password },
+                { 'is-valid': formik.touched.password && !formik.errors.password }
+              )}
             />
             <button className="btn btn-icon" onClick={togglePassword}>
               <KeenIcon icon="eye" className={clsx('text-gray-500', { hidden: showPassword })} />
@@ -176,11 +162,15 @@ const Login = () => {
 
         <button
           type="submit"
-          className="btn btn-primary flex justify-center grow"
+          className="btn btn-primary flex justify-center"
           disabled={loading || formik.isSubmitting}
         >
           {loading ? 'Please wait...' : 'Sign In'}
         </button>
+
+        <div className="mt-4">
+          Don't have an account? <Link to={'/auth/signup'} className="text-blue-500">Sign Up</Link>
+        </div>
       </form>
     </div>
   );

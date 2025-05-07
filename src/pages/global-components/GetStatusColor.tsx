@@ -6,8 +6,8 @@ export function GetStatusColor(status: TicketStatus) {
   const statusColors: Record<TicketStatus, string> = {
     [TicketStatus.Open]: "blue-500",
     [TicketStatus.InProgress]: "purple-500",
-    [TicketStatus.Closed]: "yellow-500",
-    [TicketStatus.Resolved]: "green-500",
+    [TicketStatus.Resolved]: "yellow-500",
+    [TicketStatus.Closed]: "green-500",
   };
 
   return statusColors[status] || "gray-500";
@@ -15,8 +15,8 @@ export function GetStatusColor(status: TicketStatus) {
 
 export function getPriorityColor(priority: TicketPriority) {
   const priorityColors: Record<TicketPriority, string> = {
-    [TicketPriority.Medium]: "amber-500",
     [TicketPriority.Low]: "blue-500",
+    [TicketPriority.Medium]: "amber-500",
     [TicketPriority.High]: "orange-500",
     [TicketPriority.Critical]: "red-500",
   };
@@ -30,26 +30,31 @@ export function getStatusBadge(status: string) {
       return {
         color: "bg-blue-100 text-blue-600 border-blue-200",
         icon: <Clock className="w-3 h-3 mr-1" />,
+        hex: "#3B82F6" // blue-500
       };
     case TicketStatus.InProgress:
       return {
         color: "bg-purple-100 text-purple-600 border-purple-200",
         icon: <Clock className="w-3 h-3 mr-1" />,
+        hex: "#A855F7" // purple-500
       };
     case TicketStatus.Closed:
       return {
-        color: "bg-red-100 text-red-600 border-red-200",
+        color: "bg-green-100 text-green-600 border-green-200",
         icon: null,
+        hex: "#22C55E" // green-500
       };
     case TicketStatus.Resolved:
       return {
-        color: "bg-green-100 text-green-600 border-green-200",
+        color: "bg-yellow-100 text-yellow-600 border-yellow-200",
         icon: null,
+        hex: "#EAB308" // yellow-500
       };
     default:
       return {
         color: "bg-gray-100 text-gray-600 border-gray-200",
         icon: null,
+        hex: "#6B7280" // gray-500
       };
   }
 }
@@ -60,30 +65,35 @@ export function getPriorityBadge(priority: TicketPriority) {
       return {
         border: "border-blue-200",
         color: "bg-blue-100 text-blue-600 border-blue-200",
+        hex: "#3B82F6", // blue-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     case TicketPriority.Medium:
       return {
         border: "border-amber-200",
         color: "bg-amber-100 text-amber-600 border-amber-200",
+        hex: "#F59E0B", // amber-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     case TicketPriority.High:
       return {
         border: "border-orange-200",
         color: "bg-orange-100 text-orange-600 border-orange-200",
+        hex: "#F97316", // orange-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     case TicketPriority.Critical:
       return {
         border: "border-red-200",
         color: "bg-red-100 text-red-600 border-red-200",
+        hex: "#EF4444", // red-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     default:
       return {
         border: "border-gray-200",
         color: "bg-gray-100 text-gray-600 border-gray-200",
+        hex: "#6B7280", // gray-500
         icon: null,
       };
   }

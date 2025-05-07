@@ -1,57 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-export default function Tenure() {
+import { fetchDashboardData } from '@/pages/charts/data_manipulations';
+import { useRole } from '@/pages/global-components/role-context';
+
+export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
+  const { selectedRoles } = useRole();
+
+  useEffect(() => {
+    const today = new Date();
+    const formatDate = (date: Date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${year}-${month}-${day}`;
+    };
+
+    if (selectedButton === 'Today') {
+      setFromDate(formatDate(today));
+      setToDate(formatDate(today));
+    } else if (selectedButton === 'Weekly') {
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+      setFromDate(formatDate(oneWeekAgo));
+      setToDate(formatDate(today));
+    } else if (selectedButton === 'Fortnightly') {
+      const twoWeeksAgo = new Date(today);
+      twoWeeksAgo.setDate(today.getDate() - 14);
+      setFromDate(formatDate(twoWeeksAgo));
+      setToDate(formatDate(today));
+    }
+  }, [selectedButton]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!selectedRoles.length) return;
+        
+        const data = await fetchDashboardData(fromDate, toDate, selectedRoles[0]);
+        if (data) {
+          onDataUpdate(data);
+        } else {
+          console.error('API did not return success:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    if (fromDate && toDate) {
+      fetchData();
+    }
+  }, [fromDate, toDate, selectedRoles]);
 
   const handleButtonClick = (button: React.SetStateAction<string>) => {
     setSelectedButton(button);
   };
 
   return (
-    <Card style={{ padding: '20px' }} className='w-full flex flex-row justify-between shadow-lg'>
-      <div style={{ marginBottom: '10px' }} className='my-auto'>
+    <Card className="p-5 w-full flex flex-row justify-between shadow-md my-4">
+      <div className="mb-2 my-auto">
         <Button
           variant={selectedButton === 'Today' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Today')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Today
         </Button>
         <Button
           variant={selectedButton === 'Weekly' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Weekly')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Weekly
         </Button>
         <Button
           variant={selectedButton === 'Fortnightly' ? 'default' : 'outline'}
           onClick={() => handleButtonClick('Fortnightly')}
-          style={{ marginRight: '10px' }}
+          className="mr-2"
         >
           Fortnightly
         </Button>
       </div>
-      <div className='text-center my-auto'>
-        <label style={{ marginRight: '10px' }}>
+      <div className="text-center my-auto flex lg:flex-row flex-col">
+        <label className="mr-2">
           From:
           <input
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            style={{ marginLeft: '5px' }}
+            className="ml-1"
           />
         </label>
-        <label style={{ marginLeft: '20px' }}>
+        <label className="ml-5">
           To:
           <input
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            style={{ marginLeft: '5px' }}
+            className="ml-1"
           />
         </label>
       </div>

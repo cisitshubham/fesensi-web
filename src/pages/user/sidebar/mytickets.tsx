@@ -1,4 +1,4 @@
-import Ticket from './ticket-component';
+import Ticket from '@/pages/agent/sidebar/my-tickets/ticket-component'; 
 import { Tickettype, TicketStatus, TicketPriority } from '@/types';
 import { GetUserTickets } from '@/api/api';
 
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 
-export default function AgentTickets() {
+export default function UserTickets() {
 
 	const [tickets, setTickets] = useState<Tickettype[]>([])
 	const [loading, setLoading] = useState(true)
@@ -20,7 +20,7 @@ export default function AgentTickets() {
 				setTickets(response.data)				
 				setLoading(false)
 				
-			} catch (error:any) {
+			} catch (error) {
 				setError('Failed to load tickets.')
 				setLoading(false)
 			}

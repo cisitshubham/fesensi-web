@@ -28,7 +28,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
 
   const buildHeader = () => {
     return (
-      <div className="flex items-center justify-between px-5 py-1.5 gap-1.5">
+      <div className="flex items-center justify-between px-5 py-1.5 gap-1.5 w-fit overflow-hidden">
         <div className="flex items-center gap-2">
           <img
             className="size-9 rounded-full border-2 border-success"
@@ -38,7 +38,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
               (e.target as HTMLImageElement).src = toAbsoluteUrl('/media/avatars/300-2.png');
             }}
           />
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 overflow-hidden">
             <Link
               to="/account/home/user-profile"
               className="text-sm text-gray-800 hover:text-primary font-semibold leading-none"
@@ -92,7 +92,6 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
               ]
             }}
           ></MenuItem>
-          <DropdownUserLanguages menuItemRef={menuItemRef} />
           <MenuSeparator />
         </div>
       </Fragment>
@@ -132,7 +131,7 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
 
   return (
     <MenuSub
-      className="menu-default light:border-gray-300 w-[200px] md:w-[250px]"
+      className="menu-default light:border-gray-300 w-fit"
       rootClassName="p-0"
     >
       {buildHeader()}

@@ -37,27 +37,32 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 
       {
         title: 'knowledge base',
-        icon: 'book-open'
+        icon: 'book-open',
+        path: '/user/knowledgeBase'
 
       },
 
       {
         title: 'Announcements',
-        icon: 'notification-status'
+        icon: 'notification-status',
+        path: '/user/announcements'
 
       },
       {
         title: 'Rate Us/Feedback',
-        icon: 'star'
+        icon: 'star',
+        path: '/user/rate-us'
       },
       {
         title: 'Trust Level',
-        icon: 'like-shapes'
+        icon: 'like-shapes',
+        path: '/user/Trust'
       },
 
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
+        icon: 'abstract-32',
+        path: '/user/Support'
       },
     ]
     : []),
@@ -88,27 +93,32 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
       },
       {
         title: 'Escalated tickets',
-        icon: 'flag'
+        icon: 'flag',
+        path: '/agent/escalated-tickets'
       },
       {
         title: 'SLA Status',
-        icon: 'timer'
+        icon: 'timer',
+        path: '/agent/sla-status'
       },
 
 
       {
         title: 'Announcements',
-        icon: 'notification-status'
+        icon: 'notification-status',
+        path: '/agent/announcements'
 
       },
       {
         title: 'knowledge base',
-        icon: 'book-open'
+        icon: 'book-open',
+        path: '/agent/knowledgeBase'
 
       },
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
+        icon: 'abstract-32',
+        path: '/agent/Support'
       }
 
     ]
@@ -138,37 +148,45 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/admin/roles'
       },
       {
-        title: 'Masters (Dropdown)',
+        title: 'Masters',
         icon: 'shield',
-        path: '/admin/roles'
-      },
-      {
-        title: 'Categories',
-        icon: 'folder',
-        path: '/admin/categories'
-      },
-      {
-        title: 'Force Reasons',
-        icon: 'lock-3',
-        path: '/admin/force-reasons'
-      },
-      {
-        title: 'Configuration',
-        icon: 'setting',
-        path: '/admin/configurations'
-      },
+        children: [
+          {
+            title: 'Categories',
+            icon: 'folder',
+            path: '/admin/categories'
+          },
+          {
+            title: 'Force Reasons',
+            icon: 'lock-3',
+            path: '/admin/force-reasons'
+          },
+          {
+            title: 'Configuration',
+            icon: 'setting',
+            path: '/admin/configurations',
+          },
+          {
+            title: 'reassign options'
+          },
+          {
+            title: 'priority options',
+          },
+          
 
+
+        ]
+      },
       {
         title: 'knowledge base',
-        icon: 'book-open'
-
+        icon: 'book-open',
+        path: '/admin/knowledgeBase',
       },
       {
         title: 'Contact Support',
-        icon: 'abstract-32'
-        // contact to super admin
+        icon: 'abstract-32',
+        path: '/admin/Support'
       }
-
     ]
     : [])
 ];
@@ -205,32 +223,32 @@ export const getMegaMenu = (roles: string[]): TMenuConfig => [
 ];
 
 export const MENU_ROOT: TMenuConfig = [
-  {
-    title: 'Public Profile',
-    icon: 'profile-circle',
-    rootPath: '/public-profile/',
-    path: 'public-profile/profiles/default',
-    childrenIndex: 2
-  },
-  {
-    title: 'Account',
-    icon: 'setting-2',
-    rootPath: '/account/',
-    path: '/',
-    childrenIndex: 3
-  },
-  {
-    title: 'Network',
-    icon: 'users',
-    rootPath: '/network/',
-    path: 'network/get-started',
-    childrenIndex: 4
-  },
-  {
-    title: 'Authentication',
-    icon: 'security-user',
-    rootPath: '/authentication/',
-    path: 'authentication/get-started',
-    childrenIndex: 5
-  }
+  // {
+  //   title: 'Public Profile',
+  //   icon: 'profile-circle',
+  //   rootPath: '/public-profile/',
+  //   path: 'public-profile/profiles/default',
+  //   childrenIndex: 2
+  // },
+  // {
+  //   title: 'Account',
+  //   icon: 'setting-2',
+  //   rootPath: '/account/',
+  //   path: '/',
+  //   childrenIndex: 3
+  // },
+  // {
+  //   title: 'Network',
+  //   icon: 'users',
+  //   rootPath: '/network/',
+  //   path: 'network/get-started',
+  //   childrenIndex: 4
+  // },
+  // {
+  //   title: 'Authentication',
+  //   icon: 'security-user',
+  //   rootPath: '/authentication/',
+  //   path: 'authentication/get-started',
+  //   childrenIndex: 5
+  // }
 ];
