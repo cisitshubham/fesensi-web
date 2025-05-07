@@ -11,7 +11,6 @@ import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import DashboardPage from '@/pages/global-components/DashboardPage';
 const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispatch<React.SetStateAction<File[]>> }) => {
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

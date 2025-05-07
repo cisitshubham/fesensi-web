@@ -234,11 +234,10 @@ export const GetPermissionsList = async () => {
   }
 };
 
-
 export const UpdatePermissions = async (formData: FormData) => {
   try {
-    console.log("roleId", formData.get('roleId'))
-    console.log("permissions", formData.get('permissions'))
+    console.log('roleId', formData.get('roleId'));
+    console.log('permissions[]', formData.get('permissions[]'));
     const response = await axiosInstance.post('/admin/assign/permissions', formData);
     return response.data;
   } catch (error) {
@@ -329,6 +328,7 @@ export const ChartDataAgent = async (formData: FormData) => {
 export const MyTickets = async (filters: any) => {
   try {
     const response = await axiosInstance.post('/agent/myTickets', filters);
+    console.log(filters);
     return response.data;
   } catch (error: any) {
     if (error.response) {

@@ -95,12 +95,12 @@ import Tickets from '@/pages/agent/flow/tickets';
 import IncompleteTicket from '@/pages/agent/flow/Incomplete-ticket';
 import AdminUsersPage from '@/pages/admin/sidebar/userlist/userslist';
 import UserDetailPage from '@/pages/admin/sidebar/userlist/userdetailpage';
-import CreateCategory from '@/pages/admin/sidebar/Categories/createCategory';
-import RolesAndPermissions from '@/pages/admin/sidebar/RolesAndPermissions/rolesAndPermissions';
-import PermissionsToggle from '@/pages/admin/sidebar/configuration/config';
+import CreateCategory from '@/pages/admin/sidebar/createCategory';
+import RolesAndPermissions from '@/pages/admin/sidebar/rolesAndPermissions';
+import PermissionsToggle from '@/pages/admin/sidebar/config';
 import ResolveTicket from '@/pages/agent/flow/resolve';
-import CreateReasons from '@/pages/admin/sidebar/force_reasons/force-reasons';
-import AnalyticsPage from '@/pages/admin/sidebar/analytics/analytics';
+import CreateReasons from '@/pages/admin/sidebar/force-reasons';
+import AnalyticsPage from '@/pages/admin/sidebar/analytics';
 
 import UserTickets from '@/pages/user/sidebar/mytickets';
 import UserTTicketDetails from '@/pages/user/flow/Ticket';
@@ -113,8 +113,8 @@ import BulkReassign from '@/pages/agent/sidebar/bulk-reassignment/bulk-reassign'
 import RequestedReassignment from '@/pages/agent/sidebar/requested-reassignment/requested-reassignmnet';
 import FeedbackPage from '@/pages/user/flow/feedback-main';
 import DashboardPage from '@/pages/global-components/DashboardPage';
-import KnowledgeBasePageAdmin from '@/pages/admin/sidebar/knowledgeBase/knowledgebase';
-import SupportPageAdmin from '@/pages/admin/sidebar/support/Support-page-admin';
+import KnowledgeBasePageAdmin from '@/pages/admin/sidebar/knowledgebase';
+import SupportPageAdmin from '@/pages/admin/sidebar/Support-page-admin';
 import KnowledgeBasePageUser from '@/pages/user/sidebar/knowledgeBase';
 import AnnouncementsUser from '@/pages/user/sidebar/announcements';
 import RateUsUser from '@/pages/user/sidebar/rate_us';

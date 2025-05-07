@@ -14,6 +14,7 @@ export default function AgentTickets() {
 		try {
 			setLoading(true);
 			const response = await MyTickets(filters);
+			console.log(filters)
 			setTickets(Array.isArray(response.data) ? response.data : []); // Extract the data property
 			setLoading(false);
 		} catch (error) {
