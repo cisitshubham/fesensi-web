@@ -28,30 +28,40 @@ export function getStatusBadge(status: string) {
   switch (status) {
     case TicketStatus.Open:
       return {
+        darkbg: "bg-blue-500",
+        border: "border-blue-400",
         color: "bg-blue-100 text-blue-600 border-blue-200",
         icon: <Clock className="w-3 h-3 mr-1" />,
         hex: "#3B82F6" // blue-500
       };
     case TicketStatus.InProgress:
       return {
+        darkbg: "bg-purple-500",
+        border: "border-purple-400",
         color: "bg-purple-100 text-purple-600 border-purple-200",
         icon: <Clock className="w-3 h-3 mr-1" />,
         hex: "#A855F7" // purple-500
       };
     case TicketStatus.Closed:
       return {
+        darkbg: "bg-green-500",
+        border: "border-green-400",
         color: "bg-green-100 text-green-600 border-green-200",
         icon: null,
         hex: "#22C55E" // green-500
       };
     case TicketStatus.Resolved:
       return {
+        darkbg: "bg-yellow-500",
+        border: "border-yellow-400",
         color: "bg-yellow-100 text-yellow-600 border-yellow-200",
         icon: null,
         hex: "#EAB308" // yellow-500
       };
     default:
       return {
+        darkbg: "bg-gray-500",
+        border: "border-gray-200",
         color: "bg-gray-100 text-gray-600 border-gray-200",
         icon: null,
         hex: "#6B7280" // gray-500

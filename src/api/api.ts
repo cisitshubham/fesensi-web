@@ -96,6 +96,7 @@ export const getTicketByCategory = async () => {
 };
 
 export const ChartDataAdmin = async (formData: FormData) => {
+  console.log(formData.get('fromDate'), formData.get('toDate'), formData.get('role'));
   try {
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
     return response.data;
@@ -225,6 +226,46 @@ export const createRoles = async (formData: FormData) => {
   return null;
 };
 
+
+export const createAnnouncement = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/announcements/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating announcement:', error);
+  }
+};
+
+
+export const getAnnouncementsAdmin = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/announcements/getAllAnnouncements');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching announcements:', error);
+  }
+};
+
+
+export const GetPermissionsList = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/assigned/permissions');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching permissions list:', error);
+  }
+};
+
+export const UpdatePermissions = async (formData: FormData) => {
+  try {
+    console.log('roleId', formData.get('roleId'));
+    console.log('permissions[]', formData.get('permissions[]'));
+    const response = await axiosInstance.post('/admin/assign/permissions', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating permissions:', error);
+  }
+};
 export const GetUserTickets = async () => {
   try {
     const response = await axiosInstance.get('/tickets/ticket-list');
@@ -309,6 +350,7 @@ export const ChartDataAgent = async (formData: FormData) => {
 export const MyTickets = async (filters: any) => {
   try {
     const response = await axiosInstance.post('/agent/myTickets', filters);
+    console.log(filters);
     return response.data;
   } catch (error: any) {
     if (error.response) {
@@ -326,6 +368,17 @@ export const MyTicketDetails = async (TicketId: string) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching ticket by ID:', error);
+  }
+};
+
+
+
+export const getEscalatedTickets = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/myTicket/escalated');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching escalated tickets:', error);
   }
 };
 

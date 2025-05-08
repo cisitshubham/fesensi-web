@@ -148,6 +148,12 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/admin/roles'
       },
       {
+        title: 'Announcements',
+        icon: 'notification-status',
+        path: '/admin/announcements'
+
+      },
+      {
         title: 'Masters',
         icon: 'shield',
         children: [

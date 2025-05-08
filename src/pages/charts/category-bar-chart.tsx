@@ -24,7 +24,7 @@ export default function BarChart({ series, labels }: { series: number[]; labels:
         }
       },
       dataLabels: {
-        enabled: true
+        enabled: true,
       },
       xaxis: {
         categories: labels,

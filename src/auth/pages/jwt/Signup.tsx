@@ -94,8 +94,8 @@ const Signup = () => {
             className="h-[60px] max-w-none  "
             alt=""
           />
-          <h1 className="bg-gradient-to-t from-[#314DCA] to-[#5A77FA] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
-            <p className="font-thin">|</p> Fesensi
+          <h1 className="bg-gradient-to-t from-[#314DCA] to-[#7189f4] flex flex-row gap-1 tracking-wider font-bold uppercase text-nowrap bg-clip-text text-transparent">
+             Fesensi
           </h1>
         </div>
         <h1 className="text-2xl font-semibold text-primary-active">Sign up</h1>
