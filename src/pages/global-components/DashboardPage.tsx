@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { fetchUser } from '@/api/api';
@@ -77,29 +77,36 @@ export default function DashboardPage() {
   });
 
   const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { selectedRoles, setSelectedRoles } = useRole();
 
-  const handleRoleToggle = (role: string) => {
+  const handleRoleToggle = useCallback((role: string) => {
     if (selectedRoles.includes(role)) {
-      setSelectedRoles([]); // Clear the array if the role is already selected
+      setSelectedRoles([]);
     } else {
-      setSelectedRoles([role]); // Set the array to only contain the selected role
-      localStorage.setItem('selectedRole', role); // Store the selected role in local storage
+      setSelectedRoles([role]);
+      localStorage.setItem('selectedRole', role);
     }
-  };
+  }, [selectedRoles, setSelectedRoles]);
+
+  const fetchUserData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const userData = await fetchUser();
+      setUser(userData.data);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      setError('Failed to fetch user data. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const userData = await fetchUser();
-        setUser(userData.data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
-    getUser();
-  }, []);
+    fetchUserData();
+  }, [fetchUserData]);
 
   const roles = user?.role || [];
 
@@ -130,23 +137,6 @@ export default function DashboardPage() {
       }
     }
   }, [roles]);
-
-
-
-
-
-
-
-
-
-// role handle ------------------------------------------
-
-
-
-
-
-
-
 
   const isDropdownReadonly = roles.length === 1;
 
@@ -197,7 +187,6 @@ export default function DashboardPage() {
     );
   };
 
-  // Chart data states
   const [chartData, setChartData] = useState<ChartData>({
     statusData: [],
     statusLabels: [],
@@ -218,46 +207,57 @@ export default function DashboardPage() {
   const handleDataUpdate = (data: ChartData) => {
     setChartData(data);
     setCategories(data.ticketsbyCategory.counts as CategoryCount[]);
-
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchDashboardData(
-          date?.from?.toISOString() || new Date().toISOString(),
-          date?.to?.toISOString() || new Date().toISOString(),
-          selectedRoles[0] || 'ADMIN'
-        );
+  const fetchDashboardDataWithRetry = useCallback(async (retries = 3) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetchDashboardData(
+        date?.from?.toISOString() || new Date().toISOString(),
+        date?.to?.toISOString() || new Date().toISOString(),
+        selectedRoles[0] || 'ADMIN'
+      );
 
-        if (response) {
-          const { statusData, statusLabels, ticketsbyCategory } = response as DashboardResponse;
-          
-          // Update ticket counts from statusData and statusLabels
-          const statusMap = statusLabels.reduce((acc, label, index) => {
-            acc[label] = statusData[index];
-            return acc;
-          }, {} as Record<string, number>);
+      if (response) {
+        const { statusData, statusLabels, ticketsbyCategory } = response as DashboardResponse;
+        
+        const statusMap = statusLabels.reduce((acc, label, index) => {
+          acc[label] = statusData[index];
+          return acc;
+        }, {} as Record<string, number>);
 
-          setTicketCounts({
-            resolved: statusMap['RESOLVED'] || 0,
-            inProgress: statusMap['IN-PROGRESS'] || 0,
-            open: statusMap['OPEN'] || 0,
-            closed: statusMap['CLOSED'] || 0,
-            total: statusData.reduce((a: number, b: number) => a + b, 0) || 1
-          });
+        setTicketCounts({
+          resolved: statusMap['RESOLVED'] || 0,
+          inProgress: statusMap['IN-PROGRESS'] || 0,
+          open: statusMap['OPEN'] || 0,
+          closed: statusMap['CLOSED'] || 0,
+          total: statusData.reduce((a: number, b: number) => a + b, 0) || 1
+        });
 
-          setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
-          setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
-          setCategories(ticketsbyCategory.counts);
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
+        setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
+        setCategories(ticketsbyCategory.counts);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      if (retries > 0) {
+        setTimeout(() => {
+          fetchDashboardDataWithRetry(retries - 1);
+        }, 1000 * (3 - retries));
+      } else {
+        setError('Failed to fetch dashboard data. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [date, selectedRoles]);
 
-    fetchData();
-  }, [selectedRoles]);
+  useEffect(() => {
+    if (selectedRoles.length > 0) {
+      fetchDashboardDataWithRetry();
+    }
+  }, [selectedRoles, fetchDashboardDataWithRetry]);
 
   const resolvedPercentage = (ticketCounts.resolved / ticketCounts.total) * 100;
   const inProgressPercentage = (ticketCounts.inProgress / ticketCounts.total) * 100;
@@ -269,83 +269,103 @@ export default function DashboardPage() {
         <Toolbar>
           <ToolbarHeading title="Dashboard" description="Central Hub for Comprehensive View" />
           <ToolbarActions>
-            {isDropdownReadonly ? (
+            {isLoading ? (
               <div className="px-4 py-2 rounded-md bg-gray-200 text-gray-500">
-                {roles.length > 0 ? roles[0].role_name : 'Select Roles'}
+                Loading...
+              </div>
+            ) : error ? (
+              <div className="px-4 py-2 rounded-md bg-red-100 text-red-500">
+                {error}
               </div>
             ) : (
-              <Select onValueChange={(value) => handleRoleToggle(value)}>
-                <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
-                  <SelectValue
-                    placeholder={
-                      selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'
-                    }
-                  ></SelectValue>
-                </SelectTrigger>
-                <SelectContent className="mt-2 shadow-lg rounded-md">
-                  {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
-                    <SelectItem
-                      key={_id}
-                      value={role_name}
-                      className={cn(
-                        'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
-                        selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
-                      )}
-                    >
-                      {role_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <>
+                {isDropdownReadonly ? (
+                  <div className="px-4 py-2 rounded-md bg-gray-200 text-gray-500">
+                    {roles.length > 0 ? roles[0].role_name : 'Select Roles'}
+                  </div>
+                ) : (
+                  <Select onValueChange={(value) => handleRoleToggle(value)}>
+                    <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
+                      <SelectValue
+                        placeholder={
+                          selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'
+                        }
+                      ></SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="mt-2 shadow-lg rounded-md">
+                      {roles.map(({ _id, role_name }: { _id: string; role_name: string }) => (
+                        <SelectItem
+                          key={_id}
+                          value={role_name}
+                          className={cn(
+                            'cursor-pointer hover:bg-primary rounded-md flex flex-row justify-between gap-2',
+                            selectedRoles.includes(role_name) && 'bg-primary-light text-primary'
+                          )}
+                        >
+                          {role_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </>
             )}
           </ToolbarActions>
         </Toolbar>
       </Container>
 
-      <Container>
-        <Tenure onDataUpdate={handleDataUpdate} />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-500 p-4">{error}</div>
+      ) : (
+        <Container>
+          <Tenure onDataUpdate={handleDataUpdate} />
 
-        <div className="flex flex-col lg:flex-row gap-6 ">
-          <div className="grid grid-cols-2 w-1/3  gap-4 ">
-            <TicketStatusCards ticketCounts={ticketCounts} />
+          <div className="flex flex-col lg:flex-row gap-6 ">
+            <div className="grid grid-cols-2 w-1/3  gap-4 ">
+              <TicketStatusCards ticketCounts={ticketCounts} />
+            </div>
+            
+            <div className="w-full">
+              <TicketProgression
+                ticketStatusTotal={ticketStatusTotal}
+                ticketStatusTotalPercentage={ticketStatusTotalPercentage}
+                resolvedPercentage={resolvedPercentage}
+                inProgressPercentage={inProgressPercentage}
+                openPercentage={openPercentage}
+                categories={categories}
+                renderCategory={renderCategory}
+              />
+            </div>
           </div>
-          
-          <div className="w-full">
-            <TicketProgression
-              ticketStatusTotal={ticketStatusTotal}
-              ticketStatusTotalPercentage={ticketStatusTotalPercentage}
-              resolvedPercentage={resolvedPercentage}
-              inProgressPercentage={inProgressPercentage}
-              openPercentage={openPercentage}
-              categories={categories}
-              renderCategory={renderCategory}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <LineChart
+              series={chartData.ticketVolumeData}
+              labels={chartData.ticketVolumeLabels}
+              key={`line-${chartData.ticketVolumeData.join('-')}`}
+            />
+            <Donut
+              series={chartData.statusData}
+              labels={chartData.statusLabels}
+              key={`donut-${chartData.statusData.join('-')}`}
+            />
+            <Pie
+              series={chartData.priorityData}
+              labels={chartData.priorityLabels}
+              key={`pie-${chartData.priorityData.join('-')}`}
+            />
+            <BarChart
+              series={chartData.categoryData}
+              labels={chartData.categoryLabels}
+              key={`bar-${chartData.categoryData.join('-')}`}
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <LineChart
-            series={chartData.ticketVolumeData}
-            labels={chartData.ticketVolumeLabels}
-            key={`line-${chartData.ticketVolumeData.join('-')}`}
-          />
-          <Donut
-            series={chartData.statusData}
-            labels={chartData.statusLabels}
-            key={`donut-${chartData.statusData.join('-')}`}
-          />
-          <Pie
-            series={chartData.priorityData}
-            labels={chartData.priorityLabels}
-            key={`pie-${chartData.priorityData.join('-')}`}
-          />
-          <BarChart
-            series={chartData.categoryData}
-            labels={chartData.categoryLabels}
-            key={`bar-${chartData.categoryData.join('-')}`}
-          />
-        </div>
-      </Container>
+        </Container>
+      )}
     </Fragment>
   );
 }

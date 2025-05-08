@@ -218,7 +218,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => {} }: 
       <div className="mx-auto max-w-7xl">
         <Card className="flex flex-row items-center text-center justify-center w-full mb-4">
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">Manage role permissions and access control</p>
+            <p className="text-2xl font-bold">Roles & Permissions</p>
           </CardContent>
      
         </Card>

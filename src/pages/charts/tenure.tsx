@@ -1,14 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { fetchDashboardData } from '@/pages/charts/data_manipulations';
 import { useRole } from '@/pages/global-components/role-context';
+import { cn } from '@/lib/utils';
 
 export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { selectedRoles } = useRole();
+  const lastFetchRef = useRef<{ fromDate: string; toDate: string; role: string } | null>(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const formatDate = useCallback((date: Date) => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -17,75 +22,133 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
     return `${year}-${month}-${day}`;
   }, []);
 
+  // Memoize the date calculation logic
+  const calculateDateRange = useCallback((button: string) => {
+    const today = new Date();
+    let from = today;
+    let to = today;
+
+    if (button === 'Weekly') {
+      from = new Date(today);
+      from.setDate(today.getDate() - 7);
+    } else if (button === 'Fortnightly') {
+      from = new Date(today);
+      from.setDate(today.getDate() - 14);
+    }
+
+    return {
+      from: formatDate(from),
+      to: formatDate(to)
+    };
+  }, [formatDate]);
+
   // Effect to set initial dates and handle button changes
   useEffect(() => {
-    const today = new Date();
-    
-    if (selectedButton === 'Today') {
-      setFromDate(formatDate(today));
-      setToDate(formatDate(today));
-    } else if (selectedButton === 'Weekly') {
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(today.getDate() - 7);
-      setFromDate(formatDate(oneWeekAgo));
-      setToDate(formatDate(today));
-    } else if (selectedButton === 'Fortnightly') {
-      const twoWeeksAgo = new Date(today);
-      twoWeeksAgo.setDate(today.getDate() - 14);
-      setFromDate(formatDate(twoWeeksAgo));
-      setToDate(formatDate(today));
+    const { from, to } = calculateDateRange(selectedButton);
+    setFromDate(from);
+    setToDate(to);
+  }, [selectedButton, calculateDateRange]);
+
+  // Memoize the fetch data function
+  const fetchData = useCallback(async (retries = 3) => {
+    if (!selectedRoles.length || !fromDate || !toDate) return;
+
+    // Check if we've already fetched this exact data
+    const currentFetch = { fromDate, toDate, role: selectedRoles[0] };
+    if (
+      lastFetchRef.current &&
+      lastFetchRef.current.fromDate === currentFetch.fromDate &&
+      lastFetchRef.current.toDate === currentFetch.toDate &&
+      lastFetchRef.current.role === currentFetch.role
+    ) {
+      setIsButtonDisabled(false);
+      return;
     }
-  }, [selectedButton, formatDate]);
 
-  // Effect to fetch data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!selectedRoles.length || !fromDate || !toDate) return;
-        
-        console.log(fromDate, toDate, selectedRoles[0]);
-        const data = await fetchDashboardData(fromDate, toDate, selectedRoles[0]);
-        if (data) {
-          onDataUpdate(data);
-        } else {
-          console.error('API did not return success:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await fetchDashboardData(fromDate, toDate, selectedRoles[0]);
+      
+      if (data) {
+        lastFetchRef.current = currentFetch;
+        onDataUpdate(data);
+      } else {
+        throw new Error('No data received from API');
       }
-    };
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      if (retries > 0) {
+        // Retry with exponential backoff
+        setTimeout(() => {
+          fetchData(retries - 1);
+        }, 1000 * (3 - retries));
+      } else {
+        setError('Failed to fetch data. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+      setIsButtonDisabled(false);
+    }
+  }, [fromDate, toDate, selectedRoles, onDataUpdate]);
 
-    fetchData();
-  }, [fromDate, toDate, selectedRoles]);
+  // Debounced effect for date changes with increased debounce time
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, 1000); // Increased to 1 second debounce
 
-  const handleButtonClick = (button: React.SetStateAction<string>) => {
+    return () => clearTimeout(timeoutId);
+  }, [fromDate, toDate, selectedRoles, fetchData]);
+
+  const handleButtonClick = useCallback((button: string) => {
+    setIsButtonDisabled(true);
     setSelectedButton(button);
-  };
+  }, []);
+
+  // Memoize the buttons to prevent unnecessary re-renders
+  const buttons = useMemo(() => (
+    <>
+      <Button
+        variant={selectedButton === 'Today' ? 'default' : 'outline'}
+        onClick={() => handleButtonClick('Today')}
+        className={cn(
+          "mr-2 transition-all duration-200",
+          isButtonDisabled && "opacity-50 cursor-not-allowed"
+        )}
+        disabled={isButtonDisabled}
+      >
+        Today
+      </Button>
+      <Button
+        variant={selectedButton === 'Weekly' ? 'default' : 'outline'}
+        onClick={() => handleButtonClick('Weekly')}
+        className={cn(
+          "mr-2 transition-all duration-200",
+          isButtonDisabled && "opacity-50 cursor-not-allowed"
+        )}
+        disabled={isButtonDisabled}
+      >
+        Weekly
+      </Button>
+      <Button
+        variant={selectedButton === 'Fortnightly' ? 'default' : 'outline'}
+        onClick={() => handleButtonClick('Fortnightly')}
+        className={cn(
+          "mr-2 transition-all duration-200",
+          isButtonDisabled && "opacity-50 cursor-not-allowed"
+        )}
+        disabled={isButtonDisabled}
+      >
+        Fortnightly
+      </Button>
+    </>
+  ), [selectedButton, handleButtonClick, isButtonDisabled]);
 
   return (
     <Card className="p-5 w-full flex flex-row justify-between shadow-md my-4">
       <div className="mb-2 my-auto">
-        <Button
-          variant={selectedButton === 'Today' ? 'default' : 'outline'}
-          onClick={() => handleButtonClick('Today')}
-          className="mr-2"
-        >
-          Today
-        </Button>
-        <Button
-          variant={selectedButton === 'Weekly' ? 'default' : 'outline'}
-          onClick={() => handleButtonClick('Weekly')}
-          className="mr-2"
-        >
-          Weekly
-        </Button>
-        <Button
-          variant={selectedButton === 'Fortnightly' ? 'default' : 'outline'}
-          onClick={() => handleButtonClick('Fortnightly')}
-          className="mr-2"
-        >
-          Fortnightly
-        </Button>
+        {buttons}
       </div>
       
       <div>
@@ -95,7 +158,11 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            className="ml-1"
+            className={cn(
+              "ml-1 transition-all duration-200",
+              isButtonDisabled && "opacity-50 cursor-not-allowed"
+            )}
+            disabled={isButtonDisabled}
           />
         </label>
         <label className="ml-5">
@@ -104,9 +171,16 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            className="ml-1"
+            className={cn(
+              "ml-1 transition-all duration-200",
+              isButtonDisabled && "opacity-50 cursor-not-allowed"
+            )}
+            disabled={isButtonDisabled}
           />
         </label>
+        {error && (
+          <span className="ml-4 text-sm text-red-500">{error}</span>
+        )}
       </div>
     </Card>
   );
