@@ -253,7 +253,7 @@ export default function RolesAndPermissions({ onPermissionsChange = () => {} }: 
             <div className="md:col-span-1">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Role Categories</CardTitle>
+                  <CardTitle className="text-lg">Permission Categories</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <ScrollArea className="h-[calc(100vh-300px)]">
