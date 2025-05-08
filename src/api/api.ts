@@ -239,8 +239,10 @@ export const getRoles = async () => {
 };
 
 export const createCategories = async (formData: FormData) => {
+  console.log('formData', formData);
+  console.log('formData', formData.get('title'));
   try {
-    const response = await axiosInstance.post('/tickets/create/categories', formData);
+    const response = await axiosInstance.post('/tickets/create/categories', );
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
@@ -260,6 +262,7 @@ export const createRoles = async (formData: FormData) => {
 
 
 export const createAnnouncement = async (formData: FormData) => {
+
   try {
     const response = await axiosInstance.post('/admin/announcements/create', formData);
     return response.data;
@@ -267,6 +270,18 @@ export const createAnnouncement = async (formData: FormData) => {
     console.error('Error creating announcement:', error);
   }
 };
+
+
+export const updateAnnouncement = async (formData: FormData, id: string) => {
+  try {
+    const response = await axiosInstance.post(`/admin/announcements/update/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating announcement:', error);
+  }
+};
+
+
 
 
 export const getAnnouncementsAdmin = async () => {
@@ -296,6 +311,18 @@ export const UpdatePermissions = async (formData: FormData) => {
     return response.data;
   } catch (error) {
     console.error('Error updating permissions:', error);
+  }
+};
+
+
+export const deletePermissions = async (formData: FormData) => {
+  console.log('roleId', formData.get('roleId'));
+  console.log('permissionId[]', formData.get('permissionId[]'));
+  try {
+    const response = await axiosInstance.post('/admin/delete/permissions', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting permissions:', error);
   }
 };
 export const GetUserTickets = async () => {
