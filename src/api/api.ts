@@ -1,5 +1,22 @@
 /* eslint-disable prettier/prettier */
 import axiosInstance from '../api/axiosInstance';
+
+// Add request cache
+const requestCache = new Map<string, {
+  data: any;
+  timestamp: number;
+}>();
+
+const CACHE_DURATION = 5000; // 5 seconds cache
+
+const getCacheKey = (url: string, params: any) => {
+  return `${url}-${JSON.stringify(params)}`;
+};
+
+const isCacheValid = (timestamp: number) => {
+  return Date.now() - timestamp < CACHE_DURATION;
+};
+
 export const fetchUser = async () => {
   try {
     const response = await axiosInstance.get('/users/me');
@@ -96,14 +113,29 @@ export const getTicketByCategory = async () => {
 };
 
 export const ChartDataAdmin = async (formData: FormData) => {
-  console.log(formData.get('fromDate'), formData.get('toDate'), formData.get('role'));
+  const cacheKey = getCacheKey('/admin/Dashboard/charts/', {
+    fromDate: formData.get('fromDate'),
+    toDate: formData.get('toDate')
+  });
+
+  const cachedData = requestCache.get(cacheKey);
+  if (cachedData && isCacheValid(cachedData.timestamp)) {
+    return cachedData.data;
+  }
+
   try {
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
+    if (response.data) {
+      requestCache.set(cacheKey, {
+        data: response.data,
+        timestamp: Date.now()
+      });
+    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
+    return null;
   }
-  return null;
 };
 
 export const createTicket = async (formData: FormData) => {
@@ -197,6 +229,44 @@ export const updateUser = async (userId: string, formData: FormData) => {
   }
 };
 
+export const CreateForceCloseReason = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/resolved/post/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign options:', error);
+  }
+};
+
+export const CreateReassignOptions = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/reassignement/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign options:', error);
+  }
+};
+
+export const CreateFeedbackOptions = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/feedback/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching feedback options:', error);
+  }
+};
+
+
+export const getEscalatedTicketsAdmin = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/request/reassign/tickets');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching feedback options:', error);
+  }
+};
+
+
 export const getRoles = async () => {
   try {
     const response = await axiosInstance.get('/admin/roles/list');
@@ -207,8 +277,10 @@ export const getRoles = async () => {
 };
 
 export const createCategories = async (formData: FormData) => {
+  console.log('formData', formData);
+  console.log('formData', formData.get('title'));
   try {
-    const response = await axiosInstance.post('/tickets/create/categories', formData);
+    const response = await axiosInstance.post('/tickets/create/categories', );
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
@@ -228,6 +300,7 @@ export const createRoles = async (formData: FormData) => {
 
 
 export const createAnnouncement = async (formData: FormData) => {
+
   try {
     const response = await axiosInstance.post('/admin/announcements/create', formData);
     return response.data;
@@ -235,6 +308,18 @@ export const createAnnouncement = async (formData: FormData) => {
     console.error('Error creating announcement:', error);
   }
 };
+
+
+export const updateAnnouncement = async (formData: FormData, id: string) => {
+  try {
+    const response = await axiosInstance.post(`/admin/announcements/update/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating announcement:', error);
+  }
+};
+
+
 
 
 export const getAnnouncementsAdmin = async () => {
@@ -264,6 +349,18 @@ export const UpdatePermissions = async (formData: FormData) => {
     return response.data;
   } catch (error) {
     console.error('Error updating permissions:', error);
+  }
+};
+
+
+export const deletePermissions = async (formData: FormData) => {
+  console.log('roleId', formData.get('roleId'));
+  console.log('permissionId[]', formData.get('permissionId[]'));
+  try {
+    const response = await axiosInstance.post('/admin/delete/permissions', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting permissions:', error);
   }
 };
 export const GetUserTickets = async () => {
@@ -326,25 +423,57 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
+  const cacheKey = getCacheKey('/tickets/Dashboard/charts/', {
+    fromDate: formData.get('fromDate'),
+    toDate: formData.get('toDate')
+  });
+
+  const cachedData = requestCache.get(cacheKey);
+  if (cachedData && isCacheValid(cachedData.timestamp)) {
+    return cachedData.data;
+  }
+
   try {
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
+    if (response.data) {
+      requestCache.set(cacheKey, {
+        data: response.data,
+        timestamp: Date.now()
+      });
+    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
+    return null;
   }
-  return null;
 };
 
 // agent
 
 export const ChartDataAgent = async (formData: FormData) => {
+  const cacheKey = getCacheKey('/agent/myTickets/Dashboard/charts', {
+    fromDate: formData.get('fromDate'),
+    toDate: formData.get('toDate')
+  });
+
+  const cachedData = requestCache.get(cacheKey);
+  if (cachedData && isCacheValid(cachedData.timestamp)) {
+    return cachedData.data;
+  }
+
   try {
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts', formData);
+    if (response.data) {
+      requestCache.set(cacheKey, {
+        data: response.data,
+        timestamp: Date.now()
+      });
+    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
+    return null;
   }
-  return null;
 };
 
 export const MyTickets = async (filters: any) => {

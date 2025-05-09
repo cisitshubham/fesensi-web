@@ -154,9 +154,19 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 
       },
       {
+        title :"Requested for Reassignment",
+        path: '/admin/requested-reassignment',
+        icon: 'update-file'
+      },
+      {
         title: 'Masters',
-        icon: 'shield',
+        icon: 'diamonds',
         children: [
+          {
+            title: 'Configuration',
+            icon: 'setting',
+            path: '/admin/configurations',
+          },
           {
             title: 'Categories',
             icon: 'folder',
@@ -168,16 +178,14 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             path: '/admin/force-reasons'
           },
           {
-            title: 'Configuration',
-            icon: 'setting',
-            path: '/admin/configurations',
+            title: 'reassign options',
+            path: '/admin/reassign'
           },
           {
-            title: 'reassign options'
+            title: 'FeedBack Options',
+            path: '/admin/feedback-options'
           },
-          {
-            title: 'priority options',
-          },
+        
           
 
 

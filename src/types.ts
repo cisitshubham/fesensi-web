@@ -1,4 +1,6 @@
 export type Tickettype = {
+  agent_reassign_reason?: string;
+  agent_reassign_comment?: string;
   resolutionTime?: number,
   isTicketClosed?: boolean,
   remainingHours?: number,
@@ -49,6 +51,11 @@ export type Tickettype = {
     createdAt: string;
     details: string;
   }[];
+  activity_logs?: {
+    creator: string;
+    comment: string;
+    createdAt: string;
+  }[];
   agentComment?: {
     _id: string;
     comment_text: string;
@@ -89,6 +96,10 @@ export type User = {
 };
 
 export type MasterDropdownDatatype = {
+  feedbackOptions: {
+    _id: string;
+    title: string;
+  }[];
   status: {
     _id: string;
     name: string;
@@ -106,6 +117,7 @@ export type MasterDropdownDatatype = {
     updatedAt: string;
     __v: number;
   }[];
+
   categories: {
     _id: string;
     title: string;
@@ -128,11 +140,13 @@ export type MasterDropdownDatatype = {
       _id: string;
       role_name: string;
     }[];
+
     categories: {
       _id: string;
       title: string;
     }[];
     level: string | null;
+
   }[];
 };
 
@@ -193,7 +207,7 @@ export type ChartsResponse = {
     ticketsbyVolume: {
       [date: string]: number; // Example: "2025-05-01": 0
     };
-    ticketsbyCategory: {
+    TicketsByCategory: {
       overallPercentageChange: string;
       totalTicketCount: number;
       totalLastMonthCount: number;
