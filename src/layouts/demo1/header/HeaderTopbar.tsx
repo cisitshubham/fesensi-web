@@ -9,9 +9,14 @@ import { DropdownChat } from '@/partials/dropdowns/chat';
 import { ModalSearch } from '@/partials/modals/search/ModalSearch';
 import { useLanguage } from '@/i18n';
 import { fetchUser } from '../../../api/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const HeaderTopbar = () => {
   const { isRTL } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [canGoBack, setCanGoBack] = useState(false);
   const itemChatRef = useRef<any>(null);
   const itemAppsRef = useRef<any>(null);
   const itemUserRef = useRef<any>(null);
@@ -20,6 +25,24 @@ const HeaderTopbar = () => {
   const handleShow = () => {
     window.dispatchEvent(new Event('resize'));
   };
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  // Update navigation state when location changes
+  useEffect(() => {
+    const handlePopState = () => {
+      setCanGoBack(window.history.state?.idx > 0);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    handlePopState(); // Initial check
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [location]);
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const handleOpen = () => setSearchModalOpen(true);
@@ -43,6 +66,16 @@ const HeaderTopbar = () => {
 
   return (
     <div className="flex items-center gap-2 lg:gap-3.5">
+      <Button
+        onClick={handleGoBack}
+        disabled={!canGoBack}
+        variant="ghost"
+        title="Back"
+      >
+        <KeenIcon icon="arrow-left" />
+        Back
+      </Button>
+
       <button
         onClick={handleOpen}
         className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"

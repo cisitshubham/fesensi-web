@@ -158,6 +158,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         icon: 'shield',
         children: [
           {
+            title: 'Configuration',
+            icon: 'setting',
+            path: '/admin/configurations',
+          },
+          {
             title: 'Categories',
             icon: 'folder',
             path: '/admin/categories'
@@ -168,16 +173,14 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             path: '/admin/force-reasons'
           },
           {
-            title: 'Configuration',
-            icon: 'setting',
-            path: '/admin/configurations',
+            title: 'reassign options',
+            path: '/admin/reassign'
           },
           {
-            title: 'reassign options'
+            title: 'FeedBack Options',
+            path: '/admin/feedback-options'
           },
-          {
-            title: 'priority options',
-          },
+        
           
 
 

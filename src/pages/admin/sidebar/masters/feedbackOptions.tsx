@@ -1,5 +1,4 @@
 import type React from "react"
-
 import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -18,38 +17,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import { createCategories } from "@/api/api"
-
-
-
-export default function CategoryManagement() {
+import { CreateFeedbackOptions } from "@/api/api"
+import { useNavigate } from "react-router-dom"
+export default function FeedbackOptions() {
   const { dropdownData } = useMasterDropdown()
-  const [categories, setCategories] = useState<MasterDropdownDatatype["categories"]>(dropdownData.categories || [])
+  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>(dropdownData.feedbackOptions || [])     
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [editedCategory, setEditedCategory] = useState({ title: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
-
-  const filtered = categories.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
-
-  const handleAdd = () => {
-    const newCategory = {
-      _id: `temp-${Date.now()}`,
-      title: "",
-      createdAt: new Date().toISOString().split("T")[0],
-      createdBy: "Admin",
-    }
-    setCategories(prev => [...prev, newCategory])
-    setEditIndex(categories.length)
-    setEditedCategory({ title: "" })
-  }
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [newCategoryTitle, setNewCategoryTitle] = useState("")
+  const navigate = useNavigate()  
+  const filtered = feedbackOptions.filter((c: { title: string }) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const handleEdit = (index: number) => {
     setEditIndex(index)
-    setEditedCategory({ title: categories[index].title })
+    setEditedCategory({ title: feedbackOptions[index].title })
   }
 
   const handleSave = async () => {
@@ -59,15 +45,14 @@ export default function CategoryManagement() {
     try {
       const formData = new FormData()
       formData.append("title", editedCategory.title.trim())
-      const response = await createCategories(formData)
-      console.log('response', response);
+      const response = await CreateFeedbackOptions(formData)
 
       if (response.success && editIndex !== null) {
-        const updated = [...categories]
+        const updated = [...feedbackOptions]
         updated[editIndex].title = editedCategory.title.trim()
-        setCategories(updated)
+        setFeedbackOptions(updated)
         setEditIndex(null)
-        toast.success("Category saved successfully")
+        toast.success("Feedback option saved successfully")
       }
     } catch {
       toast.error("Failed to save")
@@ -77,32 +62,36 @@ export default function CategoryManagement() {
   }
 
   const handleCancel = () => {
-    if (editIndex !== null && categories[editIndex]._id.startsWith("temp-")) {
-      setCategories(prev => prev.slice(0, -1))
-    }
     setEditIndex(null)
   }
 
-  const handleDelete = async () => {
-    if (deleteIndex === null) return
+  const handleAddCategorySubmit = async () => {
+    if (!newCategoryTitle.trim()) return toast.error("Category title cannot be empty")
     setIsSubmitting(true)
 
     try {
-      setCategories(prev => prev.filter((_, i) => i !== deleteIndex))
-      toast.success("Category deleted successfully")
+      const formData = new FormData()
+      formData.append("title", newCategoryTitle.trim())
+      const response = await CreateFeedbackOptions(formData)
+
+      if (response.success) {
+   
+        toast.success("Category added successfully")
+        setShowAddDialog(false)
+        navigate('/admin/feedback-options')
+      }
     } catch {
-      toast.error("Failed to delete category")
+      toast.error("Failed to add category")
     } finally {
       setIsSubmitting(false)
-      setDeleteIndex(null)
     }
   }
 
   const sortByTitle = (order: "asc" | "desc") => {
-    const sorted = [...categories].sort((a, b) =>
+    const sorted = [...feedbackOptions].sort((a, b) =>
       order === "asc" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
     )
-    setCategories(sorted)
+    setFeedbackOptions(sorted)
   }
 
   const ActionButtons = ({ index }: { index: number }) => {
@@ -124,31 +113,9 @@ export default function CategoryManagement() {
 
     return (
       <>
-        <Button variant="outline" size="sm" onClick={() => handleEdit(index)} disabled={!canEdit}
-          className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button variant="outline" size="sm" onClick={() => handleEdit(index)} disabled={!canEdit}>
           <Pencil className="h-4 w-4" />
         </Button>
-        <Dialog open={deleteIndex === index} onOpenChange={(open: boolean) => !open && setDeleteIndex(null)}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" disabled={!canEdit}
-              className="text-red-600 border-red-200 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => setDeleteIndex(index)}>
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete Category</DialogTitle>
-              <DialogDescription>This action cannot be undone.</DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteIndex(null)}>Cancel</Button>
-              <Button onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null} Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </>
     )
   }
@@ -159,11 +126,11 @@ export default function CategoryManagement() {
         <CardHeader className="pb-4 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-2xl font-bold">Categories</CardTitle>
-              <CardDescription className="mt-1">Manage your product categories</CardDescription>
+              <CardTitle className="text-2xl font-bold">Feedback Options</CardTitle>
+              <CardDescription className="mt-1">Manage your feedback options</CardDescription>
             </div>
-            <Button onClick={handleAdd} className="flex items-center gap-2" disabled={editIndex !== null || isSubmitting}>
-              <Plus className="h-4 w-4" /> Add Category
+            <Button onClick={() => setShowAddDialog(true)} className="flex items-center gap-2" disabled={isSubmitting}>
+              <Plus className="h-4 w-4" /> Add Feedback Option
             </Button>
           </div>
         </CardHeader>
@@ -172,7 +139,7 @@ export default function CategoryManagement() {
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search categories..."
+                placeholder="Search feedback options..."
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
@@ -208,8 +175,8 @@ export default function CategoryManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((cat, i) => {
-                    const index = categories.findIndex(c => c._id === cat._id)
+                  {filtered.map((cat: { title: string; _id: string }, i: number) => {
+                    const index = feedbackOptions.findIndex((c: { _id: string }) => c._id === cat._id)
                     const isEditing = editIndex === index
                     return (
                       <TableRow key={cat._id} className="group hover:bg-slate-50">
@@ -240,10 +207,32 @@ export default function CategoryManagement() {
           )}
 
           <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filtered.length} of {categories.length} categories
+            Showing {filtered.length} of {feedbackOptions.length} feedback options
           </div>
         </CardContent>
       </Card>
+
+      {/* Add Category Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="p-4">
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>Enter the title of the category to add it to the list.</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder="Category title"
+            value={newCategoryTitle}
+            onChange={e => setNewCategoryTitle(e.target.value)}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
+            <Button onClick={handleAddCategorySubmit} disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -81,7 +81,6 @@ function Search({ searchQuery, setSearchQuery }: { searchQuery: string; setSearc
           </Button>
         )}
       </div>
-      <Button>Add User</Button>
     </div>
   )
 }

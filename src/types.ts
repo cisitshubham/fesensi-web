@@ -89,6 +89,10 @@ export type User = {
 };
 
 export type MasterDropdownDatatype = {
+  feedbackOptions: {
+    _id: string;
+    title: string;
+  }[];
   status: {
     _id: string;
     name: string;
@@ -106,6 +110,7 @@ export type MasterDropdownDatatype = {
     updatedAt: string;
     __v: number;
   }[];
+
   categories: {
     _id: string;
     title: string;
@@ -128,11 +133,13 @@ export type MasterDropdownDatatype = {
       _id: string;
       role_name: string;
     }[];
+
     categories: {
       _id: string;
       title: string;
     }[];
     level: string | null;
+
   }[];
 };
 

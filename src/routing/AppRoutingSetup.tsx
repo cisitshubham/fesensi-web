@@ -95,11 +95,11 @@ import Tickets from '@/pages/agent/flow/tickets';
 import IncompleteTicket from '@/pages/agent/flow/Incomplete-ticket';
 import AdminUsersPage from '@/pages/admin/sidebar/userlist/userslist';
 import UserDetailPage from '@/pages/admin/sidebar/userlist/userdetailpage';
-import CreateCategory from '@/pages/admin/sidebar/createCategory';
+import CreateCategory from '@/pages/admin/sidebar/masters/createCategory';
 import RolesAndPermissions from '@/pages/admin/sidebar/rolesAndPermissions';
 import PermissionsToggle from '@/pages/admin/sidebar/config';
 import ResolveTicket from '@/pages/agent/flow/resolve';
-import CreateReasons from '@/pages/admin/sidebar/force-reasons';
+import CreateReasons from '@/pages/admin/sidebar/masters/force-reasons';
 import AnalyticsPage from '@/pages/admin/sidebar/analytics';
 
 import UserTickets from '@/pages/user/sidebar/mytickets';
@@ -126,6 +126,8 @@ import AnnouncementsAgent from '@/pages/agent/sidebar/announcements/announcement
 import KnowledgebaseAgent from '@/pages/agent/sidebar/knowledgebase/knowledgebas';
 import SupportPageAgent from '@/pages/agent/sidebar/suppport/support';
 import AnnouncementsAdmin from '@/pages/admin/sidebar/announcements';
+import CresteReassign from '@/pages/admin/sidebar/masters/reassign';
+import FeedbackOptions from '@/pages/admin/sidebar/masters/feedbackOptions';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -271,7 +273,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/knowledgeBase" element={<KnowledgeBasePageAdmin />} />
           <Route path="/admin/Support" element={<SupportPageAdmin />} />
           <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
-
+          <Route path="/admin/reassign" element={<CresteReassign />} />
+          <Route path="/admin/feedback-options" element={<FeedbackOptions />} />
 
 
           {/* users aadesh  */}

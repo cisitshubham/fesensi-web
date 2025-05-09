@@ -229,6 +229,44 @@ export const updateUser = async (userId: string, formData: FormData) => {
   }
 };
 
+export const CreateForceCloseReason = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/resolved/post/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign options:', error);
+  }
+};
+
+export const CreateReassignOptions = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/reassignement/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign options:', error);
+  }
+};
+
+export const CreateFeedbackOptions = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/feedback/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching feedback options:', error);
+  }
+};
+
+
+export const getEscalatedTicketsAdmin = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/request/reassign/tickets');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching feedback options:', error);
+  }
+};
+
+
 export const getRoles = async () => {
   try {
     const response = await axiosInstance.get('/admin/roles/list');

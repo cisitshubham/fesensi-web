@@ -1,9 +1,8 @@
 import { getEscalatedTickets } from '@/api/api';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import Ticket from '../my-tickets/ticket-component';
 import { Card } from '@/components/ui/card';
-
+import Ticket from './ecalatedTicket';
 
 export default function EscalatedAgent() {
     const [escalatedTickets, setEscalatedTickets] = useState([]);
@@ -23,6 +22,7 @@ export default function EscalatedAgent() {
         };
         fetchEscalatedTickets();
     }, []);
+    console.log('escalatedTickets', escalatedTickets);
 
     if (isLoading) {
         return (
