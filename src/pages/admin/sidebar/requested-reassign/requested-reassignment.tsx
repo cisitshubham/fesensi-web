@@ -12,7 +12,6 @@ import { TicketStatus, Tickettype } from '@/types';
 import { Bell, Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
 import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import clsx from 'clsx';
-import { useState } from 'react';
 
 interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
@@ -26,7 +25,7 @@ export default function Ticket({ ticket }: TicketProps) {
   return (
     <Link
       to={{
-        pathname: `/admin/escalated-tickets/${ticket._id}`,
+        pathname: `/admin/requested-reassign/${ticket._id}`,
       }}
       state={{ ticket }}
       className="block w-full"
@@ -57,7 +56,7 @@ export default function Ticket({ ticket }: TicketProps) {
                 </Badge>
               </div>
               <h3 className="font-semibold text-lg text-gray-900">{ticket.title}</h3>
-              <p className="text-gray-600 line-clamp-2 text-sm">{ticket.description}</p>
+              <p className="text-gray-600 line-clamp-2 text-sm">{ticket.agent_reassign_reason}</p>
             </div>
 
             <div className="flex flex-col gap-2 items-end min-w-[120px]">
@@ -72,10 +71,7 @@ export default function Ticket({ ticket }: TicketProps) {
                   <span>{ticket.category}</span>
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>created at: {ticket.createdAt}</span>
-                </div>
+            
                 {ticket.status === TicketStatus.InProgress && (
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
@@ -88,14 +84,13 @@ export default function Ticket({ ticket }: TicketProps) {
         </CardContent>
 
         <CardFooter className={clsx("px-5 py-3  flex justify-between items-center")}>
-          <div className="flex items-center text-sm text-gray-500">
-            <Calendar className="w-4 h-4 mr-1.5" />
-            <span>Due: {ticket.due_date}</span>
-          </div>
-
+        <div className="flex items-center text-sm text-gray-500">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Requested: {ticket.createdAt}</span>
+                </div>
           <div className="flex items-center text-sm text-gray-500">
             <User className="w-4 h-4 mr-1.5" />
-            <span>{ticket.assigned_to}</span>
+            <span>View Ticket</span>
             <ArrowRight className="w-4 h-4 ml-2 text-gray-400 group-hover:text-primary transition-colors" />
           </div>
         </CardFooter>

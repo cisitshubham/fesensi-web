@@ -1,4 +1,6 @@
 export type Tickettype = {
+  agent_reassign_reason?: string;
+  agent_reassign_comment?: string;
   resolutionTime?: number,
   isTicketClosed?: boolean,
   remainingHours?: number,
@@ -48,6 +50,11 @@ export type Tickettype = {
     action: string;
     createdAt: string;
     details: string;
+  }[];
+  activity_logs?: {
+    creator: string;
+    comment: string;
+    createdAt: string;
   }[];
   agentComment?: {
     _id: string;
@@ -200,7 +207,7 @@ export type ChartsResponse = {
     ticketsbyVolume: {
       [date: string]: number; // Example: "2025-05-01": 0
     };
-    ticketsbyCategory: {
+    TicketsByCategory: {
       overallPercentageChange: string;
       totalTicketCount: number;
       totalLastMonthCount: number;

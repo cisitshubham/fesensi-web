@@ -128,6 +128,8 @@ import SupportPageAgent from '@/pages/agent/sidebar/suppport/support';
 import AnnouncementsAdmin from '@/pages/admin/sidebar/announcements';
 import CresteReassign from '@/pages/admin/sidebar/masters/reassign';
 import FeedbackOptions from '@/pages/admin/sidebar/masters/feedbackOptions';
+import RequestedReassignmentAdmin from '@/pages/admin/sidebar/requested-reassign/requested-reassignmentview';
+import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassign/reasseign-tickets-detail';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -275,7 +277,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
           <Route path="/admin/reassign" element={<CresteReassign />} />
           <Route path="/admin/feedback-options" element={<FeedbackOptions />} />
-
+          <Route path="/admin/requested-reassignment" element={<RequestedReassignmentAdmin />} />
+          <Route path="/admin/requested-reassign/:id" element={<ReasseignTicketsDetailAdmin />} />
 
           {/* users aadesh  */}
           <Route path="/user/MyTickets" element={<UserTickets />} />

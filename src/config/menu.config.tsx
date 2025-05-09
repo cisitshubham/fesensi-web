@@ -154,8 +154,13 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 
       },
       {
+        title :"Requested for Reassignment",
+        path: '/admin/requested-reassignment',
+        icon: 'update-file'
+      },
+      {
         title: 'Masters',
-        icon: 'shield',
+        icon: 'diamonds',
         children: [
           {
             title: 'Configuration',

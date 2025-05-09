@@ -37,7 +37,7 @@ export default function LineChart({ series, labels }: LineChartProps) {
         curve: "smooth" as "smooth",
         width: 3, // Ensure line is visible
       },
-      colors: ["#3B82F6"], // Global line color
+      colors: ["#60A5FA"], // Global line color
       grid: {
         row: {
           colors: ["#f3f3f3"],

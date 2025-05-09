@@ -8,9 +8,13 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
 
     let apiResponse;
     if (role === 'ADMIN') {
+
+
       apiResponse = await ChartDataAdmin(formData);
+      console.log(apiResponse);
     } else if (role === 'AGENT') {
       apiResponse = await ChartDataAgent(formData);
+      console.log(apiResponse);
     } else if (role === 'CUSTOMER' || role === 'USER') {
       apiResponse = await ChartDataCustomer(formData);
     }
@@ -36,13 +40,8 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
       const ticketVolumeLabels = Object.keys(ticketsByVolume);
 
       // Ensure ticketsbyCategory has the required structure
-      const ticketsbyCategory = fetchedData.ticketsbyCategory || {
-        overallPercentageChange: '0',
-        totalTicketCount: 0,
-        totalLastMonthCount: 0,
-        counts: []
-      };
-
+      const ticketsbyCategory = fetchedData.TicketsByCategory;
+      console.log(ticketsbyCategory);
       return {
         statusData,
         statusLabels,

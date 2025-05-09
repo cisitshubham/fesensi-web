@@ -1,144 +1,164 @@
-/**
- * Ticket Component
- *
- * Input data must be of type TicketType:
- * refer to src/types.ts
- */
+"use client"
 
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
-import { TicketStatus, Tickettype, TicketPriority } from '@/types';
-import { Bell, Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
-import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
-import clsx from 'clsx';
-import Timer from '@/pages/global-components/timer';
-import { useState } from 'react';
+import { Badge } from "@/components/ui/badge"
+import { Link } from "react-router-dom"
+import { TicketStatus, type TicketPriority } from "@/types"
+import { Bell, Calendar, Clock, Tag, User, ChevronDown, ChevronUp } from "lucide-react"
+import { getPriorityBadge, getStatusBadge } from "@/pages/global-components/GetStatusColor"
+import clsx from "clsx"
+import Timer from "@/pages/global-components/timer"
+import { useState } from "react"
 
 interface TicketProps {
   ticket: {
-    _id: string;
-    ticket_number: number;
-    title: string;
-    description?: string;
-    status: string;
-    priority: string;
-    category: string;
-    createdAt: string;
-    assigned_to: string;
+    _id: string
+    ticket_number: number
+    title: string
+    description?: string
+    status: string
+    priority: string
+    category: string
+    createdAt: string
+    assigned_to: string
     escalation: Array<{
-      _id: string;
-      assigned_to: {
-        _id: string;
-        first_name: string;
-      };
-    }>;
-    sla?: Array<any>;
-    IsCumstomerCommneted?: boolean;
-  };
+      _id: string
+      assigned_to: string
+      level_of_user: string
+      escalation_time: string
+      escalation_reason?: string
+    }>
+    sla?: Array<any>
+    IsCumstomerCommneted?: boolean
+  }
 }
 
-// Map priority colors to Tailwind classes
+export default function TicketItem({ ticket }: TicketProps) {
+  const statusBadge = getStatusBadge(ticket.status as TicketStatus)
+  const priorityBadge = getPriorityBadge(ticket.priority as TicketPriority)
+  const [remainingHours, setRemainingHours] = useState(0)
+  const [remainingMinutes, setRemainingMinutes] = useState(0)
+  const [remainingSeconds, setRemainingSeconds] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
 
-
-export default function Ticket({ ticket }: TicketProps) {
-  const statusBadge = getStatusBadge(ticket.status as TicketStatus);
-  const priorityBadge = getPriorityBadge(ticket.priority as TicketPriority);
-  const [remainingHours, setRemainingHours] = useState(0);
-  const [remainingMinutes, setRemainingMinutes] = useState(0);
-  const [remainingSeconds, setRemainingSeconds] = useState(0);
-
-  // Get the latest escalation
-  const latestEscalation = ticket.escalation[ticket.escalation.length - 1];
-  
   return (
-    <Link
-      to={{
-        pathname: `/agent/ticket/${ticket._id}`,
-      }}
-      state={{ ticket }}
-      className="block w-full"
+    <div
+      className={clsx(
+        "border-l-4 border-b border-r border-t bg-white hover:bg-gray-50 transition-all",
+        priorityBadge.border,
+        "relative group",
+      )}
     >
-      <Card
-        className={clsx(
-          'relative border-[1px] overflow-hidden transition-all duration-200 hover:shadow-md group',
-          priorityBadge.border
-        )}
-      >
-        {ticket.IsCumstomerCommneted === true && (
-          <Badge className="absolute right-0 top-0 bg-red-700/80 rounded-full p-1">
-            <Bell className="h-4 w-4" />
-          </Badge>
-        )}
+      {ticket.IsCumstomerCommneted === true && (
+        <Badge className="absolute right-2 top-2 bg-red-700/80 rounded-full p-1">
+          <Bell className="h-3 w-3" />
+        </Badge>
+      )}
 
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-2 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="outline" className="bg-gray-100 rounded-sm">
-                  #{ticket.ticket_number}
-                </Badge>
-                <Badge className={`${statusBadge.color} flex items-center gap-1`}>
-                  {statusBadge.icon}
-                  {ticket.status}
-                </Badge>
-              </div>
-              <h3 className="font-semibold text-lg text-gray-900">{ticket.title}</h3>
-              <p className="text-gray-600 line-clamp-2 text-sm">{ticket.description}</p>
-            </div>
-
-            <div className="flex flex-col gap-2 items-end min-w-[120px]">
-              <Badge className={`${priorityBadge.color} flex items-center gap-1`}>
+      <div className="p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          {/* Left section - Ticket ID, Status, Title */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <Badge variant="outline" className="bg-gray-100 rounded-sm text-xs">
+                #{ticket.ticket_number}
+              </Badge>
+              <Badge className={`${statusBadge.color} text-xs flex items-center gap-1`}>
+                {statusBadge.icon}
+                {ticket.status}
+              </Badge>
+              <Badge className={`${priorityBadge.color} text-xs flex items-center gap-1`}>
                 {priorityBadge.icon}
                 {ticket.priority}
               </Badge>
-
-              <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
-                <div className="flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" />
-                  <span>{ticket.category}</span>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Created: {ticket.createdAt}</span>
-                </div>
-                {ticket.status === TicketStatus.InProgress && (
-                  <Timer hours={remainingHours} minutes={remainingMinutes} seconds={remainingSeconds} />
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-
-        <CardFooter className={clsx("px-5 py-3 flex flex-col gap-2")}>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center text-sm text-gray-500">
-              <Calendar className="w-4 h-4 mr-1.5" />
-              <span>Escalation Count: {ticket.escalation.length}</span>
             </div>
 
-            <div className="flex items-center text-sm text-gray-500">
-              <User className="w-4 h-4 mr-1.5" />
-              <span>Current: {ticket.assigned_to}</span>
-              <ArrowRight className="w-4 h-4 ml-2 text-gray-400 group-hover:text-primary transition-colors" />
-            </div>
+            <Link
+              to={{
+                pathname: `/agent/ticket/${ticket._id}`,
+              }}
+              state={{ ticket }}
+              className="block"
+            >
+              <h3 className="font-medium text-gray-900 truncate hover:text-primary transition-colors">
+                {ticket.title}
+              </h3>
+            </Link>
+
+            {ticket.description && <p className="text-gray-600 text-sm line-clamp-1 mt-1">{ticket.description}</p>}
           </div>
 
-          <div className="flex flex-col gap-1 w-full">
-            <div className="text-sm font-medium text-gray-700">Escalation History:</div>
-            <div className="flex flex-col gap-1">
+          {/* Right section - Meta information */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500 mt-2 sm:mt-0">
+            <div className="flex items-center gap-1">
+              <Tag className="w-3 h-3" />
+              <span>{ticket.category}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <User className="w-3 h-3" />
+              <span>{ticket.assigned_to}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              <span>Escalations: {ticket.escalation.length}</span>
+            </div>
+
+            {ticket.status === TicketStatus.InProgress && (
+              <Timer hours={remainingHours} minutes={remainingMinutes} seconds={remainingSeconds} />
+            )}
+          </div>
+        </div>
+
+        {/* Expandable section for escalation history */}
+        <div className="mt-2">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center text-xs font-medium text-gray-500 hover:text-primary transition-colors"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-3 h-3 mr-1" />
+                Hide Escalation History
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-3 h-3 mr-1" />
+                Show Escalation History
+              </>
+            )}
+          </button>
+
+          {isExpanded && (
+            <div className="mt-2 pl-2 border-l-2 border-gray-200 space-y-2">
               {ticket.escalation.map((esc, index) => (
-                <div key={esc._id} className="flex items-center text-sm text-gray-600">
-                  <span className="mr-2">#{index + 1}</span>
-                  <User className="w-3.5 h-3.5 mr-1.5" />
-                  <span>{esc.assigned_to.first_name}</span>
+                <div key={esc._id} className="text-xs text-gray-600">
+                  <div className="font-medium">
+                    #{index + 1} {esc.assigned_to} ({esc.level_of_user})
+                  </div>
+                  <div className="mt-1 pl-3 space-y-1">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{esc.escalation_time}</span>
+                    </div>
+                    {esc.escalation_reason && (
+                      <div className="flex items-center gap-1">
+                        <Tag className="w-3 h-3" />
+                        <span>{esc.escalation_reason}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        </CardFooter>
-      </Card>
-    </Link>
-  );
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }

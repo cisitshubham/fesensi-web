@@ -171,3 +171,41 @@ export const deletePermissions = async (formData: FormData) => {
     console.error('Error deleting permissions:', error);
   }
 };
+
+
+export const getReassignTicketDetail = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/admin/ticket/by/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reassign ticket detail:', error);
+  }
+};
+
+
+export const denyReassign = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/update/ticket/reassign`,formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error denying reassign:', error);
+  }
+};
+
+export const ReassignAgentList = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/users/by/role');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching agent list:', error);
+  }
+};
+
+export const reassignTicketAdmin = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/assign/ticket/to/agent', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error reassigning ticket:', error);
+  }
+};
