@@ -227,7 +227,7 @@ export default function DashboardPage() {
         const response = await fetchDashboardData(
           date?.from?.toISOString() || new Date().toISOString(),
           date?.to?.toISOString() || new Date().toISOString(),
-          selectedRoles[0] || 'ADMIN'
+          selectedRoles[0]
         );
 
         if (response) {

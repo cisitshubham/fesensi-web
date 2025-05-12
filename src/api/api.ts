@@ -504,7 +504,7 @@ export const MyTicketDetails = async (TicketId: string) => {
 
 export const getEscalatedTickets = async () => {
   try {
-    const response = await axiosInstance.get('/agent/myTicket/escalated');
+    const response = await axiosInstance.post('/agent/myTicket/escalated');
     return response.data;
   } catch (error) {
     console.error('Error fetching escalated tickets:', error);

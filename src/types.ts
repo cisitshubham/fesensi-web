@@ -81,6 +81,8 @@ export enum TicketPriority {
   Low = 'LOW',
 }
 
+
+
 export type User = {
   _id: string;
   name: string;
@@ -96,6 +98,12 @@ export type User = {
 };
 
 export type MasterDropdownDatatype = {
+  levelList: [
+    {
+        _id: string;
+        name: string;
+    },
+  ],
   feedbackOptions: {
     _id: string;
     title: string;
