@@ -1,5 +1,5 @@
 import Ticket from './ticket-component';
-import { Tickettype, TicketStatus, TicketPriority } from '@/types';
+import { Tickettype } from '@/types';
 import {MyTickets} from  '@/api/api'
 import { useEffect, useState } from 'react'
 import SearchbarFilters from '@/pages/global-components/searchbar_filters';

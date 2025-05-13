@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { ChartsResponse } from '@/types';
-import { GetStatusColor } from '@/pages/global-components/GetStatusColor';
+import { getStatusBadge, GetStatusColor } from '@/pages/global-components/GetStatusColor';
 import { TicketStatus } from '@/types';
 import { memo } from 'react';
 
@@ -23,7 +23,6 @@ const TicketProgression = memo(function TicketProgression({
   categories,
   renderCategory
 }: TicketProgressionProps) {
-  console.log(ticketStatusTotal, ticketStatusTotalPercentage, resolvedPercentage, inProgressPercentage, openPercentage, categories);
   return (
     <Card className="card-body flex flex-col gap-1 p-6 lg:p-8 lg:pt-5">
       <div className="flex flex-col gap-1">
@@ -62,12 +61,12 @@ const TicketProgression = memo(function TicketProgression({
       <div className="flex items-center flex-wrap gap-5 mb-2">
         {[
           { status: TicketStatus.Resolved, label: 'Resolved' },
-          { status: TicketStatus.InProgress, label: 'In Progress' },
+          { status: TicketStatus.InProgress, label: 'In-Progress' },
           { status: TicketStatus.Open, label: 'Open' }
         ].map((item, index) => {
           return (
             <div key={index} className="flex items-center gap-1.5">
-              <span className={`badge badge-dot size-2 bg-${GetStatusColor(item.status)}`}></span>
+              <span className={`badge badge-dot size-2 ${getStatusBadge(item.status).darkbg}`}></span>
               <span className="text-sm font-normal text-gray-800">{item.label}</span>
             </div>
           );

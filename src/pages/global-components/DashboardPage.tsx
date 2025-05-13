@@ -237,8 +237,11 @@ export default function DashboardPage() {
       }
     };
 
-    fetchData();
-  }, [selectedRoles, date]);
+    // Only fetch data if we have a valid role selected
+    if (selectedRoles.length > 0) {
+      fetchData();
+    }
+  }, [selectedRoles, date?.from, date?.to]); // Only depend on role and date changes
 
   const percentages = useMemo(() => ({
     resolvedPercentage: (ticketCounts.resolved / ticketCounts.total) * 100,

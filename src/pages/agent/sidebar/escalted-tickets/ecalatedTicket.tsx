@@ -7,36 +7,7 @@ import { Accordion,AccordionItem } from "@/components/accordion"
 import { getStatusBadge, getPriorityBadge } from "@/pages/global-components/GetStatusColor"
 import { TicketStatus, TicketPriority } from "@/types"
 
-// Dummy ticket data with escalations
-const dummyTicket = {
-  _id: "t123456",
-  ticket_number: 1001,
-  title: "System outage in production environment",
-  description: "Users are unable to access the dashboard due to server errors",
-  status: TicketStatus.InProgress,
-  priority: TicketPriority.High,
-  category: "Infrastructure",
-  createdAt: "2023-05-15T10:30:00Z",
-  assigned_to: "John Smith",
-  escalation: [
-    {
-      _id: "esc1",
-      assigned_to: "Sarah Johnson",
-      level_of_user: "L2",
-      escalation_time: "2023-05-15T14:30:00Z",
-      escalation_reason: "Requires database expertise",
-    },
-    {
-      _id: "esc2",
-      assigned_to: "Michael Chen",
-      level_of_user: "L3",
-      escalation_time: "2023-05-16T09:15:00Z",
-      escalation_reason: "Critical infrastructure issue requiring senior intervention",
-    },
-  ],
-  sla: [{ remaining_time: "04:30:00" }],
-  IsCumstomerCommneted: true,
-}
+
 
 interface TicketProps {
   ticket: {
@@ -61,20 +32,26 @@ interface TicketProps {
   }
 }
 
-export default function TimelineEscalationCard({ ticket = dummyTicket }: Partial<TicketProps>) {
-  const statusBadge = getStatusBadge(ticket?.status || "")
-  const priorityBadge = getPriorityBadge(ticket?.priority || "")
+export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) {
+  const statusBadge = getStatusBadge(ticket?.status || TicketStatus.Open)
+  const priorityBadge = getPriorityBadge(ticket?.priority || TicketPriority.Medium)
 
   // Format date for display
   const formatDate = (dateString: string) => {
     if (!dateString) return ""
-    const date = new Date(dateString)
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return "Invalid Date"
+      return date.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return "Invalid Date"
+    }
   }
 
   // Early return if no ticket data

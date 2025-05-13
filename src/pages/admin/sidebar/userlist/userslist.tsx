@@ -36,9 +36,7 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { MasterDropdownDatatype } from '@/types';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
@@ -206,15 +204,19 @@ function UserTable({
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {user.categories && user.categories.length > 0 ? (
-                    user.categories.map((category) => (
+                  {Array.isArray(user.categories) ? (
+                    user.categories.map((r, i) => (
                       <span
-                        key={category._id}
-                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800"
+                        key={i}
+                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
                       >
-                        {category.title}
+                        {typeof r === 'object' && r !== null ? r.title : String(r)}
                       </span>
                     ))
+                  ) : typeof user.categories === 'object' && user.categories !== null ? (
+                    <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                      {user.categories}
+                    </span>
                   ) : (
                     <span className="text-muted-foreground">N/A</span>
                   )}
@@ -279,7 +281,7 @@ function EditUserDialog({
     if (user) {
       // Ensure unique roles and filter out any null/undefined values
       const initialRole = Array.isArray(user.role)
-        ? [...new Map(user.role.filter(r => r && r._id).map((r) => [r._id, r])).values()]
+        ? [...new Map(user.role.filter((r) => r && r._id).map((r) => [r._id, r])).values()]
         : user.role && user.role._id
           ? [user.role]
           : [];
@@ -366,37 +368,44 @@ function EditUserDialog({
     formData.append('first_name', editedData.first_name || '');
 
     const levelValue =
-      typeof editedData.level === 'object' && editedData.level !== null
-        ? editedData.level._id
-        : String(editedData.level || '');
+        typeof editedData.level === 'object' && editedData.level !== null
+            ? editedData.level._id
+            : String(editedData.level || '');
     formData.append('level', levelValue);
 
-    // Format roles as an array of IDs
+    // Format roles and categories as arrays
     const roleIds = Array.isArray(editedData.role)
-      ? editedData.role.map((r) => r._id)
-      : typeof editedData.role === 'object' && editedData.role !== null
-        ? [editedData.role._id]
+        ? editedData.role.map((r) => r._id)
         : [];
-    formData.append('role', JSON.stringify(roleIds)); // Send as JSON array
+    formData.append('role', JSON.stringify(roleIds));
 
-    // Format categories as a list of IDs
     const categoryIds = Array.isArray(editedData.categories)
-      ? editedData.categories.map((c) => c._id)
-      : [];
-    formData.append('categories', categoryIds.join(','));
+        ? editedData.categories.map((c) => c._id)
+        : [];
+    formData.append('categories', JSON.stringify(categoryIds));
 
     formData.append('profile_img', editedData.profile_img || '');
+
+    // Log the data being sent
+    console.log('Data being sent:', {
+        roles: roleIds,
+        categories: categoryIds,
+        first_name: editedData.first_name || '',
+        level: levelValue,
+        profile_img: editedData.profile_img || ''
+    });
+
     if (user) {
-      const responce = await updateUser(user._id, formData);
-      console.log('responce', responce);
-      if (responce.success === true) {
-        toast.success('User updated successfully');
-        onClose();
-      } else {
-        toast.error('Failed to update user');
-      }
+        const responce = await updateUser(user._id, formData);
+        console.log('responce', responce);
+        if (responce.success === true) {
+            toast.success('User updated successfully');
+            onClose();
+        } else {
+            toast.error('Failed to update user');
+        }
     } else {
-      toast.error('User not found');
+        toast.error('User not found');
     }
   };
 
@@ -541,9 +550,20 @@ function EditUserDialog({
                 className="w-full justify-start text-left"
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
               >
-                {Array.isArray(edited.categories) && edited.categories.length > 0
-                  ? edited.categories.map((c: Category) => c.title).join(', ')
-                  : 'Select categories'}
+                {Array.isArray(edited.categories) && edited.categories.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {edited.categories.map((c: Category) => (
+                      <span
+                        key={c._id}
+                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800"
+                      >
+                        {c.title}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  'Select categories'
+                )}
               </Button>
               {isCategoriesOpen && (
                 <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto">
@@ -561,13 +581,13 @@ function EditUserDialog({
                           <Checkbox
                             id={`category-${category._id}`}
                             checked={isChecked}
-                            onCheckedChange={(checked) => {
-                              handleCategoryChange(category, checked as boolean);
-                            }}
+                            onCheckedChange={(checked) =>
+                              handleCategoryChange(category, checked as boolean)
+                            }
                           />
                           <label
                             htmlFor={`category-${category._id}`}
-                            className="text-sm cursor-pointer flex-1"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
                             {category.title}
                           </label>
@@ -637,10 +657,7 @@ function EditUserDialog({
 
 export default function AdminUsersPage() {
   const { dropdownData } = useMasterDropdown();
-  const categories = dropdownData.categories;
-  const levels = dropdownData.levelList;
-  const roles = dropdownData.roles;
-  console.log(categories, levels, roles);
+
 
   const [users, setUsers] = useState<ExtendedUser[]>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -722,31 +739,68 @@ export default function AdminUsersPage() {
     try {
       setIsSaving(true);
 
-      // Prepare the data to be sent
-      const updatedUser = {
-        ...editingUser,
+      const payload = {
         ...editedData,
-        // Ensure role is properly formatted
-        role: Array.isArray(editedData.role) ? editedData.role.map((r) => r._id) : editedData.role,
-        // Ensure categories are properly formatted
         categories: Array.isArray(editedData.categories)
-          ? editedData.categories.map((c) => c._id)
-          : editedData.categories,
-        // Ensure level is properly formatted
+          ? editedData.categories.map((c: Category) => c._id)
+          : [],
+        role: Array.isArray(editedData.role) ? editedData.role.map((r: Role) => r._id) : [],
         level:
           typeof editedData.level === 'object' && editedData.level !== null
             ? editedData.level._id
             : editedData.level
       };
 
+      // Now send `payload` to your API
+      console.log('Sending payload:', payload);
+      // Example:
+      // await updateUser(user._id, payload);
+
+      setIsSaving(true);
+      const formData = new FormData();
+
+      formData.append('first_name', editedData.first_name || '');
+
+      // Handle level (convert object to ID if needed)
+      const levelId =
+        typeof editedData.level === 'object' && editedData.level !== null
+          ? editedData.level._id
+          : editedData.level;
+      formData.append('level', levelId || '');
+
+      // Handle categories (array of IDs)
+      const categoryIds = Array.isArray(editedData.categories)
+        ? editedData.categories.map((c: Category) => c._id)
+        : [];
+      formData.append('categories', JSON.stringify(categoryIds));
+
+      // Handle roles (array of IDs)
+      const roleIds = Array.isArray(editedData.role) ? editedData.role.map((r: Role) => r._id) : [];
+      formData.append('role', JSON.stringify(roleIds));
+
+      // If image file is selected, append it (assuming image file is stored in `selectedImage`)
+
+      // For debugging:
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      // Then send formData in a request:
+      console.log(formData);
+
       // TODO: Replace with your actual API call
-      const response = await fetch(`/api/users/${editingUser._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedUser)
-      });
+      const response = await updateUser(editingUser._id, formData);
+
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+
+      // Update the local state with the new data
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
+      );
+
+      // TODO: Replace with your actual API call
 
       if (!response.ok) {
         throw new Error('Failed to update user');

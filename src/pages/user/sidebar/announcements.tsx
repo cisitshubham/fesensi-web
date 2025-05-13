@@ -1,8 +1,7 @@
-import AnnouncementsViewUserAgent from '@/pages/global-components/announcementsView';
+import AnnouncementsViewUserAgent from '@/pages/global-components/AnnouncementsView';
 import { getAnnouncements } from '@/api/api';
 import { Announcement } from '@/types';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AnnouncementsAgent() {
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
