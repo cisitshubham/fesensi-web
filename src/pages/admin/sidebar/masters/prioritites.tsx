@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Pencil, Trash2, Plus, X, Check, Loader2, Search, Filter, ArrowUpDown } from "lucide-react"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import type { MasterDropdownDatatype } from "@/types"
-import { toast } from "sonner"
+import toast from "react-hot-toast"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -18,51 +18,43 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { CreateFeedbackOptions } from "@/api/api"
 import { useNavigate } from "react-router-dom"
-import { updateFeedbackOptions } from "@/api/admin"
-
-export default function FeedbackOptions() {
+import { CreatePriorities, updatePriorities } from "@/api/admin"
+export default function PrioritiesManagement() {
   const { dropdownData } = useMasterDropdown()
-  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>(dropdownData.feedbackOptions || [])     
+  const [categories, setCategories] = useState<MasterDropdownDatatype["priorities"]>(dropdownData.priorities         || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [editedOption, setEditedOption] = useState({ title: "", _id: "" })
+  const [editedCategory, setEditedCategory] = useState({ title: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAddDialog, setShowAddDialog] = useState(false)
-  const [newOptionTitle, setNewOptionTitle] = useState("")
+  const [newCategoryTitle, setNewCategoryTitle] = useState("")
   const navigate = useNavigate()  
-  const filtered = feedbackOptions.filter((c: { title: string }) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filtered = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const handleEdit = (index: number) => {
     setEditIndex(index)
-    setEditedOption({ title: feedbackOptions[index].title, _id: feedbackOptions[index]._id })
+    setEditedCategory({ title: categories[index].name, _id: categories[index]._id })
   }
 
   const handleSave = async () => {
-    if (!editedOption.title.trim()) return toast.error("Feedback option cannot be empty",{
-      position:"top-center"
-    })
+    if (!editedCategory.title.trim()) return toast.error("Category title cannot be empty")
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
-      formData.append("title", editedOption.title.trim())
-      const response = await updateFeedbackOptions(editedOption._id, formData)
+      formData.append("title", editedCategory.title.trim())
+      const response = await updatePriorities(editedCategory._id, formData)
 
       if (response.success && editIndex !== null) {
-        const updated = [...feedbackOptions]
-        updated[editIndex].title = editedOption.title.trim()
-        setFeedbackOptions(updated)
+        const updated = [...categories]
+        updated[editIndex].name = editedCategory.title.trim()
+        setCategories(updated)
         setEditIndex(null)
-        toast.success("Feedback option updated successfully",{
-          position:"top-center"
-        })
+        toast.success("Category saved successfully")
       }
     } catch {
-      toast.error("Failed to update feedback option",{
-        position:"top-center"
-      })
+      toast.error("Failed to save")
     } finally {
       setIsSubmitting(false)
     }
@@ -72,38 +64,33 @@ export default function FeedbackOptions() {
     setEditIndex(null)
   }
 
-  const handleAddOptionSubmit = async () => {
-    if (!newOptionTitle.trim()) return toast.error("Feedback option cannot be empty",{
-      position:"top-center"
-    })
+  const handleAddCategorySubmit = async () => {
+    if (!newCategoryTitle.trim()) return toast.error("Category title cannot be empty")
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
-      formData.append("title", newOptionTitle.trim())
-      const response = await CreateFeedbackOptions(formData)
+      formData.append("title", newCategoryTitle.trim())
+      const response = await CreatePriorities(formData)
 
       if (response.success) {
-        toast.success("Feedback option added successfully",{
-          position:"top-center"
-        })
+   
+        toast.success("Priority added successfully")
         setShowAddDialog(false)
-        navigate('/admin/feedback-options')
+        navigate('/admin/priorities')
       }
     } catch {
-      toast.error("Failed to add feedback option",{
-        position:"top-center"
-      })
+      toast.error("Failed to add priority")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const sortByTitle = (order: "asc" | "desc") => {
-    const sorted = [...feedbackOptions].sort((a, b) =>
-      order === "asc" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
+    const sorted = [...categories].sort((a, b) =>
+      order === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
     )
-    setFeedbackOptions(sorted)
+    setCategories(sorted)
   }
 
   const ActionButtons = ({ index }: { index: number }) => {
@@ -138,11 +125,10 @@ export default function FeedbackOptions() {
         <CardHeader className="pb-4 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-2xl font-bold">Feedback Options</CardTitle>
-              <CardDescription className="mt-1">Manage your feedback options for surveys and forms</CardDescription>
+              <CardTitle className="text-2xl font-bold">Priorities</CardTitle>
             </div>
             <Button onClick={() => setShowAddDialog(true)} className="flex items-center gap-2" disabled={isSubmitting}>
-              <Plus className="h-4 w-4" /> Add Feedback Option
+              <Plus className="h-4 w-4" /> Add Priority
             </Button>
           </div>
         </CardHeader>
@@ -151,7 +137,7 @@ export default function FeedbackOptions() {
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search feedback options..."
+                placeholder="Search categories..."
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
@@ -174,38 +160,32 @@ export default function FeedbackOptions() {
           {filtered.length === 0 ? (
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
               <Filter className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-lg font-medium text-slate-700">No feedback options found</h3>
-              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add Feedback Option" to create one'}</p>
+              <h3 className="text-lg font-medium text-slate-700">No categories found</h3>
+              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add Category" to create one'}</p>
             </div>
           ) : (
             <div className="rounded-md border overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="w-[70%]">Feedback Option</TableHead>
+                    <TableHead className="w-[70%]">Title</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((option: { title: string; _id: string }, i: number) => {
-                    const index = feedbackOptions.findIndex((c: { _id: string }) => c._id === option._id)
+                  {filtered.map((cat, i) => {
+                    const index = categories.findIndex(c => c._id === cat._id)
                     const isEditing = editIndex === index
                     return (
-                      <TableRow key={option._id} className="group hover:bg-slate-50">
+                      <TableRow key={cat._id} className="group hover:bg-slate-50">
                         <TableCell>
                           {isEditing ? (
-                            <Input 
-                              name="title" 
-                              value={editedOption.title} 
-                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedOption({ title: e.target.value, _id: editedOption._id })}
-                              autoFocus 
-                              className="max-w-md" 
-                              placeholder="Enter feedback option" 
-                            />
+                            <Input name="title" value={editedCategory.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedCategory({ title: e.target.value, _id: editedCategory._id })}
+                              autoFocus className="max-w-md" placeholder="Enter category title" />
                           ) : (
                             <div className="flex items-center gap-3">
-                              <span className="font-medium">{option.title || <span className="text-muted-foreground italic">Untitled</span>}</span>
-                              {option._id.startsWith("temp-") && (
+                              <span className="font-medium">{cat.name || <span className="text-muted-foreground italic">Untitled</span>}</span>
+                              {cat._id.startsWith("temp-") && (
                                 <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">New</Badge>
                               )}
                             </div>
@@ -225,27 +205,27 @@ export default function FeedbackOptions() {
           )}
 
           <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filtered.length} of {feedbackOptions.length} feedback options
+            Showing {filtered.length} of {categories.length} categories
           </div>
         </CardContent>
       </Card>
 
-      {/* Add Feedback Option Dialog */}
+      {/* Add Category Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="p-4">
           <DialogHeader>
-            <DialogTitle>Add New Feedback Option</DialogTitle>
-            <DialogDescription>Enter the feedback option to add it to the list.</DialogDescription>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>Enter the title of the category to add it to the list.</DialogDescription>
           </DialogHeader>
           <Input
-            placeholder="Feedback option"
-            value={newOptionTitle}
-            onChange={e => setNewOptionTitle(e.target.value)}
+            placeholder="Category title"
+            value={newCategoryTitle}
+            onChange={e => setNewCategoryTitle(e.target.value)}
             autoFocus
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
-            <Button onClick={handleAddOptionSubmit} disabled={isSubmitting}>
+            <Button onClick={handleAddCategorySubmit} disabled={isSubmitting}>
               {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
             </Button>
           </DialogFooter>

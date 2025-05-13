@@ -61,6 +61,29 @@ export const CreateForceCloseReason = async (formData: FormData) => {
   }
 };
 
+export const updateForceCloseReason = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/resolved/post/update/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating force close reason:', error);
+  }
+};
+
+
+
+export const updateCategory = async (id:string,formData:FormData)=>{
+  try{
+    const response = await axiosInstance.post(`/admin//categories/update/${id}`,formData)
+    return response.data;
+  }
+  catch(error){
+    console.log("error updating Category",error)
+  }
+}
+
+
+
 // Create reassign options
 export const CreateReassignOptions = async (formData: FormData) => {
   try {
@@ -80,6 +103,16 @@ export const CreateFeedbackOptions = async (formData: FormData) => {
     console.error('Error fetching feedback options:', error);
   }
 };
+
+export const updateFeedbackOptions = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/feedback/update/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating feedback options:', error);
+  }
+};
+
 
 // Get escalated tickets admin
 export const getEscalatedTicketsAdmin = async () => {
@@ -209,3 +242,27 @@ export const reassignTicketAdmin = async (formData: FormData) => {
     console.error('Error reassigning ticket:', error);
   }
 };
+
+
+export const CreatePriorities = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/admin/priority/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching priorities:', error);
+  }
+};
+
+export const updatePriorities = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/priroty/update/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating priorities:', error);
+  }
+};
+
+
+
+
+

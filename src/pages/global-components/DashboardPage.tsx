@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { fetchUser } from '@/api/api';
@@ -79,14 +79,14 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const { selectedRoles, setSelectedRoles } = useRole();
 
-  const handleRoleToggle = (role: string) => {
+  const handleRoleToggle = useCallback((role: string) => {
     if (selectedRoles.includes(role)) {
-      setSelectedRoles([]); // Clear the array if the role is already selected
+      setSelectedRoles([]);
     } else {
-      setSelectedRoles([role]); // Set the array to only contain the selected role
-      localStorage.setItem('selectedRole', role); // Store the selected role in local storage
+      setSelectedRoles([role]);
+      localStorage.setItem('selectedRole', role);
     }
-  };
+  }, [selectedRoles]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -131,24 +131,7 @@ export default function DashboardPage() {
     }
   }, [roles]);
 
-
-
-
-
-
-
-
-
-// role handle ------------------------------------------
-
-
-
-
-
-
-
-
-  const isDropdownReadonly = roles.length === 1;
+  const isDropdownReadonly = useMemo(() => roles.length === 1, [roles.length]);
 
   const [ticketCounts, setTicketCounts] = useState({
     closed: 0,
@@ -171,7 +154,7 @@ export default function DashboardPage() {
     'Others': 'technology-4'
   };
 
-  const renderCategory = (category: CategoryCount, index: number) => {
+  const renderCategory = useCallback((category: CategoryCount, index: number) => {
     return (
       <div key={index} className="flex items-center justify-between ">
         <div className="flex items-center">
@@ -195,7 +178,7 @@ export default function DashboardPage() {
         </div>
       </div>
     );
-  };
+  }, []);
 
   // Chart data states
   const [chartData, setChartData] = useState<ChartData>({
@@ -215,11 +198,10 @@ export default function DashboardPage() {
     }
   });
 
-  const handleDataUpdate = (data: ChartData) => {
+  const handleDataUpdate = useCallback((data: ChartData) => {
     setChartData(data);
     setCategories(data.ticketsbyCategory.counts as CategoryCount[]);
-
-  };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -233,7 +215,6 @@ export default function DashboardPage() {
         if (response) {
           const { statusData, statusLabels, ticketsbyCategory } = response as DashboardResponse;
           
-          // Update ticket counts from statusData and statusLabels
           const statusMap = statusLabels.reduce((acc, label, index) => {
             acc[label] = statusData[index];
             return acc;
@@ -257,11 +238,13 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [selectedRoles]);
+  }, [selectedRoles, date]);
 
-  const resolvedPercentage = (ticketCounts.resolved / ticketCounts.total) * 100;
-  const inProgressPercentage = (ticketCounts.inProgress / ticketCounts.total) * 100;
-  const openPercentage = (ticketCounts.open / ticketCounts.total) * 100;
+  const percentages = useMemo(() => ({
+    resolvedPercentage: (ticketCounts.resolved / ticketCounts.total) * 100,
+    inProgressPercentage: (ticketCounts.inProgress / ticketCounts.total) * 100,
+    openPercentage: (ticketCounts.open / ticketCounts.total) * 100
+  }), [ticketCounts]);
 
   return (
     <Fragment>
@@ -314,9 +297,9 @@ export default function DashboardPage() {
             <TicketProgression
               ticketStatusTotal={ticketStatusTotal}
               ticketStatusTotalPercentage={ticketStatusTotalPercentage}
-              resolvedPercentage={resolvedPercentage}
-              inProgressPercentage={inProgressPercentage}
-              openPercentage={openPercentage}
+              resolvedPercentage={percentages.resolvedPercentage}
+              inProgressPercentage={percentages.inProgressPercentage}
+              openPercentage={percentages.openPercentage}
               categories={categories}
               renderCategory={renderCategory}
             />

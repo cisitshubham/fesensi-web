@@ -13,12 +13,13 @@ import * as authHelper from '../_helpers';
 import { type AuthModel, type UserModel } from '@/auth';
 import { MasterDropdownProvider } from '@/pages/global-components/master-dropdown-context';
 import { RoleProvider } from '@/pages/global-components/role-context';
+
 const API_URL = import.meta.env.VITE_APP_API_URL;
 export const LOGIN_URL = `${API_URL}/users/login`;
 export const REGISTER_URL = `${API_URL}/users/signup`;
 export const FORGOT_PASSWORD_URL = `${API_URL}/users/forget-password`;
 export const RESET_PASSWORD_URL = `${API_URL}/users/reset-password`;
-export const GET_USER_URL = `${API_URL}/users/user`;
+export const GET_USER_URL = `${API_URL}/users/me`;
 interface AuthContextProps {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;

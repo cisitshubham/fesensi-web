@@ -5,7 +5,7 @@ import { fetchDashboardData } from '@/pages/charts/data_manipulations';
 import { useRole } from '@/pages/global-components/role-context';
 import { cn } from '@/lib/utils';
 
-export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
+const Tenure = React.memo(function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
@@ -106,6 +106,14 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
     setSelectedButton(button);
   }, []);
 
+  const handleDateChange = useCallback((type: 'from' | 'to', value: string) => {
+    if (type === 'from') {
+      setFromDate(value);
+    } else {
+      setToDate(value);
+    }
+  }, []);
+
   // Memoize the buttons to prevent unnecessary re-renders
   const buttons = useMemo(() => (
     <>
@@ -157,7 +165,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
           <input
             type="date"
             value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
+            onChange={(e) => handleDateChange('from', e.target.value)}
             className={cn(
               "ml-1 transition-all duration-200",
               isButtonDisabled && "opacity-50 cursor-not-allowed"
@@ -170,7 +178,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
           <input
             type="date"
             value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
+            onChange={(e) => handleDateChange('to', e.target.value)}
             className={cn(
               "ml-1 transition-all duration-200",
               isButtonDisabled && "opacity-50 cursor-not-allowed"
@@ -184,4 +192,6 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
       </div>
     </Card>
   );
-}
+});
+
+export default Tenure;

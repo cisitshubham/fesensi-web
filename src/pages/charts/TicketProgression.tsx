@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card';
 import { ChartsResponse } from '@/types';
 import { GetStatusColor } from '@/pages/global-components/GetStatusColor';
 import { TicketStatus } from '@/types';
+import { memo } from 'react';
 
 interface TicketProgressionProps {
   ticketStatusTotal: number;
@@ -13,7 +14,7 @@ interface TicketProgressionProps {
   renderCategory: (category: ChartsResponse['data']['TicketsByCategory']['counts'][0], index: number) => JSX.Element;
 }
 
-export default function TicketProgression({
+const TicketProgression = memo(function TicketProgression({
   ticketStatusTotal,
   ticketStatusTotalPercentage,
   resolvedPercentage,
@@ -77,4 +78,6 @@ export default function TicketProgression({
       {categories.map(renderCategory)}
     </Card>
   );
-} 
+});
+
+export default TicketProgression; 

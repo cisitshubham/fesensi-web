@@ -168,6 +168,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             path: '/admin/configurations',
           },
           {
+            title: 'Priorities',
+            icon: 'folder',
+            path: '/admin/priorities'
+          },
+          {
             title: 'Categories',
             icon: 'folder',
             path: '/admin/categories'

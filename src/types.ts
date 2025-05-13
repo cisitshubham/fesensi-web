@@ -238,3 +238,12 @@ export type Permission = {
   updatedAt: string;
   __v: number;
 }
+
+
+export type Announcement = {
+  _id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+}
+

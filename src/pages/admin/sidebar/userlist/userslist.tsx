@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { getAllUsers } from '@/api/api';
+import { getAllUsers, updateUser } from '@/api/api';
 import { MoreHorizontal, ArrowUpDown, SearchIcon, X } from 'lucide-react';
 import {
   Table,
@@ -40,6 +40,7 @@ import { MasterDropdownDatatype } from '@/types';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
 
 // Types
 interface Category {
@@ -257,7 +258,7 @@ function EditUserDialog({
   user,
   isOpen,
   onClose,
-  onSave,
+  onSave
 }: {
   user: ExtendedUser | null;
   isOpen: boolean;
@@ -271,15 +272,28 @@ function EditUserDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [isRolesOpen, setIsRolesOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const rolesDropdownRef = useRef<HTMLDivElement>(null);
+  const categoriesDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
+      // Ensure unique roles and filter out any null/undefined values
+      const initialRole = Array.isArray(user.role)
+        ? [...new Map(user.role.filter(r => r && r._id).map((r) => [r._id, r])).values()]
+        : user.role && user.role._id
+          ? [user.role]
+          : [];
+
+      // Ensure unique categories
+      const initialCategories = Array.isArray(user.categories)
+        ? [...new Map(user.categories.map((c) => [c._id, c])).values()]
+        : [];
+
       setEdited({
         first_name: user.first_name,
         level: user.level,
-        role: user.role,
-        categories: user.categories,
+        role: initialRole,
+        categories: initialCategories,
         profile_img: user.profile_img
       });
       setImagePreview(user.profile_img || null);
@@ -289,8 +303,13 @@ function EditUserDialog({
   // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (rolesDropdownRef.current && !rolesDropdownRef.current.contains(event.target as Node)) {
         setIsRolesOpen(false);
+      }
+      if (
+        categoriesDropdownRef.current &&
+        !categoriesDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsCategoriesOpen(false);
       }
     }
@@ -322,36 +341,68 @@ function EditUserDialog({
   };
 
   const handleRoleChange = (role: Role, isChecked: boolean) => {
-    setEdited(prev => {
+    setEdited((prev) => {
       const currentRoles: Role[] = Array.isArray(prev.role) ? prev.role : [];
-      const updatedRoles = isChecked
-        ? currentRoles.filter((r) => r._id !== role._id)
-        : [...currentRoles, role];
+      // Remove any existing role with the same ID before adding
+      const filteredRoles = currentRoles.filter((r) => r._id !== role._id);
+      const updatedRoles = isChecked ? [...filteredRoles, role] : filteredRoles;
       return { ...prev, role: updatedRoles };
     });
   };
 
   const handleCategoryChange = (category: Category, isChecked: boolean) => {
-    setEdited(prev => {
+    setEdited((prev) => {
       const currentCategories: Category[] = Array.isArray(prev.categories) ? prev.categories : [];
-      const updatedCategories = isChecked
-        ? [...currentCategories, category]
-        : currentCategories.filter((c) => c._id !== category._id);
+      // Remove any existing category with the same ID before adding
+      const filteredCategories = currentCategories.filter((c) => c._id !== category._id);
+      const updatedCategories = isChecked ? [...filteredCategories, category] : filteredCategories;
       return { ...prev, categories: updatedCategories };
     });
   };
 
   const handleSave = async (editedData: Partial<ExtendedUser>) => {
-    console.log(editedData);
-    
+    const formData = new FormData();
+
+    formData.append('first_name', editedData.first_name || '');
+
+    const levelValue =
+      typeof editedData.level === 'object' && editedData.level !== null
+        ? editedData.level._id
+        : String(editedData.level || '');
+    formData.append('level', levelValue);
+
+    // Format roles as an array of IDs
+    const roleIds = Array.isArray(editedData.role)
+      ? editedData.role.map((r) => r._id)
+      : typeof editedData.role === 'object' && editedData.role !== null
+        ? [editedData.role._id]
+        : [];
+    formData.append('role', JSON.stringify(roleIds)); // Send as JSON array
+
+    // Format categories as a list of IDs
+    const categoryIds = Array.isArray(editedData.categories)
+      ? editedData.categories.map((c) => c._id)
+      : [];
+    formData.append('categories', categoryIds.join(','));
+
+    formData.append('profile_img', editedData.profile_img || '');
+    if (user) {
+      const responce = await updateUser(user._id, formData);
+      console.log('responce', responce);
+      if (responce.success === true) {
+        toast.success('User updated successfully');
+        onClose();
+      } else {
+        toast.error('Failed to update user');
+      }
+    } else {
+      toast.error('User not found');
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className="max-w-lg p-6"
-        onPointerDownOutside={(e) => e.preventDefault()}
-      >
+      <DialogContent className="max-w-lg p-6" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Edit User</DialogTitle>
         </DialogHeader>
@@ -400,8 +451,8 @@ function EditUserDialog({
                   typeof edited.level === 'object' && edited.level !== null
                     ? edited.level._id
                     : typeof user?.level === 'object' && user?.level !== null
-                    ? user.level._id
-                    : String(edited.level || user?.level || '')
+                      ? user.level._id
+                      : String(edited.level || user?.level || '')
                 }
                 onValueChange={(value) => {
                   const selectedLevel = dropdownData.levelList.find((l: Level) => l._id === value);
@@ -413,8 +464,8 @@ function EditUserDialog({
                     {typeof edited.level === 'object' && edited.level !== null
                       ? edited.level.name
                       : typeof user?.level === 'object' && user?.level !== null
-                      ? user.level.name
-                      : edited.level || user?.level || 'Select level'}
+                        ? user.level.name
+                        : edited.level || user?.level || 'Select level'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -427,35 +478,54 @@ function EditUserDialog({
               </Select>
             </div>
 
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative" ref={rolesDropdownRef}>
               <label className="block text-sm font-medium mb-1">Roles</label>
               <Button
                 variant="outline"
                 className="w-full justify-start text-left"
                 onClick={() => setIsRolesOpen(!isRolesOpen)}
               >
-                {Array.isArray(edited.role) && edited.role.length > 0
-                  ? edited.role.map((r: Role) => r.role_name).join(', ')
-                  : 'Select roles'}
+                {Array.isArray(edited.role) && edited.role.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {edited.role.map((r: Role) => (
+                      <span
+                        key={r._id}
+                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800"
+                      >
+                        {r.role_name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  'Select roles'
+                )}
               </Button>
               {isRolesOpen && (
                 <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto">
                   <div className="p-2 space-y-1">
                     {dropdownData.roles.map((role: Role) => {
-                      const isChecked = Array.isArray(edited.role) 
+                      const isChecked = Array.isArray(edited.role)
                         ? edited.role.some((r: Role) => r._id === role._id)
                         : false;
                       return (
                         <div
                           key={role._id}
                           className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
-                          onClick={() => handleRoleChange(role, isChecked)}
+                          onClick={() => handleRoleChange(role, !isChecked)}
                         >
                           <Checkbox
+                            id={`role-${role._id}`}
                             checked={isChecked}
-                            onCheckedChange={(checked) => handleRoleChange(role, checked as boolean)}
+                            onCheckedChange={(checked) => {
+                              handleRoleChange(role, checked as boolean);
+                            }}
                           />
-                          <span className="text-sm">{role.role_name}</span>
+                          <label
+                            htmlFor={`role-${role._id}`}
+                            className="text-sm cursor-pointer flex-1"
+                          >
+                            {role.role_name}
+                          </label>
                         </div>
                       );
                     })}
@@ -464,7 +534,7 @@ function EditUserDialog({
               )}
             </div>
 
-            <div className="relative">
+            <div className="relative" ref={categoriesDropdownRef}>
               <label className="block text-sm font-medium mb-1">Categories</label>
               <Button
                 variant="outline"
@@ -476,44 +546,28 @@ function EditUserDialog({
                   : 'Select categories'}
               </Button>
               {isCategoriesOpen && (
-                <div 
-                  className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto">
                   <div className="p-2 space-y-1">
                     {dropdownData.categories.map((category: Category) => {
-                      const isChecked = Array.isArray(edited.categories) 
+                      const isChecked = Array.isArray(edited.categories)
                         ? edited.categories.some((c: Category) => c._id === category._id)
                         : false;
                       return (
                         <div
                           key={category._id}
-                          className="flex items-center gap-2 p-2 rounded-md hover:bg-accent"
-                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
+                          onClick={() => handleCategoryChange(category, !isChecked)}
                         >
                           <Checkbox
                             id={`category-${category._id}`}
                             checked={isChecked}
                             onCheckedChange={(checked) => {
-                              const currentCategories = Array.isArray(edited.categories) ? edited.categories : [];
-                              if (checked) {
-                                setEdited(prev => ({
-                                  ...prev,
-                                  categories: [...currentCategories, category]
-                                }));
-                              } else {
-                                setEdited(prev => ({
-                                  ...prev,
-                                  categories: currentCategories.filter(c => c._id !== category._id)
-                                }));
-                              }
+                              handleCategoryChange(category, checked as boolean);
                             }}
-                            onClick={(e) => e.stopPropagation()}
                           />
                           <label
                             htmlFor={`category-${category._id}`}
                             className="text-sm cursor-pointer flex-1"
-                            onClick={(e) => e.stopPropagation()}
                           >
                             {category.title}
                           </label>
@@ -628,8 +682,11 @@ export default function AdminUsersPage() {
     // Apply search filter
     if (searchQuery) {
       result = result.filter((user) =>
-        [user.first_name, user.email, formatRole(user.role), formatLevel(user.level)].some((field) =>
-          String(field || '').toLowerCase().includes(searchQuery.toLowerCase())
+        [user.first_name, user.email, formatRole(user.role), formatLevel(user.level)].some(
+          (field) =>
+            String(field || '')
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
         )
       );
     }
@@ -638,7 +695,7 @@ export default function AdminUsersPage() {
     if (sortColumn) {
       result.sort((a, b) => {
         let aValue, bValue;
-        
+
         if (sortColumn === 'role') {
           aValue = formatRole(a.role);
           bValue = formatRole(b.role);
@@ -664,32 +721,31 @@ export default function AdminUsersPage() {
 
     try {
       setIsSaving(true);
-      
+
       // Prepare the data to be sent
       const updatedUser = {
         ...editingUser,
         ...editedData,
         // Ensure role is properly formatted
-        role: Array.isArray(editedData.role) 
-          ? editedData.role.map(r => r._id)
-          : editedData.role,
+        role: Array.isArray(editedData.role) ? editedData.role.map((r) => r._id) : editedData.role,
         // Ensure categories are properly formatted
         categories: Array.isArray(editedData.categories)
-          ? editedData.categories.map(c => c._id)
+          ? editedData.categories.map((c) => c._id)
           : editedData.categories,
         // Ensure level is properly formatted
-        level: typeof editedData.level === 'object' && editedData.level !== null
-          ? editedData.level._id
-          : editedData.level
+        level:
+          typeof editedData.level === 'object' && editedData.level !== null
+            ? editedData.level._id
+            : editedData.level
       };
 
       // TODO: Replace with your actual API call
       const response = await fetch(`/api/users/${editingUser._id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updatedUser),
+        body: JSON.stringify(updatedUser)
       });
 
       if (!response.ok) {
@@ -697,12 +753,8 @@ export default function AdminUsersPage() {
       }
 
       // Update the local state with the new data
-      setUsers(prevUsers => 
-        prevUsers.map(user => 
-          user._id === editingUser._id 
-            ? { ...user, ...editedData }
-            : user
-        )
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
       );
 
       // Close the dialog

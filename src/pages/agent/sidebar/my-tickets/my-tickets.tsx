@@ -43,6 +43,7 @@ export default function AgentTickets() {
   return (
     <div className="space-y-4 px-6">
 		<SearchbarFilters onFiltersChange={handleFiltersChange} />
+		
       {tickets.map((ticket) => (
         <Ticket key={ticket._id} ticket={ticket} />
       ))}
