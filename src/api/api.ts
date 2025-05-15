@@ -45,13 +45,13 @@ export const updateProfile = async (imageFile: File) => {
   }
 };
 
-export const updatepassword = async (formData: any) => {
-  console.log(formData);
+export const updatepassword = async (formData:any) => {
   try {
     const response = await axiosInstance.post('/users/forget-password', formData);
     console.log(response.data);
     return response.data;
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error updating password:', error);
   }
   return null;

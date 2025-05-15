@@ -33,11 +33,9 @@ const AppRouting = (): ReactElement => {
   // Handle route changes and auth state changes
   useEffect(() => {
     if (!firstLoad && auth) {
-      console.log('Route or auth state changed: Verifying user...');
       setProgressBarLoader(true);
       verify()
         .then(() => {
-          console.log('User verified successfully after route/auth change.');
         })
         .catch((error) => {
           console.error('Error during user verification on route/auth change:', error);

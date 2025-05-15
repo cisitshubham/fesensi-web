@@ -45,11 +45,11 @@ const DropdownUser = ({ menuItemRef }: IDropdownUserProps, user: any) => {
             >
               {user?.data?.first_name || ''}
             </Link>
-            <a href={`mailto:${user?.data?.email || ''}`}>
+            <a href={`mailto:${user?.data?.email || ''}`} className="text-xs text-gray-500 hover:text-primary font-normal leading-none">
               {user?.data?.email || 'No Email'}
             </a>
 
-            <div className="text-xs text-gray-600">
+            <div className="text-gray-500 text-xs font-normal leading-none">
               {user?.data?.role?.map((role: any, index: number) => (
                 <span key={role._id}>
                   {role.role_name}

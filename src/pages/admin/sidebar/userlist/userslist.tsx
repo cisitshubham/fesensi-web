@@ -39,6 +39,7 @@ import {
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 // Types
 interface Category {
@@ -267,6 +268,7 @@ function EditUserDialog({
   onClose: () => void;
   onSave: (user: Partial<ExtendedUser>) => void;
 }) {
+  const navigate = useNavigate();
   const { dropdownData } = useMasterDropdown();
   const [edited, setEdited] = useState<Partial<ExtendedUser>>({});
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -297,6 +299,7 @@ function EditUserDialog({
         role: initialRole,
         categories: initialCategories,
         profile_img: user.profile_img
+		
       });
       setImagePreview(user.profile_img || null);
     }
@@ -362,52 +365,67 @@ function EditUserDialog({
     });
   };
 
-  const handleSave = async (editedData: Partial<ExtendedUser>) => {
-    const formData = new FormData();
+	const handleSave = async (editedData: Partial<ExtendedUser>) => {
+		try {
+			if (!user?._id) {
+				throw new Error('User ID is required');
+			}
+			setIsSaving(true);
 
-    formData.append('first_name', editedData.first_name || '');
+			const formData = new FormData();
 
-    const levelValue =
-        typeof editedData.level === 'object' && editedData.level !== null
-            ? editedData.level._id
-            : String(editedData.level || '');
-    formData.append('level', levelValue);
+			formData.append('first_name', editedData.first_name || '');
+			const levelId =
+					typeof editedData.level === 'object' && editedData.level !== null
+					? editedData.level.name
+					: editedData.level;
+			formData.append('level', levelId || '');
 
-    // Format roles and categories as arrays
-    const roleIds = Array.isArray(editedData.role)
-        ? editedData.role.map((r) => r._id)
-        : [];
-    formData.append('role', JSON.stringify(roleIds));
+			// Append each category ID as categories[]
+			if (Array.isArray(editedData.categories)) {
+				editedData.categories.forEach((category: Category) => {
+					if (category._id) {
+						formData.append('categories[]', category._id);
+					}
+				});
+			}
 
-    const categoryIds = Array.isArray(editedData.categories)
-        ? editedData.categories.map((c) => c._id)
-        : [];
-    formData.append('categories', JSON.stringify(categoryIds));
+			// Append each role ID as role[]
+			if (Array.isArray(editedData.role)) {
+				editedData.role.forEach((role: Role) => {
+					if (role._id) {
+						formData.append('role[]', role._id);
+					}
+				});
+			}
 
-    formData.append('profile_img', editedData.profile_img || '');
+			// Append profile image if it's a File
+			// if (editedData.profile_img instanceof File) {
+			// 	formData.append('profile_img', editedData.profile_img);
+			// } else if (typeof editedData.profile_img === 'string' && editedData.profile_img !== '') {
+			// 	formData.append('profile_img', editedData.profile_img);
+			// }
 
-    // Log the data being sent
-    console.log('Data being sent:', {
-        roles: roleIds,
-        categories: categoryIds,
-        first_name: editedData.first_name || '',
-        level: levelValue,
-        profile_img: editedData.profile_img || ''
-    });
 
-    if (user) {
-        const responce = await updateUser(user._id, formData);
-        console.log('responce', responce);
-        if (responce.success === true) {
-            toast.success('User updated successfully');
-            onClose();
-        } else {
-            toast.error('Failed to update user');
-        }
-    } else {
-        toast.error('User not found');
-    }
-  };
+			const userId = user._id;
+			const response = await updateUser(userId, formData);
+			if(!response){
+				toast.error('Failed to update user');
+			}
+
+			if(response.success === true){
+				navigate('/admin/allUsers');
+				toast.success('User updated successfully');
+			}
+			
+		
+		} catch (error) {
+			console.error('Error saving user:', error);
+			// Handle error (e.g., toast or alert)
+		} finally {
+			setIsSaving(false);
+		}
+	};
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -789,15 +807,19 @@ export default function AdminUsersPage() {
       console.log(formData);
 
       // TODO: Replace with your actual API call
-      const response = await updateUser(editingUser._id, formData);
+      const userId = editingUser._id;
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await updateUser(userId, formData);
 
       if (!response.ok) {
         throw new Error('Failed to update user');
       }
 
       // Update the local state with the new data
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
+      setUsers((prevUsers: ExtendedUser[]) =>
+        prevUsers.map((user: ExtendedUser) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
       );
 
       // TODO: Replace with your actual API call
@@ -807,8 +829,8 @@ export default function AdminUsersPage() {
       }
 
       // Update the local state with the new data
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
+      setUsers((prevUsers: ExtendedUser[]) =>
+        prevUsers.map((user: ExtendedUser) => (user._id === editingUser._id ? { ...user, ...editedData } : user))
       );
 
       // Close the dialog
@@ -846,3 +868,11 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+function setUsers(arg0: (prevUsers: ExtendedUser[]) => ExtendedUser[]) {
+	throw new Error('Function not implemented.');
+}
+
+function setEditingUser(arg0: null) {
+	throw new Error('Function not implemented.');
+}
+
