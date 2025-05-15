@@ -1,12 +1,18 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { CalendarClock } from "lucide-react";
 
 export default function SupportPageAgent() {
-  const handlesubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState(false);
+  const [dateTime, setDateTime] = useState({ date: "", time: "" });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted');
+    console.log("Form submitted", { dateTime });
   };
 
   return (
@@ -16,43 +22,71 @@ export default function SupportPageAgent() {
         <p className="text-sm text-gray-500 mt-1">Please provide details about the issue</p>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handlesubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <Input type="text" id="title" placeholder="Enter the Title of the issue" required />
-            <div className=" my-4">
-              <label>Preferred Time of Calling</label>
-              <Input type="text" placeholder="enter the preferred time for calling" />
+        <div className="flex gap-4 mb-4">
+          <Button variant={email ? "default" : "outline"} onClick={() => setEmail(true)}>
+            Email
+          </Button>
+          <Button variant={!email ? "default" : "outline"} onClick={() => setEmail(false)}>
+            Phone
+          </Button>
+        </div>
 
-              <label htmlFor="">Contact Number</label>
-              <Input type="text" />
+        {email ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Textarea placeholder="Describe your issue" required />
+            <Button type="submit">Submit</Button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input type="tel" placeholder="Phone Number" required />
+
+            {/* Custom DateTime Dropdown */}
+            <div className="w-1/3">
+              <label className="block text-sm font-medium mb-1">Select Date and Time</label>
+              <Popover>
+                <PopoverTrigger asChild >
+                  <Button variant="outline" className="w-full justify-between">
+                    <span>
+                      {dateTime.date && dateTime.time
+                        ? `${dateTime.date} @ ${dateTime.time}`
+                        : "Select Date & Time"}
+                    </span>
+                    <CalendarClock className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 space-y-2">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Date</label>
+                    <Input
+                      type="date"
+                      className="justify-between"
+                      placeholder="Select Date"
+                      value={dateTime.date}
+                      onChange={(e) =>
+                        setDateTime((prev) => ({ ...prev, date: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Time</label>
+                    <Input
+                      type="time"
+                      className="justify-between"
+                      placeholder="Select Time"
+                      value={dateTime.time}
+                      onChange={(e) =>
+                        setDateTime((prev) => ({ ...prev, time: e.target.value }))
+                      }
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
-          </div>
 
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-              Message
-            </label>
-            <Textarea
-              id="message"
-              placeholder="Describe the issue in detail"
-              className=""
-              required
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              variant="default"
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Submit
-            </Button>
-          </div>
-        </form>
+            <Textarea placeholder="Please enter your issue" required />
+            <Button type="submit">Submit</Button>
+          </form>
+        )}
       </CardContent>
     </Card>
   );

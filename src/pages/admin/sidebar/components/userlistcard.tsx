@@ -18,9 +18,7 @@ export default function UserListCard({ user }: { user: User }) {
     }
   };
 
-  function tolocalestring(createdAt: string | undefined): import("react").ReactNode {
-    throw new Error('Function not implemented.');
-  }
+  
 
   return (
     <Card key={user._id} className="p-4 flex items-center justify-between">

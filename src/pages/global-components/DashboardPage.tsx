@@ -292,7 +292,7 @@ export default function DashboardPage() {
         <Tenure onDataUpdate={handleDataUpdate} />
 
         <div className="flex flex-col lg:flex-row gap-6 ">
-          <div className="grid grid-cols-2 w-1/3  gap-4 ">
+          <div className="grid grid-cols-2 w-full lg:w-1/3  gap-4 ">
             <TicketStatusCards ticketCounts={ticketCounts} />
           </div>
           

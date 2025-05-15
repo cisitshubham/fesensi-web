@@ -40,19 +40,19 @@ const TicketProgression = memo(function TicketProgression({
       <div className="flex items-center gap-1 mb-2">
         {resolvedPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.Resolved)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.Resolved).darkbg} h-2 rounded-md`}
             style={{ width: `${resolvedPercentage}%` }}
           ></div>
         )}
         {inProgressPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.InProgress)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.InProgress).darkbg} h-2 rounded-md`}
             style={{ width: `${inProgressPercentage}%` }}
           ></div>
         )}
         {openPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.Open)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.Open).darkbg} h-2 rounded-md`}
             style={{ width: `${openPercentage}%` }}
           ></div>
         )}
