@@ -3,7 +3,7 @@ import { KeenIcon } from '@/components';
 import { TicketStatus } from '@/types';
 import clsx from 'clsx';
 import { getStatusBadge } from '@/pages/global-components/GetStatusColor';
-
+import { Link } from 'react-router-dom';
 interface TicketStatusCardsProps {
   ticketCounts: {
     open: number;
@@ -16,40 +16,42 @@ interface TicketStatusCardsProps {
 const statusConfig = [
   {
     key: 'open',
-    label: TicketStatus.Open,
     icon: 'arrows-circle',
     status: TicketStatus.Open,
     link:'Mytickets(category{"OPEN"})'
   },
   {
     key: 'inProgress',
-    label: TicketStatus.InProgress,
     icon: 'watch',
     status: TicketStatus.InProgress,
     link:'Mytickets(category{"IN-PROGRESS})'
   },
   {
     key: 'resolved',
-    label: TicketStatus.Resolved,
     icon: 'check-circle',
     status: TicketStatus.Resolved,
     link:'Mytickets(category{"RESOLVED"})'
   },
   {
     key: 'closed',
-    label: TicketStatus.Closed,
     icon: 'like',
     status: TicketStatus.Closed,
-    link:'Mytickets(category{"CLOSED"})'
   },
 ] as const;
 
 export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
   return (
     <>
-      {statusConfig.map(({ key, label, icon, status }) => {
+      {statusConfig.map(({ key, icon, status }) => {
         const badge = getStatusBadge(status);
         return (
+          <Link
+            to={`/agent/tickets/filtered`}
+            state={{
+              status: status,
+              ticketCounts: ticketCounts,
+            }}
+          >
           <Card key={key} className={clsx("p-2 flex flex-col justify-between aspect-square h-auto w-auto overflow-auto", badge.color,badge.border)}>
             <div className="flex items-center gap-2 mb-2 ">
               <div
@@ -60,10 +62,11 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
               >
                 <KeenIcon icon={icon} className=""/>
               </div>
-              <h3 className="text-sm font-semibold">{label}</h3>
+              <h3 className="text-sm font-semibold">{status}</h3>
             </div>
             <Card className={clsx("text-2xl font-bold text-white text-center",badge.darkbg)}>{ticketCounts[key]}</Card>
           </Card>
+          </Link>
         );
       })}
     </>

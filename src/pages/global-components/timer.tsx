@@ -33,7 +33,6 @@ interface TimerProps {
 export default function Timer({ hours = 0, minutes = 0, seconds = 0 }: TimerProps) {
   const timeInSeconds = hours * 3600 + minutes * 60 + seconds;
   const { hours: timerHours, minutes: timerMinutes, seconds: timerSeconds } = useTimer(timeInSeconds);
-console.log(timerHours, timerMinutes, timerSeconds);
   const formatNumber = (num: number) => num.toString().padStart(2, "0");
 
   return (

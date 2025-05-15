@@ -131,6 +131,7 @@ import FeedbackOptions from '@/pages/admin/sidebar/masters/feedbackOptions';
 import RequestedReassignmentAdmin from '@/pages/admin/sidebar/requested-reassign/requested-reassignmentview';
 import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassign/reasseign-tickets-detail';
 import PrioritiesManagement from '@/pages/admin/sidebar/masters/prioritites';
+import FilteredTickets from '@/pages/agent/filteredTickets';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -262,6 +263,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/announcements" element={<AnnouncementsAgent />} />
           <Route path="/agent/knowledgeBase" element={<KnowledgebaseAgent />} />
           <Route path="/agent/Support" element={<SupportPageAgent />} />
+          <Route path="/agent/tickets/filtered" element={<FilteredTickets />} />
 
 
 

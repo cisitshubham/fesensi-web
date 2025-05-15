@@ -25,6 +25,20 @@ export const MyTickets = async (filters: any) => {
     throw new Error('Failed to fetch tickets. Please try again later.');
   }
 };
+export const FilteredMyTickets = async (status:string) => {
+  try {
+    const response = await axiosInstance.post(`/agent/myTickets/${status}`);
+    
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      console.error('🚨 Server Error Response:', error.response.data);
+    } else {
+      console.error('🚨 No Response from Server:', error.message);
+    }
+    throw new Error('Failed to fetch tickets. Please try again later.');
+  }
+};
 
 // Get ticket details
 export const MyTicketDetails = async (TicketId: string) => {
