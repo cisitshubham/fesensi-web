@@ -220,6 +220,11 @@ export const getUserById = async (userId: string) => {
 };
 
 export const updateUser = async (userId: string, formData: FormData) => {
+  console.log('formData', formData.get('role'));
+  console.log('formData', formData.get('categories'));
+  console.log('formData', formData.get('level'));
+  console.log('formData', formData.get('first_name'));
+  console.log('userId', userId);
   try {
     const response = await axiosInstance.post(`/admin/users/update/${userId}`, formData);
     return response.data;
@@ -277,16 +282,18 @@ export const getRoles = async () => {
 };
 
 export const createCategories = async (formData: FormData) => {
-  console.log('formData', formData);
   console.log('formData', formData.get('title'));
   try {
-    const response = await axiosInstance.post('/tickets/create/categories', );
+    const response = await axiosInstance.post('/admin/categories/create', );
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
   }
   return null;
 };
+
+
+
 
 export const createRoles = async (formData: FormData) => {
   try {
@@ -325,6 +332,16 @@ export const updateAnnouncement = async (formData: FormData, id: string) => {
 export const getAnnouncementsAdmin = async () => {
   try {
     const response = await axiosInstance.get('/admin/announcements/getAllAnnouncements');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching announcements:', error);
+  }
+};
+
+
+export const getAnnouncements = async () => {
+  try {
+    const response = await axiosInstance.get('/tickets/announcements');
     return response.data;
   } catch (error) {
     console.error('Error fetching announcements:', error);
@@ -504,7 +521,7 @@ export const MyTicketDetails = async (TicketId: string) => {
 
 export const getEscalatedTickets = async () => {
   try {
-    const response = await axiosInstance.get('/agent/myTicket/escalated');
+    const response = await axiosInstance.post('/agent/myTicket/escalated');
     return response.data;
   } catch (error) {
     console.error('Error fetching escalated tickets:', error);

@@ -1,7 +1,8 @@
 import { Card } from '@/components/ui/card';
 import { ChartsResponse } from '@/types';
-import { GetStatusColor } from '@/pages/global-components/GetStatusColor';
+import { getStatusBadge, GetStatusColor } from '@/pages/global-components/GetStatusColor';
 import { TicketStatus } from '@/types';
+import { memo } from 'react';
 
 interface TicketProgressionProps {
   ticketStatusTotal: number;
@@ -13,7 +14,7 @@ interface TicketProgressionProps {
   renderCategory: (category: ChartsResponse['data']['TicketsByCategory']['counts'][0], index: number) => JSX.Element;
 }
 
-export default function TicketProgression({
+const TicketProgression = memo(function TicketProgression({
   ticketStatusTotal,
   ticketStatusTotalPercentage,
   resolvedPercentage,
@@ -22,7 +23,6 @@ export default function TicketProgression({
   categories,
   renderCategory
 }: TicketProgressionProps) {
-  console.log(ticketStatusTotal, ticketStatusTotalPercentage, resolvedPercentage, inProgressPercentage, openPercentage, categories);
   return (
     <Card className="card-body flex flex-col gap-1 p-6 lg:p-8 lg:pt-5">
       <div className="flex flex-col gap-1">
@@ -40,19 +40,19 @@ export default function TicketProgression({
       <div className="flex items-center gap-1 mb-2">
         {resolvedPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.Resolved)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.Resolved).darkbg} h-2 rounded-md`}
             style={{ width: `${resolvedPercentage}%` }}
           ></div>
         )}
         {inProgressPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.InProgress)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.InProgress).darkbg} h-2 rounded-md`}
             style={{ width: `${inProgressPercentage}%` }}
           ></div>
         )}
         {openPercentage > 0 && (
           <div
-            className={`bg-${GetStatusColor(TicketStatus.Open)} h-2 rounded-md`}
+            className={`${getStatusBadge(TicketStatus.Open).darkbg} h-2 rounded-md`}
             style={{ width: `${openPercentage}%` }}
           ></div>
         )}
@@ -61,12 +61,12 @@ export default function TicketProgression({
       <div className="flex items-center flex-wrap gap-5 mb-2">
         {[
           { status: TicketStatus.Resolved, label: 'Resolved' },
-          { status: TicketStatus.InProgress, label: 'In Progress' },
+          { status: TicketStatus.InProgress, label: 'In-Progress' },
           { status: TicketStatus.Open, label: 'Open' }
         ].map((item, index) => {
           return (
             <div key={index} className="flex items-center gap-1.5">
-              <span className={`badge badge-dot size-2 bg-${GetStatusColor(item.status)}`}></span>
+              <span className={`badge badge-dot size-2 ${getStatusBadge(item.status).darkbg}`}></span>
               <span className="text-sm font-normal text-gray-800">{item.label}</span>
             </div>
           );
@@ -77,4 +77,6 @@ export default function TicketProgression({
       {categories.map(renderCategory)}
     </Card>
   );
-} 
+});
+
+export default TicketProgression; 

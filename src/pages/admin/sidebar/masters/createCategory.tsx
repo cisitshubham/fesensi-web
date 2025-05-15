@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Pencil, Trash2, Plus, X, Check, Loader2, Search, Filter, ArrowUpDown } from "lucide-react"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import type { MasterDropdownDatatype } from "@/types"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -17,18 +17,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { createCategories } from "@/api/api"
 import { useNavigate } from "react-router-dom"
+import { updateCategory } from "@/api/admin"
+
 export default function CategoryManagement() {
   const { dropdownData } = useMasterDropdown()
   const [categories, setCategories] = useState<MasterDropdownDatatype["categories"]>(dropdownData.categories || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [editedCategory, setEditedCategory] = useState({ title: "" })
+  const [editedCategory, setEditedCategory] = useState({ title: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [newCategoryTitle, setNewCategoryTitle] = useState("")
   const navigate = useNavigate()  
@@ -36,27 +36,33 @@ export default function CategoryManagement() {
 
   const handleEdit = (index: number) => {
     setEditIndex(index)
-    setEditedCategory({ title: categories[index].title })
+    setEditedCategory({ title: categories[index].title, _id: categories[index]._id })
   }
 
   const handleSave = async () => {
-    if (!editedCategory.title.trim()) return toast.error("Category title cannot be empty")
+    if (!editedCategory.title.trim()) return toast.error("Category title cannot be empty",{
+      position:"top-center"
+    })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
       formData.append("title", editedCategory.title.trim())
-      const response = await createCategories(formData)
+      const response = await updateCategory(editedCategory._id, formData)
 
       if (response.success && editIndex !== null) {
         const updated = [...categories]
         updated[editIndex].title = editedCategory.title.trim()
         setCategories(updated)
         setEditIndex(null)
-        toast.success("Category saved successfully")
+        toast.success("Category updated successfully",{
+          position:"top-center"
+        })
       }
     } catch {
-      toast.error("Failed to save")
+      toast.error("Failed to update category",{
+        position:"top-center"
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -67,7 +73,9 @@ export default function CategoryManagement() {
   }
 
   const handleAddCategorySubmit = async () => {
-    if (!newCategoryTitle.trim()) return toast.error("Category title cannot be empty")
+    if (!newCategoryTitle.trim()) return toast.error("Category title cannot be empty",{
+      position:"top-center"
+    })
     setIsSubmitting(true)
 
     try {
@@ -76,13 +84,16 @@ export default function CategoryManagement() {
       const response = await createCategories(formData)
 
       if (response.success) {
-   
-        toast.success("Category added successfully")
+        toast.success("Category added successfully",{
+          position:"top-center"
+        })
         setShowAddDialog(false)
         navigate('/admin/categories')
       }
     } catch {
-      toast.error("Failed to add category")
+      toast.error("Failed to add category",{
+        position:"top-center"
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -171,7 +182,7 @@ export default function CategoryManagement() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="w-[70%]">Title</TableHead>
+                    <TableHead className="w-[70%]">Category</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -183,8 +194,14 @@ export default function CategoryManagement() {
                       <TableRow key={cat._id} className="group hover:bg-slate-50">
                         <TableCell>
                           {isEditing ? (
-                            <Input name="title" value={editedCategory.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedCategory({ title: e.target.value })}
-                              autoFocus className="max-w-md" placeholder="Enter category title" />
+                            <Input 
+                              name="title" 
+                              value={editedCategory.title} 
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedCategory({ title: e.target.value, _id: editedCategory._id })}
+                              autoFocus 
+                              className="max-w-md" 
+                              placeholder="Enter category title" 
+                            />
                           ) : (
                             <div className="flex items-center gap-3">
                               <span className="font-medium">{cat.title || <span className="text-muted-foreground italic">Untitled</span>}</span>
@@ -218,7 +235,7 @@ export default function CategoryManagement() {
         <DialogContent className="p-4">
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>Enter the title of the category to add it to the list.</DialogDescription>
+            <DialogDescription>Enter the category title to add it to the list.</DialogDescription>
           </DialogHeader>
           <Input
             placeholder="Category title"

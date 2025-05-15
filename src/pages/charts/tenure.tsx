@@ -5,7 +5,7 @@ import { fetchDashboardData } from '@/pages/charts/data_manipulations';
 import { useRole } from '@/pages/global-components/role-context';
 import { cn } from '@/lib/utils';
 
-export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
+const Tenure = React.memo(function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => void }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedButton, setSelectedButton] = useState('Today');
@@ -14,6 +14,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
   const { selectedRoles } = useRole();
   const lastFetchRef = useRef<{ fromDate: string; toDate: string; role: string } | null>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout>();
 
   const formatDate = useCallback((date: Date) => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -94,16 +95,36 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
 
   // Debounced effect for date changes with increased debounce time
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchData();
-    }, 1000); // Increased to 1 second debounce
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
 
-    return () => clearTimeout(timeoutId);
+    // Only set up the timeout if we have all required data
+    if (selectedRoles.length && fromDate && toDate) {
+      fetchTimeoutRef.current = setTimeout(() => {
+        fetchData();
+      }, 1000); // 1 second debounce
+    }
+
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
   }, [fromDate, toDate, selectedRoles, fetchData]);
 
   const handleButtonClick = useCallback((button: string) => {
     setIsButtonDisabled(true);
     setSelectedButton(button);
+  }, []);
+
+  const handleDateChange = useCallback((type: 'from' | 'to', value: string) => {
+    if (type === 'from') {
+      setFromDate(value);
+    } else {
+      setToDate(value);
+    }
   }, []);
 
   // Memoize the buttons to prevent unnecessary re-renders
@@ -157,7 +178,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
           <input
             type="date"
             value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
+            onChange={(e) => handleDateChange('from', e.target.value)}
             className={cn(
               "ml-1 transition-all duration-200",
               isButtonDisabled && "opacity-50 cursor-not-allowed"
@@ -170,7 +191,7 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
           <input
             type="date"
             value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
+            onChange={(e) => handleDateChange('to', e.target.value)}
             className={cn(
               "ml-1 transition-all duration-200",
               isButtonDisabled && "opacity-50 cursor-not-allowed"
@@ -184,4 +205,6 @@ export default function Tenure({ onDataUpdate }: { onDataUpdate: (data: any) => 
       </div>
     </Card>
   );
-}
+});
+
+export default Tenure;

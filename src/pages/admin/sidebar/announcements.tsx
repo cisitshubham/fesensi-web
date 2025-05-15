@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { createAnnouncement, getAnnouncementsAdmin } from '@/api/api';
-import AnnouncementsView, { AnnouncementsViewRef } from '@/pages/global-components/announcementsView';
+import AnnouncementsView, { AnnouncementsViewRef } from '@/pages/global-components/announcementsViewAdmin';
 
 // Define the schema for validation
 const announcementSchema = z.object({

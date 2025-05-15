@@ -128,7 +128,6 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
         };
         onFiltersChange(transformedFilters);
     };
-
     return (
         <div className="flex flex-col space-y-6 ">
             <div className="max-w-xl" id="container">

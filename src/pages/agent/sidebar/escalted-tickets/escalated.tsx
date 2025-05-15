@@ -22,7 +22,6 @@ export default function EscalatedAgent() {
         };
         fetchEscalatedTickets();
     }, []);
-    console.log('escalatedTickets', escalatedTickets);
 
     if (isLoading) {
         return (

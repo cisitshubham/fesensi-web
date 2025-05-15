@@ -28,11 +28,12 @@ import {
 import { Pencil, Plus, X, Check, Loader2, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
 import type { MasterDropdownDatatype } from '@/types';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { CreateForceCloseReason } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { updateForceCloseReason } from '@/api/admin';
 
 export default function CreateReasons() {
   const { dropdownData } = useMasterDropdown();
@@ -40,7 +41,7 @@ export default function CreateReasons() {
     dropdownData.resolvedPostList || []
   );
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editedReason, setEditedReason] = useState<{ title: string }>({ title: '' });
+  const [editedReason, setEditedReason] = useState<{ title: string, _id: string }>({ title: '', _id: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -51,27 +52,34 @@ export default function CreateReasons() {
 
   const handleEdit = (index: number) => {
     setEditIndex(index);
-    setEditedReason({ title: reasons[index].title });
+    setEditedReason({ title: reasons[index].title, _id: reasons[index]._id });
   };
 
   const handleSave = async () => {
-    if (!editedReason.title.trim()) return toast.error('Reason title cannot be empty');
+    if (!editedReason.title.trim()) return toast.error('Reason title cannot be empty',{
+      position:"top-center"
+    });
     setIsSubmitting(true);
 
     try {
       const formData = new FormData();
       formData.append('title', editedReason.title.trim());
-      const response = await CreateForceCloseReason(formData);
-
+      const response = await updateForceCloseReason(editedReason._id, formData);
+      console.log(response);
+debugger;
       if (response.success && editIndex !== null) {
         const updated = [...reasons];
         updated[editIndex].title = editedReason.title.trim();
         setReasons(updated);
         setEditIndex(null);
-        toast.success('Reason saved successfully');
+        toast.success('Reason saved successfully',{
+          position:"top-center"
+        });
       }
     } catch {
-      toast.error('Failed to save');
+      toast.error('Failed to save',{
+        position:"top-center"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -82,7 +90,11 @@ export default function CreateReasons() {
   };
 
   const handleAddReasonSubmit = async () => {
-    if (!newReasonTitle.trim()) return toast.error('Reason title cannot be empty');
+    
+    
+    if (!newReasonTitle.trim()) return toast.error('Reason title cannot be empty',{
+      position:"top-center"
+    });
     setIsSubmitting(true);
 
     try {
@@ -91,12 +103,16 @@ export default function CreateReasons() {
       const response = await CreateForceCloseReason(formData);
 
       if (response.success) {
-        toast.success('Reason added successfully');
+        toast.success('Reason added successfully',{
+          position:"top-center"
+        });
         setShowAddDialog(false);
         navigate('/admin/force-reasons');
       }
     } catch {
-      toast.error('Failed to add reason');
+      toast.error('Failed to add reason',{
+        position:"top-center"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -200,7 +216,7 @@ export default function CreateReasons() {
                             <Input
                               name="title"
                               value={editedReason.title}
-                              onChange={(e) => setEditedReason({ title: e.target.value })}
+                              onChange={(e) => setEditedReason({ title: e.target.value, _id: editedReason._id })}
                               autoFocus
                               className="max-w-md"
                               placeholder="Enter reason title"

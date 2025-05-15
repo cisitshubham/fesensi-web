@@ -92,7 +92,7 @@ export default function Ticket({ ticket }: TicketProps) {
         <CardFooter className={clsx("px-5 py-3  flex justify-between items-center")}>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="w-4 h-4 mr-1.5" />
-            <span>Due: {ticket.due_date}</span>
+            <span>Escalation date: {ticket.due_date}</span>
           </div>
 
           <div className="flex items-center text-sm text-gray-500">

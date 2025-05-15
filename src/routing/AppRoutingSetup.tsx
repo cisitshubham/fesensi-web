@@ -130,6 +130,7 @@ import CresteReassign from '@/pages/admin/sidebar/masters/reassign';
 import FeedbackOptions from '@/pages/admin/sidebar/masters/feedbackOptions';
 import RequestedReassignmentAdmin from '@/pages/admin/sidebar/requested-reassign/requested-reassignmentview';
 import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassign/reasseign-tickets-detail';
+import PrioritiesManagement from '@/pages/admin/sidebar/masters/prioritites';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -279,6 +280,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/feedback-options" element={<FeedbackOptions />} />
           <Route path="/admin/requested-reassignment" element={<RequestedReassignmentAdmin />} />
           <Route path="/admin/requested-reassign/:id" element={<ReasseignTicketsDetailAdmin />} />
+          <Route path="/admin/priorities" element={<PrioritiesManagement />} />
 
           {/* users aadesh  */}
           <Route path="/user/MyTickets" element={<UserTickets />} />

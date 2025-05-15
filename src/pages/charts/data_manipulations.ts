@@ -8,13 +8,9 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
 
     let apiResponse;
     if (role === 'ADMIN') {
-
-
       apiResponse = await ChartDataAdmin(formData);
-      console.log(apiResponse);
     } else if (role === 'AGENT') {
       apiResponse = await ChartDataAgent(formData);
-      console.log(apiResponse);
     } else if (role === 'CUSTOMER' || role === 'USER') {
       apiResponse = await ChartDataCustomer(formData);
     }
@@ -41,7 +37,6 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
 
       // Ensure ticketsbyCategory has the required structure
       const ticketsbyCategory = fetchedData.TicketsByCategory;
-      console.log(ticketsbyCategory);
       return {
         statusData,
         statusLabels,
@@ -54,11 +49,9 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
         ticketsbyCategory
       };
     } else {
-      console.error('API did not return success:', apiResponse);
       return null;
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
     throw error;
   }
 }

@@ -216,7 +216,7 @@ export default function ReassignTicketsDetailAdmin() {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="default" className="w-full">
-                  Reassign Ticket
+                  Approve Reassignment
                 </Button>
               </DialogTrigger>
               <DialogContent className="p-4">
@@ -256,7 +256,7 @@ export default function ReassignTicketsDetailAdmin() {
             <Dialog open={isDenyDialogOpen} onOpenChange={setIsDenyDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="destructive" className="w-full">
-                  Deny Request
+                  Reject Request
                 </Button>
               </DialogTrigger>
               <DialogContent className="p-4">
