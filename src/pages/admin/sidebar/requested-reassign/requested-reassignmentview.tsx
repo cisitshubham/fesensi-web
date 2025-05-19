@@ -2,7 +2,7 @@ import EscalatedTicketsComponent from "./requested-reassignment";
 import { useEffect, useState } from "react";  
 import { getEscalatedTicketsAdmin } from "@/api/api";
 import { Tickettype } from "@/types";
-export default function RequestedReassignmentAdmin() {
+export default function RequestedReassignmentAdminPending() {
     const [tickets, setTickets] = useState<Tickettype[]>([]);
 
 

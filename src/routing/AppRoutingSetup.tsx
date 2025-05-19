@@ -128,10 +128,13 @@ import SupportPageAgent from '@/pages/agent/sidebar/suppport/support';
 import AnnouncementsAdmin from '@/pages/admin/sidebar/announcements';
 import CresteReassign from '@/pages/admin/sidebar/masters/reassign';
 import FeedbackOptions from '@/pages/admin/sidebar/masters/feedbackOptions';
-import RequestedReassignmentAdmin from '@/pages/admin/sidebar/requested-reassign/requested-reassignmentview';
+import RequestedReassignmentAdminPending from '@/pages/admin/sidebar/requested-reassign/requested-reassignmentview';
 import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassign/reasseign-tickets-detail';
 import PrioritiesManagement from '@/pages/admin/sidebar/masters/prioritites';
 import FilteredTickets from '@/pages/agent/filteredTickets';
+import RequestedReassignmentAdminApproved from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-approved';
+import RequestedReassignmentAdminDenied from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-deined';
+import AdminSupportList from '@/pages/admin/sidebar/admin-support-list';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -257,7 +260,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/reassign-ticket/:id" element={<ReassignTicket />} />
           <Route path="/agent/Force-resolve/:id" element={<ForceResolve />} />
           <Route path="/agent/bulk-reassignment" element={<BulkReassign />} />
-          <Route path="/agent/requested-reassignment" element={<RequestedReassignment />} />
+          <Route path="/agent/requested-reassignment/" element={<RequestedReassignment />} />
           <Route path="/agent/escalated-tickets" element={<EscalatedAgent />} />
           <Route path="/agent/Sla-Status" element={<SlastatusAgent />} />
           <Route path="/agent/announcements" element={<AnnouncementsAgent />} />
@@ -280,9 +283,12 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
           <Route path="/admin/reassign" element={<CresteReassign />} />
           <Route path="/admin/feedback-options" element={<FeedbackOptions />} />
-          <Route path="/admin/requested-reassignment" element={<RequestedReassignmentAdmin />} />
+          <Route path="/admin/requested-reassignment/pending" element={<RequestedReassignmentAdminPending />} />
+          <Route path="/admin/requested-reassignment/denied" element={<RequestedReassignmentAdminApproved />} />
+          <Route path="/admin/requested-reassignment/approved" element={<RequestedReassignmentAdminDenied />} />
           <Route path="/admin/requested-reassign/:id" element={<ReasseignTicketsDetailAdmin />} />
           <Route path="/admin/priorities" element={<PrioritiesManagement />} />
+          <Route path="/admin/support-list" element={<AdminSupportList />} />
 
           {/* users aadesh  */}
           <Route path="/user/MyTickets" element={<UserTickets />} />

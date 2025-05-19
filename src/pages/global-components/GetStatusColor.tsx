@@ -52,7 +52,7 @@ export function getStatusBadge(status: string) {
       };
     case TicketStatus.Resolved:
       return {
-        darkbg: "bg-yellow-400",
+        darkbg: "bg-amber-400",
         border: "border-yellow-400",
         color: "bg-yellow-100 text-yellow-600 border-yellow-200",
         icon: null,

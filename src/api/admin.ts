@@ -1,3 +1,4 @@
+import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
 
 // Get ticket by status
@@ -72,13 +73,13 @@ export const updateForceCloseReason = async (id: string, formData: FormData) => 
 
 
 
-export const updateCategory = async (id:string,formData:FormData)=>{
-  try{
-    const response = await axiosInstance.post(`/admin//categories/update/${id}`,formData)
+export const updateCategory = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin//categories/update/${id}`, formData)
     return response.data;
   }
-  catch(error){
-    console.log("error updating Category",error)
+  catch (error) {
+    console.log("error updating Category", error)
   }
 }
 
@@ -218,7 +219,7 @@ export const getReassignTicketDetail = async (id: string) => {
 
 export const denyReassign = async (formData: FormData) => {
   try {
-    const response = await axiosInstance.post(`/admin/update/ticket/reassign`,formData);
+    const response = await axiosInstance.post(`/admin/update/ticket/reassign`, formData);
     return response.data;
   } catch (error) {
     console.error('Error denying reassign:', error);
@@ -265,4 +266,62 @@ export const updatePriorities = async (id: string, formData: FormData) => {
 
 
 
+export const getApprovedReassignlist = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/request/reassign/tickets/approve');
+    return response.data;
 
+  }
+  catch (error) {
+    console.error('error occured:', error);
+  }
+}
+
+
+
+export const Makeandremoveadmin = async (id: String) => {
+
+
+  try {
+    const responce = await axiosInstance.post(`/admin/users/make/admin/${id}`)
+ 
+    return responce
+  }
+  catch(error){
+    console.error('error occured',error)
+
+  }
+}
+
+
+export const deactiveateUser=async (id: String) => {
+  try {
+    const responce = await axiosInstance.post(`/admin//users/activate/${id}`)
+    return responce
+  }
+  catch(error){
+    console.error('error occured',error)
+
+  }
+}
+
+
+
+export const getContactSupport = async () => {
+  try {
+    const response = await axiosInstance.get('/admin/contact/support/list');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contact support:', error);
+  }
+}
+
+
+export const Updatesupport = async (id: string, ) => {
+  try {
+    const response = await axiosInstance.get(`/admin/contact/support/update/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating contact support:', error);
+  }
+}

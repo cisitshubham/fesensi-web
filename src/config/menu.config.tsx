@@ -155,8 +155,22 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
       },
       {
         title :"Requested for Reassignment",
-        path: '/admin/requested-reassignment',
-        icon: 'update-file'
+        icon: 'update-file',
+        children :[
+          {
+            title:"Pending",
+            path:'/admin/requested-reassignment/pending',
+          },
+          {
+            title:"Denied",
+            path:"/admin/requested-reassignment/approved",
+          },
+          {
+
+            title:"Approved",
+            path:"/admin/requested-reassignment/denied"
+          }
+        ]
       },
       {
         title: 'Masters',
@@ -200,6 +214,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'knowledge base',
         icon: 'book-open',
         path: '/admin/knowledgeBase',
+      },
+      {
+        title: 'Support List Ticket',
+        icon: 'file-sheet',
+        path: '/admin/support-list'
       },
       {
         title: 'Contact Support',

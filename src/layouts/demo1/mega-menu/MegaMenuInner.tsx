@@ -52,12 +52,7 @@ const MegaMenuInner = () => {
     ));
   };
 
-  const buildArrow = () => (
-    <MenuArrow className="flex lg:hidden text-gray-400">
-      <KeenIcon icon="plus" className="text-2xs menu-item-show:hidden" />
-      <KeenIcon icon="minus" className="text-2xs hidden menu-item-show:inline-flex" />
-    </MenuArrow>
-  );
+
 
   return (
     <Menu

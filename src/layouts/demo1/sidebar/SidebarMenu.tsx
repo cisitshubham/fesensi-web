@@ -18,7 +18,6 @@ import {
   MenuTitle
 } from '@/components/menu';
 import { useMenus } from '@/providers/useMenus';
-import { verifyRole } from '@/api/api';
 import { useRole } from '@/pages/global-components/role-context';
 
 const SidebarMenu = () => {
@@ -40,19 +39,8 @@ const SidebarMenu = () => {
   const { selectedRoles } = useRole();
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const res = await verifyRole();
-        const roleNames = res.data.role.map((r: any) => r.role_name);
-        setRoles(roleNames);
-
-        const config = getMenuConfig(roleNames);
-        setMenuConfig(config);
-      } catch (err) {
-        console.error('Failed to fetch roles:', err);
-      }
-    };
-    fetchRoles();
+    const config = getMenuConfig(selectedRoles || []);
+    setMenuConfig(config);
   }, [selectedRoles]); 
 
   

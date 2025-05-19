@@ -24,8 +24,11 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
       const statusLabels = Object.keys(statusCharts);
 
       const categoryCharts = fetchedData.categoryCharts || {};
-      const categoryData = Object.values(categoryCharts);
-      const categoryLabels = Object.keys(categoryCharts);
+      const categoryDataInprogress = categoryCharts.inprogress
+      const categoryDataresolved = categoryCharts.resolved
+      const categoryLabels = categoryCharts.categories
+
+
 
       const priorityCharts = fetchedData.priorityCharts || {};
       const priorityData = Object.values(priorityCharts);
@@ -40,7 +43,9 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
       return {
         statusData,
         statusLabels,
-        categoryData,
+        categoryDataInprogress,
+        categoryDataresolved,
+
         categoryLabels,
         priorityData,
         priorityLabels,

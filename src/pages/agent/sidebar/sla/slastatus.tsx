@@ -1,9 +1,40 @@
+import { getSLA } from "@/api/agent";
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { SLAStatustype } from "@/types";
+
+
+
 export default function SlastatusAgent() {
-    return (
-        <div className="flex flex-col w-full h-full p-4">
-            <h1 className="text-2xl font-bold">SLA Status Page</h1>
-            <p className="mt-2 text-gray-600">This is the SLA status page for agent users.</p>
-            {/* Add your SLA status page content here */}
-        </div>
-    );
+  const [slaData, setSlaData] = useState<SLAStatustype[]>([]);
+
+  const fetchSLA = async () => {
+    try {
+      const response = await getSLA();
+      console.log("SLA Data:", response);
+      setSlaData(response.data);
+    } catch (error) {
+      console.error("Error fetching SLA data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSLA();
+  }, []);
+
+  return (
+    <div className="flex flex-col p-4">
+      {Array.isArray(slaData) && slaData.length > 0 ? (
+        slaData.map((sla, idx) => (
+          <Card key={idx} className="mb-4 p-4">
+            <h3 className="text-lg font-semibold">Priority: {sla.priority}</h3>
+            <p className="text-gray-600">Response Time: {sla.response_time} hours</p>
+            <p className="text-gray-600">Created At: {sla.createdAt}</p>
+          </Card>
+        ))
+      ) : (
+        <div className="text-gray-500">No SLA data found.</div>
+      )}
+    </div>
+  );
 }

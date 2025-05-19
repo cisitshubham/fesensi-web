@@ -134,3 +134,26 @@ export const getReassignListPending = async () => {
     console.error('Error fetching reassign list:', error);
   }
 };
+
+
+
+export const CreateSupport = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.post('/agent/contact/support/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating support ticket:', error);
+  }
+  return null;
+}
+
+
+export const getSLA = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/sla');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contact support data:', error);
+  }
+  return null;
+}

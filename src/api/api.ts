@@ -2,20 +2,7 @@
 import axiosInstance from '../api/axiosInstance';
 
 // Add request cache
-const requestCache = new Map<string, {
-  data: any;
-  timestamp: number;
-}>();
 
-const CACHE_DURATION = 5000; // 5 seconds cache
-
-const getCacheKey = (url: string, params: any) => {
-  return `${url}-${JSON.stringify(params)}`;
-};
-
-const isCacheValid = (timestamp: number) => {
-  return Date.now() - timestamp < CACHE_DURATION;
-};
 
 export const fetchUser = async () => {
   try {
@@ -113,24 +100,8 @@ export const getTicketByCategory = async () => {
 };
 
 export const ChartDataAdmin = async (formData: FormData) => {
-  const cacheKey = getCacheKey('/admin/Dashboard/charts/', {
-    fromDate: formData.get('fromDate'),
-    toDate: formData.get('toDate')
-  });
-
-  const cachedData = requestCache.get(cacheKey);
-  if (cachedData && isCacheValid(cachedData.timestamp)) {
-    return cachedData.data;
-  }
-
   try {
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
-    if (response.data) {
-      requestCache.set(cacheKey, {
-        data: response.data,
-        timestamp: Date.now()
-      });
-    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
@@ -440,24 +411,8 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
-  const cacheKey = getCacheKey('/tickets/Dashboard/charts/', {
-    fromDate: formData.get('fromDate'),
-    toDate: formData.get('toDate')
-  });
-
-  const cachedData = requestCache.get(cacheKey);
-  if (cachedData && isCacheValid(cachedData.timestamp)) {
-    return cachedData.data;
-  }
-
   try {
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
-    if (response.data) {
-      requestCache.set(cacheKey, {
-        data: response.data,
-        timestamp: Date.now()
-      });
-    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
@@ -468,24 +423,8 @@ export const ChartDataCustomer = async (formData: FormData) => {
 // agent
 
 export const ChartDataAgent = async (formData: FormData) => {
-  const cacheKey = getCacheKey('/agent/myTickets/Dashboard/charts', {
-    fromDate: formData.get('fromDate'),
-    toDate: formData.get('toDate')
-  });
-
-  const cachedData = requestCache.get(cacheKey);
-  if (cachedData && isCacheValid(cachedData.timestamp)) {
-    return cachedData.data;
-  }
-
   try {
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts', formData);
-    if (response.data) {
-      requestCache.set(cacheKey, {
-        data: response.data,
-        timestamp: Date.now()
-      });
-    }
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);

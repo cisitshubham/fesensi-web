@@ -31,7 +31,8 @@ interface ChartData {
   priorityLabels: string[];
   ticketVolumeData: number[];
   ticketVolumeLabels: string[];
-  categoryData: number[];
+  categoryDataInprogress: number[];
+  categoryDataresolved: number[];
   categoryLabels: string[];
   ticketsbyCategory: {
     overallPercentageChange: string;
@@ -188,7 +189,8 @@ export default function DashboardPage() {
     priorityLabels: [],
     ticketVolumeData: [],
     ticketVolumeLabels: [],
-    categoryData: [],
+    categoryDataInprogress: [],
+    categoryDataresolved: [],
     categoryLabels: [],
     ticketsbyCategory: {
       overallPercentageChange: '',
@@ -213,7 +215,7 @@ export default function DashboardPage() {
         );
 
         if (response) {
-          const { statusData, statusLabels, ticketsbyCategory } = response as DashboardResponse;
+          const { statusData, statusLabels, ticketsbyCategory } = response as unknown as DashboardResponse;
           
           const statusMap = statusLabels.reduce((acc, label, index) => {
             acc[label] = statusData[index];
@@ -237,7 +239,6 @@ export default function DashboardPage() {
       }
     };
 
-    // Only fetch data if we have a valid role selected
     if (selectedRoles.length > 0) {
       fetchData();
     }
@@ -325,10 +326,12 @@ export default function DashboardPage() {
             labels={chartData.priorityLabels}
             key={`pie-${chartData.priorityData.join('-')}`}
           />
+          {/* Ensure BarChart is a React component that accepts these props */}
           <BarChart
-            series={chartData.categoryData}
+            resolved={chartData.categoryDataresolved}
+            inprogress={chartData.categoryDataInprogress}
             labels={chartData.categoryLabels}
-            key={`bar-${chartData.categoryData.join('-')}`}
+            key={`bar-${chartData.categoryDataresolved.join('-')}`}
           />
         </div>
       </Container>

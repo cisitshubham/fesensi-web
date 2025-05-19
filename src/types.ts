@@ -247,3 +247,39 @@ export type Announcement = {
   createdAt: string;
 }
 
+
+// Types
+export type Category= {
+  _id: string;
+  title: string;
+}
+export type Role= {
+  _id: string;
+  role_name: string;
+  permissions: string[];
+  status: string;
+  createdAt: string;
+}
+export type Level= {
+  _id: string;
+  name: string;
+}
+
+export type ExtendedUser= {
+  _id: string;
+  email: string;
+  first_name: string;
+  level: string | Level;
+  categories: Category[];
+  status: boolean;
+  profile_img: string;
+  role: Role | Role[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type  SLAStatustype= {
+  priority: string;
+  response_time: number;
+  createdAt: string;
+}
