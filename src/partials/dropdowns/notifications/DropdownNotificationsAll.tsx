@@ -49,7 +49,6 @@ const DropdownNotificationsAll = ({ onRefresh }: DropdownNotificationsAllProps) 
   const handleDeleteNotification = async (notificationId: string, onSuccess?: () => void) => {
     try {
       const response = await deleteNotification(notificationId);
-      console.log(response);
       if (response.success === true) {
         const updatedNotifications = notifications.filter(
           (notification) => notification._id !== notificationId

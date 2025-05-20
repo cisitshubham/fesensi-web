@@ -1,6 +1,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { Card } from "@/components/ui/card";
 
 interface BarChartProps {
   resolved: number[];
@@ -9,7 +10,6 @@ interface BarChartProps {
 }
 
 export default function BarChart({ resolved, inprogress, labels }: BarChartProps) {
-  console.log(resolved,inprogress,labels)
   const [state, setState] = React.useState<{
     series: { name: string; data: number[] }[];
     options: ApexOptions;
@@ -72,7 +72,7 @@ export default function BarChart({ resolved, inprogress, labels }: BarChartProps
   });
 
   return (
-    <div>
+    <Card>
       <div id="chart">
         <ReactApexChart
           options={state.options}
@@ -82,7 +82,7 @@ export default function BarChart({ resolved, inprogress, labels }: BarChartProps
         />
       </div>
       <div id="html-dist"></div>
-    </div>
+    </Card>
   );
 }
 

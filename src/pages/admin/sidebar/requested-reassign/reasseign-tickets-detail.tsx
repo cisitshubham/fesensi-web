@@ -71,7 +71,6 @@ export default function ReassignTicketsDetailAdmin() {
   useEffect(() => {
     const fetchAgentList = async () => {
       const response = await ReassignAgentList();
-      console.log(response.data);
       setAgentList(response.data);
     };
     fetchAgentList();

@@ -26,6 +26,7 @@ import { toast, } from 'sonner';
 import { useNavigate } from 'react-router';
 import { getReassignListPending } from '@/api/api';
 import { get } from 'http';
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 
 export default function BulkReassign() {
     const navigate = useNavigate()
@@ -81,9 +82,7 @@ export default function BulkReassign() {
         });
         formData.append('AgentreAssign', selectedReason);
         formData.append('AgentreAssignComment', description);
-        console.log(typeof (formData.get('ticket_id')));
-        console.log(formData.get('AgentreAssign'));
-        console.log(formData.get('AgentreAssignComment'));
+
         const response = await requestReassign(formData);
         if (response) {
             toast.success('Tickets reassigned successfully.', { position: "top-center" });
@@ -103,11 +102,14 @@ export default function BulkReassign() {
 
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>;
+    if (error) return <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>;
+    if (!tickets.length) {
+        return <NoTicketsPage />;
+    }
 
     return (
-        <>
+        <div className="mx-8 space-y-4">
             <Card>
                 <div className="flex items-center justify-between p-4">
                     <div className="flex items-center">
@@ -186,7 +188,6 @@ export default function BulkReassign() {
                         <Button
                             disabled={!selectedReason || !description.trim()}
                             onClick={() => {
-                                console.log("Reassigning tickets:", handleSubmit(), "Reason:", selectedReason);
                                 handleDialogClose();
                             }}
                         >
@@ -195,6 +196,6 @@ export default function BulkReassign() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </>
+        </div>
     );
 }

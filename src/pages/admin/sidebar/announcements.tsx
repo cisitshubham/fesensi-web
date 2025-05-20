@@ -72,7 +72,6 @@ export default function AnnouncementsAdmin() {
       submitData.append('title', formData.title);
       submitData.append('content', formData.description);
       const response = await createAnnouncement(submitData);
-      console.log(response);
       
       toast.success('Announcement created successfully');
       setFormData({ title: '', description: '' });

@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
-import { GetStatusColor, getPriorityColor } from "@/pages/global-components/GetStatusColor";
+import { GetStatusColor, getPriorityColor, getStatusBadge } from "@/pages/global-components/GetStatusColor";
 import { Tickettype } from "@/types";
 
 interface BulkReassignCardProps {
@@ -18,7 +18,8 @@ export default function BulkReassignCard({ ticket, onCheck }: BulkReassignCardPr
     setIsChecked(ticket.isSelected || false);
   }, [ticket.isSelected]);
 
-
+const status = getStatusBadge(ticket.status);
+const priority = getStatusBadge(ticket.priority);
 
   return (
     <Card className={`w-full max-w-md transition-shadow duration-200 ${isChecked ? 'shadow-lg' : 'shadow-sm'}`}>
@@ -44,7 +45,7 @@ export default function BulkReassignCard({ ticket, onCheck }: BulkReassignCardPr
                 <div className="text-sm font-medium text-gray-700">Ticket Number</div>
                 <span className="text-sm font-medium text-gray-600">{ticket.ticket_number}</span>
               </div>
-              <Badge variant="outline" className={`bg-${GetStatusColor(ticket.status)}`}>
+              <Badge variant="outline" className={`${status.color} text-xs`}>
                 {ticket.status}
               </Badge>
             </div>
@@ -54,7 +55,7 @@ export default function BulkReassignCard({ ticket, onCheck }: BulkReassignCardPr
 
             {/* Priority */}
             <div className="flex items-center gap-1">
-              <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>{ticket.priority}</Badge>
+              <Badge className={`${priority.color}`}>{ticket.priority}</Badge>
             </div>
           </div>
         </div>

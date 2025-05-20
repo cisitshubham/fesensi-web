@@ -2,7 +2,7 @@ import { getReassignList } from "@/api/api"
 import { useEffect, useState } from "react"
 import { Tickettype } from "@/types"
 import Ticket from "../my-tickets/ticket-component"
-import { map } from "leaflet"
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 export default function RequestedReassignment() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -27,11 +27,16 @@ useEffect(() => {
     
     return (
         <div className="px-6">
-          
-                {tickets.map((ticket) => (
-                       <Ticket key={ticket._id} ticket={ticket} />
-                     ))} 
-
-           
+            {loading ? (
+                <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>
+            ) : error ? (
+                <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>
+            ) : tickets.length === 0 ? (
+                <NoTicketsPage />
+            ) : (
+                tickets.map((ticket) => (
+                    <Ticket key={ticket._id} ticket={ticket} />
+                ))
+            )}
         </div>  
     )}

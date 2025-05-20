@@ -315,7 +315,6 @@ export default function RolesAndPermissions({
 
 		try {
 			const response = await deletePermissions(formData);
-			console.log(response);
 			if (response.success) {
 				toast.success('Permissions removed successfully');
 

@@ -65,7 +65,6 @@ export default function CreateReasons() {
       const formData = new FormData();
       formData.append('title', editedReason.title.trim());
       const response = await updateForceCloseReason(editedReason._id, formData);
-      console.log(response);
 debugger;
       if (response.success && editIndex !== null) {
         const updated = [...reasons];

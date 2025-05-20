@@ -34,7 +34,6 @@ export default function PermissionsToggle() {
   };
 
   const handleSave = () => {
-    console.log('Updated Permissions:', items);
     alert('Changes saved!');
   };
 

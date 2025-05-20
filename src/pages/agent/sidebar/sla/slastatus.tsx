@@ -11,7 +11,6 @@ export default function SlastatusAgent() {
   const fetchSLA = async () => {
     try {
       const response = await getSLA();
-      console.log("SLA Data:", response);
       setSlaData(response.data);
     } catch (error) {
       console.error("Error fetching SLA data:", error);

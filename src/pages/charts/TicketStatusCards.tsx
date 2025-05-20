@@ -49,7 +49,6 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
             to={`/agent/tickets/filtered`}
             state={{
               status: status,
-              ticketCounts: ticketCounts,
             }}
           >
           <Card key={key} className={clsx("p-2 flex flex-col justify-between aspect-square h-auto w-auto overflow-auto", badge.color,badge.border)}>

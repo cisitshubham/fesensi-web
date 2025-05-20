@@ -14,6 +14,7 @@ import { closeTicket } from '@/api/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Timer from '@/pages/global-components/timer';
+import { getTicketComments } from '@/api/api';
 
 export default function Tickets() {
   const location = useLocation();
@@ -27,6 +28,8 @@ export default function Tickets() {
   const [remainingMinutes, setRemainingMinutes] = useState(ticketData.remainingMinutes);
   const [remainingSeconds, setRemainingSeconds] = useState(ticketData.remainingSeconds);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [activityLog, setActivityLog] = useState<any[]>([]);
   useEffect(() => {
     const fetchTicketData = async () => {
       try {
@@ -35,11 +38,20 @@ export default function Tickets() {
           throw new Error('Ticket ID is not available.');
         }
         const response = await MyTicketDetails(id);
-
+        const commentsResponse = await getTicketComments(id);
+        // Map agentComment and customerComment to a flat array for ActivityLogAndComments
+        let mappedComments: any[] = [];
+        if (commentsResponse.data) {
+          const { agentComment, customerComment } = commentsResponse.data;
+          if (agentComment) mappedComments.push({ ...agentComment, role: 'agent', comment_text: agentComment.comment_text });
+          if (customerComment) mappedComments.push({ ...customerComment, role: 'customer', comment_text: customerComment.comment_text });
+        }
+        setComments(mappedComments);
         setTicketData(response.data);
         setRemainingHours(response.data.remainingHours); // Ensure default value
         setRemainingMinutes(response.data.remainingMinutes); // Ensure default value
         setRemainingSeconds(response.data.remainingSeconds); // Ensure default value
+        setActivityLog(response.data.activity_log);
         setLoading(false);
       } catch (error: any) {
         setError(error);
@@ -72,15 +84,9 @@ export default function Tickets() {
 
   // Function to get initials from name
 
-  const activityLog = (ticketData.activity_log || []).map((log: any) => ({
-    ...log,
-    creator: log.creator || { _id: 'unknown', first_name: 'Unknown' }, // Provide a default creator
-  }));
-  const agentComments = ticketData.agentComment ? [ticketData.agentComment] : [];
 
   const statusBadge = getStatusBadge(ticket?.status || '');
   const priorityBadge = getPriorityBadge(ticket.priority);
-  console.log(ticketData, 'ticketData');
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -214,7 +220,7 @@ export default function Tickets() {
           </div>
         </div>
         <div className="h-2/3 md:h-full w-full md:w-1/3">
-          <ActivityLogAndComments activityLog={activityLog} agentComments={agentComments} />
+          <ActivityLogAndComments activityLog={activityLog} agentComments={comments} />
         </div>
       </div>
       <div className="flex justify-center mt-6 gap-5">

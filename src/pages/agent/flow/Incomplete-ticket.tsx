@@ -39,26 +39,24 @@ export default function IncompleteTicket() {
 
     // Prepare the data to be submitted
     const reasonType = 'defaultReasonType'; // Replace 'defaultReasonType' with the appropriate value
-    const incompleteData = {
-      ticketId: ticket?._id,
-      reasonType,
-      reason,
-      timestamp: new Date().toISOString()
-    };
+
 
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append('ticket_id', ticket?._id || '');
       formData.append('comment_text', reason);
-      await ticketIncomplete(formData);
+      const responce = await ticketIncomplete(formData);
+      if (responce.success) {
       toast.success('Ticket marked as incomplete successfully.', { position: 'top-center' });
       setTimeout(() => {
 
         navigate('/agent/mytickets');
       }, 1000);
+      }
     } catch (error) {
       console.error('Error marking ticket as incomplete:', error);
+      toast.error('Failed to mark ticket as incomplete. Please try again.', { position: 'top-center' });
       setError(true);
     } finally {
       setIsSubmitting(false);

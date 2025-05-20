@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import Ticket from './ecalatedTicket';
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 
 export default function EscalatedAgent() {
     const [escalatedTickets, setEscalatedTickets] = useState([]);
@@ -12,7 +13,6 @@ export default function EscalatedAgent() {
         const fetchEscalatedTickets = async () => {
             try {
                 const response = await getEscalatedTickets();
-                console.log(response);
                 setEscalatedTickets(response.data);
                 setIsLoading(false);
             } catch (error) {
@@ -32,12 +32,7 @@ export default function EscalatedAgent() {
     }
 
     if (escalatedTickets.length === 0) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-[calc(100vh-200px)] mx-8">
-                <div className="text-gray-400 text-xl font-medium">No escalated tickets found</div>
-                <p className="text-gray-500 mt-2">There are currently no escalated tickets to display</p>
-            </Card>
-        );
+        return <NoTicketsPage />;
     }
 
     return (

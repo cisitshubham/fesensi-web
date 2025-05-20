@@ -325,3 +325,13 @@ export const Updatesupport = async (id: string, ) => {
     console.error('Error updating contact support:', error);
   }
 }
+
+
+export const deleteAnnouncement = async (id: string) => {
+  try {
+    const response = await axiosInstance.post(`/admin/announcements/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting announcement:', error);
+  }
+}

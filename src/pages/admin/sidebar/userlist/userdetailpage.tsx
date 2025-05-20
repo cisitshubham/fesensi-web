@@ -45,7 +45,6 @@ export default function UserDetailPage() {
   })
 
   const { dropdownData } = useMasterDropdown()
-  console.log(dropdownData)
 
   const AVAILABLE_CATEGORIES = dropdownData.categories
   const [availableRoles, setAvailableRoles] = useState<string[]>([])

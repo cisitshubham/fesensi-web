@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import UserTicket from './ticket-component';
+import { NoTicketsPage } from '@/errors/no-ticketspage'; // Import the NoTicketsPage component
 
 
 export default function UserTickets() {
@@ -32,11 +33,20 @@ export default function UserTickets() {
 
   return (
     <div className="space-y-4 px-6">
-		<Link to={"/user/create-ticket"}>
-		<Button variant={'default'}>Create Ticket</Button></Link>
-      {tickets.map((ticket) => (
-        <UserTicket key={ticket._id} ticket={ticket} />
-      ))}
+      <Link to={"/user/create-ticket"}>
+        <Button variant={'default'}>Create Ticket</Button>
+      </Link>
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>
+      ) : tickets.length === 0 ? (
+        <NoTicketsPage />
+      ) : (
+        tickets.map((ticket) => (
+          <UserTicket key={ticket._id} ticket={ticket} />
+        ))
+      )}
     </div>
   );
 }

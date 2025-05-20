@@ -13,7 +13,6 @@ export default function RequestedReassignmentAdminApproved() {
   const fetchApprovedList = async () => {
     try {
       const response = await getApprovedReassignlist();
-      console.log('Approved Reassignment List:', response);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching :', error);

@@ -200,49 +200,73 @@ export default function DashboardPage() {
     }
   });
 
-  const handleDataUpdate = useCallback((data: ChartData) => {
-    setChartData(data);
-    setCategories(data.ticketsbyCategory.counts as CategoryCount[]);
+  const [tenureState, setTenureState] = useState({
+    fromDate: '',
+    toDate: '',
+    selectedButton: 'Today',
+  });
+
+  useEffect(() => {
+    // Default to 'Today'
+    const today = new Date();
+    const formatDate = (date: Date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${year}-${month}-${day}`;
+    };
+    setTenureState({
+      fromDate: formatDate(today),
+      toDate: formatDate(today),
+      selectedButton: 'Today',
+    });
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchDashboardData(
-          date?.from?.toISOString() || new Date().toISOString(),
-          date?.to?.toISOString() || new Date().toISOString(),
+          tenureState.fromDate,
+          tenureState.toDate,
           selectedRoles[0]
         );
-
         if (response) {
-          const { statusData, statusLabels, ticketsbyCategory } = response as unknown as DashboardResponse;
-          
-          const statusMap = statusLabels.reduce((acc, label, index) => {
-            acc[label] = statusData[index];
+          const { statusData, statusLabels, priorityData, priorityLabels, ticketVolumeData, ticketVolumeLabels, categoryDataInprogress, categoryDataresolved, categoryLabels, ticketsbyCategory } = response;
+          const statusMap = (statusLabels as string[]).reduce((acc, label, index) => {
+            acc[label] = (statusData as number[])[index];
             return acc;
           }, {} as Record<string, number>);
-
           setTicketCounts({
             resolved: statusMap['RESOLVED'] || 0,
             inProgress: statusMap['IN-PROGRESS'] || 0,
             open: statusMap['OPEN'] || 0,
             closed: statusMap['CLOSED'] || 0,
-            total: statusData.reduce((a: number, b: number) => a + b, 0) || 1
+            total: (statusData as number[]).reduce((a: number, b: number) => a + b, 0) || 1
           });
-
           setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
           setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
           setCategories(ticketsbyCategory.counts);
+          setChartData({
+            statusData: statusData as number[],
+            statusLabels: statusLabels as string[],
+            priorityData: priorityData as number[],
+            priorityLabels: priorityLabels as string[],
+            ticketVolumeData: ticketVolumeData as number[],
+            ticketVolumeLabels: ticketVolumeLabels as string[],
+            categoryDataInprogress: categoryDataInprogress as number[],
+            categoryDataresolved: categoryDataresolved as number[],
+            categoryLabels: categoryLabels as string[],
+            ticketsbyCategory: ticketsbyCategory
+          });
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       }
     };
-
-    if (selectedRoles.length > 0) {
+    if (selectedRoles.length > 0 && tenureState.fromDate && tenureState.toDate) {
       fetchData();
     }
-  }, [selectedRoles, date?.from, date?.to]); // Only depend on role and date changes
+  }, [selectedRoles, tenureState.fromDate, tenureState.toDate]);
 
   const percentages = useMemo(() => ({
     resolvedPercentage: (ticketCounts.resolved / ticketCounts.total) * 100,
@@ -290,13 +314,18 @@ export default function DashboardPage() {
       </Container>
 
       <Container>
-        <Tenure onDataUpdate={handleDataUpdate} />
+        <Tenure
+          fromDate={tenureState.fromDate}
+          toDate={tenureState.toDate}
+          selectedButton={tenureState.selectedButton}
+          onChange={setTenureState}
+        />
 
         <div className="flex flex-col lg:flex-row gap-6 ">
           <div className="grid grid-cols-2 w-full lg:w-1/3  gap-4 ">
             <TicketStatusCards ticketCounts={ticketCounts} />
           </div>
-          
+
           <div className="w-full">
             <TicketProgression
               ticketStatusTotal={ticketStatusTotal}
@@ -311,11 +340,13 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <LineChart
-            series={chartData.ticketVolumeData}
-            labels={chartData.ticketVolumeLabels}
-            key={`line-${chartData.ticketVolumeData.join('-')}`}
-          />
+          {selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT') && (
+            <LineChart
+              series={chartData.ticketVolumeData}
+              labels={chartData.ticketVolumeLabels}
+              key={`line-${chartData.ticketVolumeData.join('-')}`}
+            />
+          )}
           <Donut
             series={chartData.statusData}
             labels={chartData.statusLabels}
@@ -326,13 +357,19 @@ export default function DashboardPage() {
             labels={chartData.priorityLabels}
             key={`pie-${chartData.priorityData.join('-')}`}
           />
-          {/* Ensure BarChart is a React component that accepts these props */}
-          <BarChart
-            resolved={chartData.categoryDataresolved}
-            inprogress={chartData.categoryDataInprogress}
-            labels={chartData.categoryLabels}
-            key={`bar-${chartData.categoryDataresolved.join('-')}`}
-          />
+
+          {
+
+            selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT') && (
+                <BarChart
+                  resolved={chartData.categoryDataresolved}
+                  inprogress={chartData.categoryDataInprogress}
+                  labels={chartData.categoryLabels}
+                  key={`bar-${chartData.categoryDataresolved.join('-')}`}
+                />
+            )
+          }
+
         </div>
       </Container>
     </Fragment>

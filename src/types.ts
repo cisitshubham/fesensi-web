@@ -247,7 +247,6 @@ export type Announcement = {
   createdAt: string;
 }
 
-
 // Types
 export type Category= {
   _id: string;
@@ -282,4 +281,16 @@ export type  SLAStatustype= {
   priority: string;
   response_time: number;
   createdAt: string;
+}
+
+export type FeedbackData = {
+  _id: string;
+  ticket_number: number;
+  title: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  createdAt: string;
+  category: string;
+  assigned_to: string;
 }

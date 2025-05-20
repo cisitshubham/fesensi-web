@@ -99,9 +99,17 @@ export const getTicketByCategory = async () => {
   }
 };
 
+// Simple in-memory cache for chart data
+const chartDataCache: Record<string, any> = {};
+
 export const ChartDataAdmin = async (formData: FormData) => {
+  const cacheKey = JSON.stringify(Array.from(formData.entries()));
+  if (chartDataCache[cacheKey]) {
+    return chartDataCache[cacheKey];
+  }
   try {
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
+    chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
@@ -411,8 +419,13 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
+  const cacheKey = JSON.stringify(Array.from(formData.entries()));
+  if (chartDataCache[cacheKey]) {
+    return chartDataCache[cacheKey];
+  }
   try {
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
+    chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
@@ -423,8 +436,13 @@ export const ChartDataCustomer = async (formData: FormData) => {
 // agent
 
 export const ChartDataAgent = async (formData: FormData) => {
+  const cacheKey = JSON.stringify(Array.from(formData.entries()));
+  if (chartDataCache[cacheKey]) {
+    return chartDataCache[cacheKey];
+  }
   try {
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts', formData);
+    chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);
@@ -550,3 +568,13 @@ export const deleteNotification = async (notificationId: string) => {
     console.error('Error deleting notification:', error);
   }
 };
+
+
+export const getTicketComments = async (ticketId: string) => {
+  try {
+    const response = await axiosInstance.get(`/agent/myTicket/comments/${ticketId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ticket comments:', error);
+  }
+} 

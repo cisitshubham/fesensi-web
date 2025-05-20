@@ -30,7 +30,6 @@ const CrudAvatarUpload = () => {
 		if (selectedAvatar.length > 0 && selectedAvatar[0].file) {
 			try {
 				await updateProfile(selectedAvatar[0].file); 
-				console.log('Profile image updated successfully');
 			} catch (error) {
 				console.error('Error uploading image:', error);
 			}

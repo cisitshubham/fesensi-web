@@ -27,6 +27,7 @@ import { MasterDropdownDatatype } from '@/types';
 import { requestReassign } from '@/api/api';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 
 export default function ReassignTicket() {
 
@@ -110,6 +111,14 @@ export default function ReassignTicket() {
       setLoading(false);
     }
   };
+
+  if (loading) return <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading ticket...</div>;
+  if (error) return <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>;
+  if (!ticketData) {
+    return (
+      <NoTicketsPage />
+    );
+  }
 
   return (
     <div className="container px-6 ">

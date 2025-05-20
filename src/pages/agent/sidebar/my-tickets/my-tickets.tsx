@@ -3,6 +3,7 @@ import { Tickettype } from '@/types';
 import {MyTickets} from  '@/api/api'
 import { useEffect, useState } from 'react'
 import SearchbarFilters from '@/pages/global-components/searchbar_filters';
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 
 export default function AgentTickets() {
 
@@ -14,7 +15,6 @@ export default function AgentTickets() {
 		try {
 			setLoading(true);
 			const response = await MyTickets(filters);
-			console.log(filters)
 			setTickets(Array.isArray(response.data) ? response.data : []); // Extract the data property
 			setLoading(false);
 		} catch (error) {
@@ -42,11 +42,20 @@ export default function AgentTickets() {
 
   return (
     <div className="space-y-4 px-6">
-		<SearchbarFilters onFiltersChange={handleFiltersChange} />
-		
-      {tickets.map((ticket) => (
-        <Ticket key={ticket._id} ticket={ticket} />
-      ))}
+      <SearchbarFilters onFiltersChange={handleFiltersChange} />
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">
+          <span>{error}</span>
+        </div>
+      ) : tickets.length === 0 ? (
+        <NoTicketsPage />
+      ) : (
+        tickets.map((ticket) => (
+          <Ticket key={ticket._id} ticket={ticket} />
+        ))
+      )}
     </div>
   );
 }

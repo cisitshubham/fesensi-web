@@ -96,7 +96,6 @@ export default function ResolveTicket() {
         }
         const response = await MyTicketDetails(id);
         setTicketData(response.data);
-        console.log(response.data, 'ticketData');
         setStatus(response.data.status.toLowerCase());
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch ticket';
@@ -145,7 +144,6 @@ export default function ResolveTicket() {
       formData.append('resolution', resolution);
 
       files.forEach((file) => {
-        console.log(file);
         formData.append('image', file);
       });
 

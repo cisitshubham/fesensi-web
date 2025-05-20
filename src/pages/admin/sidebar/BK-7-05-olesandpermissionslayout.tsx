@@ -161,7 +161,6 @@ export default function RolesAndPermissions({ onPermissionsChange = () => {} }: 
     try {
       const response = await UpdatePermissions(formData);
       toast.success('Permissions updated successfully');
-      console.log(response);
     } catch (error) {
       toast.error('Failed to update permissions');
       console.error(error);

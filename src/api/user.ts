@@ -124,3 +124,14 @@ export const deleteNotification = async (notificationId: string) => {
     console.error('Error deleting notification:', error);
   }
 };
+
+
+
+export const GetSkippedFeedback = async () => {
+  try {
+    const response = await axiosInstance.get('/tickets/feedback/ticket');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching skipped feedback:', error);
+  }
+}

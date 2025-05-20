@@ -275,7 +275,14 @@ const UserCreateTicketForm = () => {
               <Button
                 type="submit"
                 className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white  py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
-                disabled={loading}
+                disabled={
+                  loading ||
+                  !title.trim() ||
+                  !description.trim() ||
+                  !category ||
+                  !priority ||
+                  Object.keys(validationErrors).length > 0
+                }
               >
                 {loading ? 'Creating...' : 'Create Ticket'}
               </Button>

@@ -27,7 +27,7 @@ export const MyTickets = async (filters: any) => {
 };
 export const FilteredMyTickets = async (status:string) => {
   try {
-    const response = await axiosInstance.post(`/agent/myTickets/${status}`);
+    const response = await axiosInstance.post(`/agent/myTickets/OPEN`);
     
     return response;
   } catch (error: any) {
@@ -157,3 +157,4 @@ export const getSLA = async () => {
   }
   return null;
 }
+
