@@ -128,14 +128,13 @@ export default function TrustPageAgent() {
                     cy="50"
                   />
                 </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="text-4xl font-bold">{trustLevel.scoreOutOf100}</span>
+                <div className="absolute flex flex-col items-center">                  <span className="text-4xl font-bold">{trustLevel.scoreOutOf100 || 0}</span>
                   <span className="text-sm text-gray-500">out of 100</span>
                 </div>
               </div>
-              <Badge className={`text-lg py-1 px-4 ${getBadgeColor(trustLevel.level)}`}>
+              <Badge className={`text-lg py-1 px-4 ${getBadgeColor(trustLevel.level || 'low')}`}>
                 <Award className="mr-1 h-4 w-4" />
-                {trustLevel.level} Trust
+                {trustLevel.level || 'Not Rated'} Trust
               </Badge>
             </div>
           </CardContent>
@@ -149,18 +148,17 @@ export default function TrustPageAgent() {
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Average Rating</span>
-                  <span className="text-sm font-medium">{trustLevel.metrics.avgRating.toFixed(1)}/5</span>
+                <div className="flex justify-between">                  <span className="text-sm font-medium">Average Rating</span>
+                  <span className="text-sm font-medium">{(trustLevel.metrics?.avgRating || 0).toFixed(1)}/5</span>
                 </div>
                 <div className="flex items-center">
-                  <CustomProgress value={(trustLevel.metrics.avgRating / 5) * 100} />
+                  <CustomProgress value={((trustLevel.metrics?.avgRating || 0) / 5) * 100} />
                   <div className="ml-2 flex">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`h-4 w-4 ${
-                          i < Math.floor(trustLevel.metrics.avgRating)
+                          i < Math.floor(trustLevel.metrics?.avgRating || 0)
                             ? "fill-yellow-400 text-yellow-400"
                             : "text-gray-300"
                         }`}
@@ -174,30 +172,26 @@ export default function TrustPageAgent() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Resolution Rate</span>
-                  <span className="text-sm font-medium">
-                    {Math.round(
-                      ((trustLevel.metrics.totalTickets - trustLevel.metrics.notResolvedCount) /
-                        trustLevel.metrics.totalTickets) *
-                        100,
+                  <span className="text-sm font-medium">                    {Math.round(
+                      ((trustLevel.metrics?.totalTickets || 0) - (trustLevel.metrics?.notResolvedCount || 0)) /
+                        (trustLevel.metrics?.totalTickets || 1) * 100
                     )}
                     %
                   </span>
                 </div>
                 <CustomProgress
                   value={
-                    ((trustLevel.metrics.totalTickets - trustLevel.metrics.notResolvedCount) /
-                      trustLevel.metrics.totalTickets) *
-                    100
+                    ((trustLevel.metrics?.totalTickets || 0) - (trustLevel.metrics?.notResolvedCount || 0)) /
+                    (trustLevel.metrics?.totalTickets || 1) * 100
                   }
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Recency Factor</span>
-                  <span className="text-sm font-medium">{(trustLevel.recencyFactor * 100).toFixed(0)}%</span>
+                <div className="flex justify-between">                  <span className="text-sm font-medium">Recency Factor</span>
+                  <span className="text-sm font-medium">{((trustLevel.recencyFactor || 0) * 100).toFixed(0)}%</span>
                 </div>
-                <CustomProgress value={trustLevel.recencyFactor * 100} />
+                <CustomProgress value={(trustLevel.recencyFactor || 0) * 100} />
               </div>
             </div>
           </CardContent>
@@ -215,29 +209,28 @@ export default function TrustPageAgent() {
               <div className="text-gray-500 mb-1 flex items-center">
                 <ThumbsUp className="mr-1 h-4 w-4" />
                 <span>Total Tickets</span>
-              </div>
-              <div className="text-2xl font-bold">{trustLevel.metrics.totalTickets}</div>
+              </div>              <div className="text-2xl font-bold">{trustLevel.metrics?.totalTickets || 0}</div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center justify-center">
               <div className="text-gray-500 mb-1 flex items-center">
                 <Star className="mr-1 h-4 w-4" />
                 <span>Total Ratings</span>
               </div>
-              <div className="text-2xl font-bold">{trustLevel.metrics.totalRatings}</div>
+              <div className="text-2xl font-bold">{trustLevel.metrics?.totalRatings || 0}</div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center justify-center">
               <div className="text-gray-500 mb-1 flex items-center">
                 <CheckCircle className="mr-1 h-4 w-4" />
                 <span>SLA Compliant</span>
               </div>
-              <div className="text-2xl font-bold">{trustLevel.metrics.slaCompliantCount}</div>
+              <div className="text-2xl font-bold">{trustLevel.metrics?.slaCompliantCount || 0}</div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center justify-center">
               <div className="text-gray-500 mb-1 flex items-center">
                 <XCircle className="mr-1 h-4 w-4" />
                 <span>Not Resolved</span>
               </div>
-              <div className="text-2xl font-bold">{trustLevel.metrics.notResolvedCount}</div>
+              <div className="text-2xl font-bold">{trustLevel.metrics?.notResolvedCount || 0}</div>
             </div>
           </div>
         </CardContent>
