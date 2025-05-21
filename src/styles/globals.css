@@ -9,6 +9,8 @@
 /* Shadcn UI */
 @import "shadcn.ui";
 
+@import './dialog.css';
+
 @layer utilities {
     /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {

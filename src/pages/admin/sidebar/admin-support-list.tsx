@@ -37,6 +37,7 @@ export default function AdminSupportList() {
     setLoading(true)
     try {
       const res = await getContactSupport()
+      console.log(res, "res")
       setRequests(res.data || [])
     } catch (e) {
       /* error handled silently */
@@ -70,19 +71,17 @@ export default function AdminSupportList() {
       return date
     }
   }
-
+console.log(requests, "requests")
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className=" mx-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Support Requests</h2>
         <Badge variant="outline">{requests.filter((r) => !r.is_resolved).length} Open</Badge>
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader>            <TableRow>
               <TableHead>Created By</TableHead>
-              <TableHead>Contact</TableHead>
               <TableHead>Calling Time</TableHead>
               <TableHead className="hidden md:table-cell">Message</TableHead>
               <TableHead className="hidden md:table-cell">Created At</TableHead>
@@ -107,14 +106,7 @@ export default function AdminSupportList() {
               </TableRow>
             ) : (
               requests.map((item) => (
-                <TableRow key={item._id}>
-                  <TableCell>{item.created_by}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      {item.contact_number}
-                    </div>
-                  </TableCell>
+                <TableRow key={item._id}>                  <TableCell>{item.created_by}</TableCell>
                   <TableCell>{item.calling_time || "—"}</TableCell>
                   <TableCell className="hidden md:table-cell max-w-[200px] truncate">{item.message}</TableCell>
                   <TableCell className="hidden md:table-cell">{formatDate(item.createdAt)}</TableCell>

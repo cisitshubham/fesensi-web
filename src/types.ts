@@ -278,7 +278,7 @@ export type ExtendedUser= {
 }
 
 export type  SLAStatustype= {
-  priority: string;
+  priority: TicketPriority;
   response_time: number;
   createdAt: string;
 }

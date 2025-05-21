@@ -27,7 +27,7 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
       {
         title: "Create Ticket",
         icon: "plus",
-        path:"/user/create-ticket"
+        path: "/user/create-ticket"
       },
       {
         title: 'MyTickets',
@@ -53,17 +53,9 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         icon: 'star',
         path: '/user/rate-us'
       },
-      {
-        title: 'Trust Level',
-        icon: 'like-shapes',
-        path: '/user/Trust'
-      },
 
-      {
-        title: 'Contact Support',
-        icon: 'abstract-32',
-        path: '/user/Support'
-      },
+
+
     ]
     : []),
 
@@ -119,7 +111,12 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'Contact Support',
         icon: 'abstract-32',
         path: '/agent/Support'
-      }
+      },
+      {
+        title: 'Trust Level',
+        icon: 'like-shapes',
+        path: '/agent/Trust'
+      },
 
     ]
     : []),
@@ -154,18 +151,18 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
 
       },
       {
-        title :"Requested for Reassignment",
+        title: "Requested for Reassignment",
         icon: 'update-file',
-        children :[
+        children: [
           {
-            title:"Pending",
-            path:'/admin/requested-reassignment/pending',
+            title: "Pending",
+            path: '/admin/requested-reassignment/pending',
           },
-    
+
           {
 
-            title:"Approved",
-            path:"/admin/requested-reassignment/denied"
+            title: "Approved",
+            path: "/admin/requested-reassignment/denied"
           }
         ]
       },
@@ -201,8 +198,8 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             title: 'FeedBack Options',
             path: '/admin/feedback-options'
           },
-        
-          
+
+
 
 
         ]

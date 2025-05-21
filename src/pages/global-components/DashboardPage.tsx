@@ -87,6 +87,7 @@ export default function DashboardPage() {
       setSelectedRoles([role]);
       localStorage.setItem('selectedRole', role);
     }
+    console.log('Selected Roles:', selectedRoles);
   }, [selectedRoles]);
 
   useEffect(() => {
@@ -243,9 +244,11 @@ export default function DashboardPage() {
             closed: statusMap['CLOSED'] || 0,
             total: (statusData as number[]).reduce((a: number, b: number) => a + b, 0) || 1
           });
-          setTicketStatusTotal(ticketsbyCategory.totalTicketCount);
-          setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
-          setCategories(ticketsbyCategory.counts);
+          if (selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) {
+            setTicketStatusTotal(ticketsbyCategory.totalTicketCount || 0);
+            setTicketStatusTotalPercentage(parseFloat(ticketsbyCategory.overallPercentageChange));
+            setCategories(ticketsbyCategory.counts);
+          }
           setChartData({
             statusData: statusData as number[],
             statusLabels: statusLabels as string[],
@@ -313,7 +316,7 @@ export default function DashboardPage() {
         </Toolbar>
       </Container>
 
-      <Container>
+      <Container >
         <Tenure
           fromDate={tenureState.fromDate}
           toDate={tenureState.toDate}
@@ -322,11 +325,19 @@ export default function DashboardPage() {
         />
 
         <div className="flex flex-col lg:flex-row gap-6 ">
-          <div className="grid grid-cols-2 w-full lg:w-1/3  gap-4 ">
+          {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
+          <div className="grid grid-cols-2 w-full lg:w-5/12  gap-4  ">
             <TicketStatusCards ticketCounts={ticketCounts} />
           </div>
+          )}
+          {(selectedRoles.includes('CUSTOMER') && (
+            <div className="flex flex-row justify-between lg:gap-4 gap-1 w-full">
+              <TicketStatusCards ticketCounts={ticketCounts} />
+            </div>
+            ))}
 
           <div className="w-full">
+            {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
             <TicketProgression
               ticketStatusTotal={ticketStatusTotal}
               ticketStatusTotalPercentage={ticketStatusTotalPercentage}
@@ -336,41 +347,37 @@ export default function DashboardPage() {
               categories={categories}
               renderCategory={renderCategory}
             />
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT') && (
-            <LineChart
-              series={chartData.ticketVolumeData}
-              labels={chartData.ticketVolumeLabels}
-              key={`line-${chartData.ticketVolumeData.join('-')}`}
-            />
-          )}
-          <Donut
-            series={chartData.statusData}
-            labels={chartData.statusLabels}
-            key={`donut-${chartData.statusData.join('-')}`}
-          />
-          <Pie
-            series={chartData.priorityData}
-            labels={chartData.priorityLabels}
-            key={`pie-${chartData.priorityData.join('-')}`}
-          />
-
-          {
-
-            selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT') && (
-                <BarChart
-                  resolved={chartData.categoryDataresolved}
-                  inprogress={chartData.categoryDataInprogress}
-                  labels={chartData.categoryLabels}
-                  key={`bar-${chartData.categoryDataresolved.join('-')}`}
-                />
-            )
-          }
-
-        </div>
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+  {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
+    <LineChart
+      series={chartData.ticketVolumeData}
+      labels={chartData.ticketVolumeLabels}
+      key={`line-${chartData.ticketVolumeData.join('-')}`}
+    />
+  )}
+  <Donut
+    series={chartData.statusData}
+    labels={chartData.statusLabels}
+    key={`donut-${chartData.statusData.join('-')}`}
+  />
+  <Pie
+    series={chartData.priorityData}
+    labels={chartData.priorityLabels}
+    key={`pie-${chartData.priorityData.join('-')}`}
+  />
+  {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
+    <BarChart
+      resolved={chartData.categoryDataresolved}
+      inprogress={chartData.categoryDataInprogress}
+      labels={chartData.categoryLabels}
+      key={`bar-${chartData.categoryDataresolved.join('-')}`}
+    />
+  )}
+</div>
       </Container>
     </Fragment>
   );

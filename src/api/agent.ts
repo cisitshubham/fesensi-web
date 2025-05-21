@@ -27,14 +27,14 @@ export const MyTickets = async (filters: any) => {
 };
 export const FilteredMyTickets = async (status:string) => {
   try {
-    const response = await axiosInstance.post(`/agent/myTickets/OPEN`);
+    const response = await axiosInstance.get(`/agent/dashboard/${status}`);
     
     return response;
   } catch (error: any) {
     if (error.response) {
-      console.error('🚨 Server Error Response:', error.response.data);
+      console.error(' Server Error Response:', error.response.data);
     } else {
-      console.error('🚨 No Response from Server:', error.message);
+      console.error(' No Response from Server:', error.message);
     }
     throw new Error('Failed to fetch tickets. Please try again later.');
   }
@@ -158,3 +158,14 @@ export const getSLA = async () => {
   return null;
 }
 
+
+
+export const getTrustlevel = async () => {
+  try {
+    const response = await axiosInstance.get('/agent/trustLevel');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contact support data:', error);
+  }
+  return null;
+}

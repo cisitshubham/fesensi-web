@@ -38,33 +38,35 @@ const statusConfig = [
     status: TicketStatus.Closed,
   },
 ] as const;
+const selectedrole = localStorage.getItem('selectedRole');
 
 export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
   return (
     <>
       {statusConfig.map(({ key, icon, status }) => {
         const badge = getStatusBadge(status);
+        const linkTo = selectedrole === 'AGENT'
+          ? '/agent/tickets/filtered'
+          : '/user/tickets/filtered';
         return (
           <Link
-            to={`/agent/tickets/filtered`}
-            state={{
-              status: status,
-            }}
+            key={key}
+            to={linkTo}
+            state={{ status }}
           >
-          <Card key={key} className={clsx("p-2 flex flex-col justify-between aspect-square h-auto w-auto overflow-auto", badge.color,badge.border)}>
-            <div className="flex items-center gap-2 mb-2 ">
-              <div
-                className={clsx(
-                  'p-2  rounded-lg flex items-center justify-center aspect-square '
-                 
-                )}
-              >
-                <KeenIcon icon={icon} className=""/>
+            <Card className={clsx("p-2 flex flex-col justify-between aspect-square h-full  overflow-auto", badge.color, badge.border)}>
+              <div className="flex items-center gap-2 mb-2 ">
+                <div
+                  className={clsx(
+                    'p-2  rounded-lg flex items-center justify-center aspect-square '
+                  )}
+                >
+                  <KeenIcon icon={icon} className=""/>
+                </div>
+                <h3 className="text-sm font-semibold">{status}</h3>
               </div>
-              <h3 className="text-sm font-semibold">{status}</h3>
-            </div>
-            <Card className={clsx("text-2xl font-bold text-white text-center",badge.darkbg)}>{ticketCounts[key]}</Card>
-          </Card>
+              <Card className={clsx("text-2xl font-bold text-white text-center", badge.darkbg)}>{ticketCounts[key]}</Card>
+            </Card>
           </Link>
         );
       })}

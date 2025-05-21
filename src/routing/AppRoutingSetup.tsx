@@ -135,6 +135,8 @@ import FilteredTickets from '@/pages/agent/filteredTickets';
 import RequestedReassignmentAdminApproved from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-approved';
 import RequestedReassignmentAdminDenied from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-deined';
 import AdminSupportList from '@/pages/admin/sidebar/admin-support-list';
+import FilteredTicketsUser from '@/pages/user/filteredTickets';
+import TrustPgeAgent from '@/pages/agent/sidebar/trustAgent';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -267,6 +269,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/knowledgeBase" element={<KnowledgebaseAgent />} />
           <Route path="/agent/Support" element={<SupportPageAgent />} />
           <Route path="/agent/tickets/filtered" element={<FilteredTickets />} />
+          <Route path="/agent/Trust" element={<TrustPgeAgent/>} />
 
 
 
@@ -300,8 +303,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="user/knowledgeBase" element={<KnowledgeBasePageUser/>} />
           <Route path="user/announcements" element={<AnnouncementsUser/>} />
           <Route path="/user/rate-us" element={<RateUsUser/>} />
-          <Route path="/user/Trust" element={<TrustPgeUser/>} />
           <Route path="/user/Support" element={<SupportPageUser/>} />
+          <Route path="/user/tickets/filtered" element={<FilteredTicketsUser />} />
 
 
         </Route>

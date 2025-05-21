@@ -1,3 +1,4 @@
+import { stat } from 'fs';
 import axiosInstance from '../api/axiosInstance';
 
 // Fetch user profile
@@ -133,5 +134,15 @@ export const GetSkippedFeedback = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching skipped feedback:', error);
+  }
+}
+
+
+export const getFilterredTickets = async (status: string) => {
+  try {
+    const response = await axiosInstance.get(`/tickets/ticket-status/${status}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching filtered tickets:', error);
   }
 }

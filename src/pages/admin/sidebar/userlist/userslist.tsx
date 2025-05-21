@@ -5,7 +5,7 @@ import type React from "react"
 import { Makeandremoveadmin } from "@/api/admin"
 import { useEffect, useState, useRef } from "react"
 import { getAllUsers, updateUser } from "@/api/api"
-import { MoreHorizontal, ArrowUpDown, SearchIcon, X } from "lucide-react"
+import { MoreHorizontal, SearchIcon, X } from "lucide-react"
 import { deactiveateUser } from "@/api/admin"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -19,9 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
@@ -29,6 +27,7 @@ import { KeenIcon } from "@/components"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+
 
 // Types
 interface Category {
@@ -68,8 +67,6 @@ const formatRole = (role: ExtendedUser["role"]) =>
       ? role.role_name
       : String(role || "N/A")
 
-const formatLevel = (level: ExtendedUser["level"]) =>
-  typeof level === "object" && "level_name" in level ? level.level_name : String(level || "N/A")
 
 // Components
 function Search({
@@ -107,23 +104,26 @@ function Search({
 
 function UserTable({
   users,
-  sortColumn,
-  sortDirection,
-  onSort,
   onEdit,
   onDeactivate,
   onMakeAdmin,
 }: {
   users: ExtendedUser[]
-  sortColumn: string | null
-  sortDirection: "asc" | "desc"
-  onSort: (column: string) => void
   onEdit: (user: ExtendedUser) => void
   onDeactivate: (user: ExtendedUser) => void
   onMakeAdmin: (user: ExtendedUser) => void
 }) {
-  // Remove the openDropdownId state and click outside handler
-  // Let the DropdownMenu component handle its own open state
+  // Helper function to get role name safely
+  const getRoleName = (role: Role | string): string => {
+    if (typeof role === "string") return role;
+    return role?.role_name || "N/A";
+  };
+
+  // Helper function to get category title safely
+  const getCategoryTitle = (category: Category | string): string => {
+    if (typeof category === "string") return category;
+    return category?.title || "N/A";
+  };
 
   return (
     <div className="rounded-md border">
@@ -132,13 +132,7 @@ function UserTable({
           <TableRow>
             {["#", "Name", "Email", "Level", "Role", "Categories", "Status", "Actions"].map((col, idx) => (
               <TableHead key={col} className={idx === 0 ? "w-[50px]" : idx === 7 ? "w-[80px]" : ""}>
-                {["Name", "Email", "Level", "Role", "Categories", "Status"].includes(col) ? (
-                  <Button variant="ghost" onClick={() => onSort(col.toLowerCase())} className="flex items-center gap-1">
-                    {col} <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  col
-                )}
+                {col}
               </TableHead>
             ))}
           </TableRow>
@@ -157,42 +151,38 @@ function UserTable({
                 </div>
               </TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{typeof user.level === "string" ? user.level : String(user.level)}</TableCell>
               <TableCell>
-                {Array.isArray(user.role) ? (
-                  user.role.map((r, i) => (
-                    <span
-                      key={i}
-                      className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
-                    >
-                      {typeof r === "object" && r !== null ? r.role_name : String(r)}
-                    </span>
-                  ))
-                ) : typeof user.role === "object" && user.role !== null ? (
-                  <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                    {user.role.role_name}
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">N/A</span>
-                )}
+                {typeof user.level === "object" ? user.level.name : user.level || "N/A"}
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {Array.isArray(user.categories) ? (
-                    user.categories.map((r, i) => (
+                  {Array.isArray(user.role) ? (
+                    user.role.map((r, i) => (
                       <span
                         key={i}
                         className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
                       >
-                        {typeof r === "object" && r !== null ? r.title : String(r)}
+                        {getRoleName(r)}
                       </span>
                     ))
-                  ) : typeof user.categories === "object" && user.categories !== null ? (
+                  ) : (
                     <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                      {(user.categories as Category).title
-                        ? (user.categories as Category).title
-                        : String(user.categories)}
+                      {getRoleName(user.role)}
                     </span>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-wrap gap-1">
+                  {Array.isArray(user.categories) && user.categories.length > 0 ? (
+                    user.categories.map((category, i) => (
+                      <span
+                        key={i}
+                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
+                      >
+                        {getCategoryTitle(category)}
+                      </span>
+                    ))
                   ) : (
                     <span className="text-muted-foreground">N/A</span>
                   )}
@@ -239,414 +229,137 @@ function UserTable({
   )
 }
 
-function EditUserDialog({
-  user,
-  isOpen,
-  onClose,
-  onSave,
-}: {
-  user: ExtendedUser | null
-  isOpen: boolean
-  onClose: () => void
-  onSave: (user: Partial<ExtendedUser>) => void
-}) {
-  const { dropdownData } = useMasterDropdown()
+const triggerFileInput = (ref: React.RefObject<HTMLInputElement>) => {
+  ref.current?.click();
+};
+
+const handleImageChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  setImagePreview: (value: string | null) => void,
+  setEdited: (update: (prev: Partial<ExtendedUser>) => Partial<ExtendedUser>) => void
+) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+      setEdited((prev) => ({ ...prev, profile_img: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const handleRoleChange = (
+  role: Role,
+  isChecked: boolean,
+  setEdited: (update: (prev: Partial<ExtendedUser>) => Partial<ExtendedUser>) => void
+) => {
+  setEdited((prev) => {
+    const currentRoles: Role[] = Array.isArray(prev.role) ? prev.role : [];
+    const filteredRoles = currentRoles.filter((r) => r._id !== role._id);
+    const updatedRoles = isChecked ? [...filteredRoles, role] : filteredRoles;
+    return { ...prev, role: updatedRoles };
+  });
+};
+
+const handleCategoryChange = (
+  category: Category,
+  isChecked: boolean,
+  setEdited: (update: (prev: Partial<ExtendedUser>) => Partial<ExtendedUser>) => void
+) => {
+  setEdited((prev) => {
+    const currentCategories: Category[] = Array.isArray(prev.categories) ? prev.categories : [];
+    const filteredCategories = currentCategories.filter((c) => c._id !== category._id);
+    const updatedCategories = isChecked ? [...filteredCategories, category] : filteredCategories;
+    return { ...prev, categories: updatedCategories };
+  });
+};
+
+// Add dialog-specific styles
+const dialogStyles = {
+  base: "rounded-lg shadow-lg p-0 border border-border bg-background",
+  backdrop: "backdrop:bg-black/50",
+  width: {
+    default: "min-w-[320px]",
+    large: "w-full max-w-2xl"
+  }
+};
+
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<ExtendedUser[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const adminDialogRef = useRef<HTMLDialogElement>(null);
+  const deactivateDialogRef = useRef<HTMLDialogElement>(null);
+  const editDialogRef = useRef<HTMLDialogElement>(null);
+  const [selectedUser, setSelectedUser] = useState<ExtendedUser | null>(null);
+  const navigate = useNavigate();
+  const { dropdownData, loading: dropdownLoading, error: dropdownError, refreshDropdownData } = useMasterDropdown();
+  
+  // Debug dropdownData
+  useEffect(() => {
+    console.log('Dropdown Data:', dropdownData);
+    if (dropdownError) {
+      console.error('Dropdown Error:', dropdownError);
+      toast.error("Failed to load dropdown data");
+    }
+  }, [dropdownData, dropdownError]);
+
+  // Refresh dropdown data when editing user
+
+ 
+
   const [edited, setEdited] = useState<Partial<ExtendedUser>>({})
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isRolesOpen, setIsRolesOpen] = useState(false)
+  const [isLevelOpen, setIsLevelOpen] = useState(false)
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
   const rolesDropdownRef = useRef<HTMLDivElement>(null)
+  const levelDropdownRef = useRef<HTMLDivElement>(null)
   const categoriesDropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (user) {
-      // Ensure unique roles and filter out any null/undefined values
-      const initialRole = Array.isArray(user.role)
-        ? [...new Map(user.role.filter((r) => r && r._id).map((r) => [r._id, r])).values()]
-        : user.role && user.role._id
-          ? [user.role]
-          : []
-
-      // Ensure unique categories
-      const initialCategories = Array.isArray(user.categories)
-        ? [...new Map(user.categories.map((c) => [c._id, c])).values()]
-        : []
-
-      setEdited({
-        first_name: user.first_name,
-        level: user.level,
-        role: initialRole,
-        categories: initialCategories,
-        profile_img: user.profile_img,
-      })
-      setImagePreview(user.profile_img || null)
-    }
-  }, [user])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (rolesDropdownRef.current && !rolesDropdownRef.current.contains(event.target as Node)) {
-        setIsRolesOpen(false)
+        setIsRolesOpen(false);
+      }
+      if (levelDropdownRef.current && !levelDropdownRef.current.contains(event.target as Node)) {
+        setIsLevelOpen(false);
       }
       if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target as Node)) {
-        setIsCategoriesOpen(false)
+        setIsCategoriesOpen(false);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [])
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-        setEdited({ ...edited, profile_img: reader.result as string })
-      }
-      reader.readAsDataURL(file)
+  useEffect(() => {
+    if (selectedUser) {
+      const initialRole = Array.isArray(selectedUser.role)
+        ? [...new Map(selectedUser.role.filter((r) => r && r._id).map((r) => [r._id, r])).values()]
+        : selectedUser.role && selectedUser.role._id
+          ? [selectedUser.role]
+          : []
+
+      const initialCategories = Array.isArray(selectedUser.categories)
+        ? [...new Map(selectedUser.categories.map((c) => [c._id, c])).values()]
+        : []
+
+      setEdited({
+        first_name: selectedUser.first_name,
+        level: selectedUser.level,
+        role: initialRole,
+        categories: initialCategories,
+        profile_img: selectedUser.profile_img,
+      })
+      setImagePreview(selectedUser.profile_img || null)
     }
-  }
+  }, [selectedUser])
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleClose = () => {
-    setEdited({})
-    setImagePreview(null)
-    setIsRolesOpen(false)
-    setIsCategoriesOpen(false)
-    onClose()
-  }
-
-  const handleRoleChange = (role: Role, isChecked: boolean) => {
-    setEdited((prev) => {
-      const currentRoles: Role[] = Array.isArray(prev.role) ? prev.role : []
-      // Remove any existing role with the same ID before adding
-      const filteredRoles = currentRoles.filter((r) => r._id !== role._id)
-      const updatedRoles = isChecked ? [...filteredRoles, role] : filteredRoles
-      return { ...prev, role: updatedRoles }
-    })
-  }
-
-  const handleCategoryChange = (category: Category, isChecked: boolean) => {
-    setEdited((prev) => {
-      const currentCategories: Category[] = Array.isArray(prev.categories) ? prev.categories : []
-      // Remove any existing category with the same ID before adding
-      const filteredCategories = currentCategories.filter((c) => c._id !== category._id)
-      const updatedCategories = isChecked ? [...filteredCategories, category] : filteredCategories
-      return { ...prev, categories: updatedCategories }
-    })
-  }
-
-  const handleSave = async () => {
-    try {
-      if (!user?._id) {
-        throw new Error("User ID is required")
-      }
-      setIsSaving(true)
-
-      const formData = new FormData()
-
-      formData.append("first_name", edited.first_name || "")
-      const levelId = typeof edited.level === "object" && edited.level !== null ? edited.level.name : edited.level
-      formData.append("level", levelId || "")
-
-      // Append each category ID as categories[]
-      if (Array.isArray(edited.categories)) {
-        edited.categories.forEach((category: Category) => {
-          if (category._id) {
-            formData.append("categories[]", category._id)
-          }
-        })
-      }
-
-      // Append each role ID as role[]
-      if (Array.isArray(edited.role)) {
-        edited.role.forEach((role: Role) => {
-          if (role._id) {
-            formData.append("role[]", role._id)
-          }
-        })
-      }
-
-      onSave(edited)
-    } catch (error) {
-      console.error("Error saving user:", error)
-      toast.error("Failed to update user")
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-lg p-0">
-        <DialogHeader className="p-6 pb-2">
-          <DialogTitle className="text-xl font-semibold">Edit User</DialogTitle>
-        </DialogHeader>
-
-        <ScrollArea className="max-h-[80vh]">
-          <div className="p-6 pt-2 space-y-6">
-            {/* Profile Section */}
-            <div className="flex flex-col items-center gap-3">
-              <div className="relative">
-                <Avatar className="h-24 w-24 border-2 border-muted">
-                  <AvatarImage src={imagePreview || user?.profile_img || "/placeholder.svg"} alt="User avatar" />
-                  <AvatarFallback>{user?.first_name?.slice(0, 2).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full shadow-md"
-                  onClick={triggerFileInput}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                  <KeenIcon icon="pencil" className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">Click the pencil icon to change profile image</p>
-            </div>
-
-            <Separator />
-
-            {/* Editable Fields */}
-            <div>
-              <h3 className="text-sm font-medium mb-3">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Name</label>
-                  <Input
-                    value={edited.first_name || ""}
-                    onChange={(e) => setEdited({ ...edited, first_name: e.target.value })}
-                    placeholder="Enter name"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Level</label>
-                  <Select
-                    value={
-                      typeof edited.level === "object" && edited.level !== null
-                        ? edited.level._id
-                        : typeof user?.level === "object" && user?.level !== null
-                          ? user.level._id
-                          : String(user?.level || edited.level)
-                    }
-                    onValueChange={(value) => {
-                      const selectedLevel = dropdownData.levelList.find((l: Level) => l._id === value)
-                      setEdited({ ...edited, level: selectedLevel || value })
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dropdownData.levelList.map((level: Level) => (
-                        <SelectItem key={level._id} value={level._id}>
-                          {level.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Roles Section */}
-            <div>
-              <h3 className="text-sm font-medium mb-3">Roles & Categories</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2" ref={rolesDropdownRef}>
-                  <label className="text-sm font-medium">Roles</label>
-                  <div className="relative">
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left h-auto min-h-10 py-2"
-                      onClick={() => setIsRolesOpen(!isRolesOpen)}
-                    >
-                      {Array.isArray(edited.role) && edited.role.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {edited.role.map((r: Role) => (
-                            <Badge key={r._id} variant="default" className="text-xs">
-                              {r.role_name}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">Select roles</span>
-                      )}
-                    </Button>
-
-                    {isRolesOpen && (
-                      <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
-                        <ScrollArea className="h-[200px]">
-                          <div className="p-2 space-y-1">
-                            {dropdownData.roles.map((role: Role) => {
-                              const isChecked = Array.isArray(edited.role)
-                                ? edited.role.some((r: Role) => r._id === role._id)
-                                : false
-
-                              return (
-                                <div
-                                  key={role._id}
-                                  className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
-                                  onClick={() => handleRoleChange(role, !isChecked)}
-                                >
-                                  <Checkbox
-                                    id={`role-${role._id}`}
-                                    checked={isChecked}
-                                    onCheckedChange={(checked) => {
-                                      handleRoleChange(role, checked as boolean)
-                                    }}
-                                  />
-                                  <label htmlFor={`role-${role._id}`} className="text-sm cursor-pointer flex-1">
-                                    {role.role_name}
-                                  </label>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </ScrollArea>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2" ref={categoriesDropdownRef}>
-                  <label className="text-sm font-medium">Categories</label>
-                  <div className="relative">
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left h-auto min-h-10 py-2"
-                      onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                    >
-                      {Array.isArray(edited.categories) && edited.categories.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {edited.categories.map((c: Category) => (
-                            <Badge key={c._id} variant="outline" className="text-xs">
-                              {c.title}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">Select categories</span>
-                      )}
-                    </Button>
-
-                    {isCategoriesOpen && (
-                      <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
-                        <ScrollArea className="h-[200px]">
-                          <div className="p-2 space-y-1">
-                            {dropdownData.categories.map((category: Category) => {
-                              const isChecked = Array.isArray(edited.categories)
-                                ? edited.categories.some((c: Category) => c._id === category._id)
-                                : false
-
-                              return (
-                                <div
-                                  key={category._id}
-                                  className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
-                                  onClick={() => handleCategoryChange(category, !isChecked)}
-                                >
-                                  <Checkbox
-                                    id={`category-${category._id}`}
-                                    checked={isChecked}
-                                    onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
-                                  />
-                                  <label htmlFor={`category-${category._id}`} className="text-sm cursor-pointer flex-1">
-                                    {category.title}
-                                  </label>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </ScrollArea>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Non-editable Info */}
-            <div>
-              <h3 className="text-sm font-medium mb-3">Account Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Email</label>
-                  <div className="text-sm p-2 bg-muted rounded-md">{user?.email || "N/A"}</div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Status</label>
-                  <div className="text-sm p-2">
-                    <Badge variant={user?.status ? "default" : "destructive"} className="text-xs">
-                      {user?.status ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Created At</label>
-                  <div className="text-sm p-2 bg-muted rounded-md">
-                    {user?.createdAt ? new Date(user.createdAt).toLocaleString() : "N/A"}
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Updated At</label>
-                  <div className="text-sm p-2 bg-muted rounded-md">
-                    {user?.updatedAt ? new Date(user.updatedAt).toLocaleString() : "N/A"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ScrollArea>
-
-        {/* Footer */}
-        <DialogFooter className="p-4 border-t">
-          <Button variant="outline" onClick={handleClose} disabled={isSaving}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export default function AdminUsersPage() {
-  const { dropdownData } = useMasterDropdown()
-  const [users, setUsers] = useState<ExtendedUser[]>([])
-  const [sortColumn, setSortColumn] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [editingUser, setEditingUser] = useState<ExtendedUser | null>(null)
-
-  // Centralized dialog management
-  const [adminDialog, setAdminDialog] = useState<{ isOpen: boolean; user: ExtendedUser | null }>({
-    isOpen: false,
-    user: null,
-  })
-
-  const [deactivateDialog, setDeactivateDialog] = useState<{ isOpen: boolean; user: ExtendedUser | null }>({
-    isOpen: false,
-    user: null,
-  })
-
-  const navigate = useNavigate()
-
+  // Fetch users data
   useEffect(() => {
     getAllUsers().then((res) => {
       if (res?.success && Array.isArray(res.data)) {
@@ -659,202 +372,519 @@ export default function AdminUsersPage() {
             status: user.status || false,
             profile_img: user.profile_img || "",
             role: user.role || "N/A",
-          })),
-        )
+          }))
+        );
       }
-    })
-  }, [])
-
-  const handleDeactivateUser = async (user: ExtendedUser) => {
-    setDeactivateDialog({ isOpen: true, user })
-  }
-
-  const confirmDeactivateUser = async () => {
-    if (deactivateDialog.user?._id) {
-      try {
-        const response = await deactiveateUser(deactivateDialog.user._id)
-        if (response && response.data && response.data.success) {
-          toast.success("User status changed successfully")
-          setUsers((prev) => prev.map((u) => (u._id === deactivateDialog.user?._id ? { ...u, status: !u.status } : u)))
-        } else {
-          toast.error("Failed to change user status")
-        }
-      } catch (error) {
-        toast.error("Failed to change user status")
-      } finally {
-        setDeactivateDialog({ isOpen: false, user: null })
-      }
-    }
-  }
-
-  const handleMakeAdmin = (user: ExtendedUser) => {
-    setAdminDialog({ isOpen: true, user })
-  }
-
-  const confirmMakeAdmin = async () => {
-    if (adminDialog.user?._id) {
-      try {
-        const response = await Makeandremoveadmin(adminDialog.user._id)
-        if (response?.status === 200) {
-          toast.success("User role changed successfully")
-          // Refresh the page to get updated user data
-          navigate("/admin/allUsers")
-        } else {
-          toast.error("Failed to update user role")
-        }
-      } catch (error) {
-        toast.error("Failed to update user role")
-      } finally {
-        setAdminDialog({ isOpen: false, user: null })
-      }
-    }
-  }
-
-  const getSortedAndFilteredUsers = () => {
-    let result = [...users]
+    });
+  }, []);
+  // Filter users based on search query
+  const getFilteredUsers = () => {
+    let result = [...users];
     if (searchQuery) {
       result = result.filter((user) =>
         [user.first_name, user.email, formatRole(user.role), user.level].some((field) =>
-          String(field || "")
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()),
-        ),
-      )
+          String(field || "").toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
     }
-    if (sortColumn) {
-      result.sort((a, b) => {
-        let aValue, bValue
-        if (sortColumn === "role") {
-          aValue = formatRole(a.role)
-          bValue = formatRole(b.role)
-        } else if (sortColumn === "level") {
-          aValue = formatLevel(a.level)
-          bValue = formatLevel(b.level)
-        } else {
-          aValue = a[sortColumn as keyof ExtendedUser]
-          bValue = b[sortColumn as keyof ExtendedUser]
-        }
-        return sortDirection === "asc"
-          ? String(aValue).localeCompare(String(bValue))
-          : String(bValue).localeCompare(String(aValue))
-      })
-    }
-    return result
-  }
+    return result;
+  };
 
-  const handleSave = async (editedData: Partial<ExtendedUser>) => {
-    if (!editingUser) return
-    try {
-      const userId = editingUser._id
-      if (!userId) throw new Error("User ID is required")
-      const formData = new FormData()
-      formData.append("first_name", editedData.first_name || "")
-      const levelId =
-        typeof editedData.level === "object" && editedData.level !== null ? editedData.level._id : editedData.level
-      formData.append("level", levelId || "")
-      if (Array.isArray(editedData.categories))
-        editedData.categories.forEach((c: Category) => c._id && formData.append("categories[]", c._id))
-      if (Array.isArray(editedData.role))
-        editedData.role.forEach((r: Role) => r._id && formData.append("role[]", r._id))
-      if (editedData.profile_img) {
-        formData.append("profile_img", editedData.profile_img)
+  // Handle user deactivation
+  const handleDeactivateUser = (user: ExtendedUser) => {
+    setSelectedUser(user);
+    deactivateDialogRef.current?.showModal();
+  };
+  const confirmDeactivateUser = async () => {
+    if (selectedUser?._id) {
+      try {
+        const response = await deactiveateUser(selectedUser._id);
+        if (response && response.data && response.data.success) {
+          // Update the local state with all user data, not just the status
+          setUsers((prev) => prev.map((u) => {
+            if (u._id === selectedUser._id) {
+              return {
+                ...u,
+                status: !u.status,
+                ...response.data.user // Merge any additional updated fields from response
+              };
+            }
+            return u;
+          }));
+          toast.success("User status changed successfully", {position:"top-center"});
+        } else {
+          toast.error("Failed to change user status", {position:"top-center"});
+        }
+      } catch (error) {
+        toast.error("Failed to change user status", {position:"top-center"});
+      } finally {
+        deactivateDialogRef.current?.close();
+        setSelectedUser(null); // Reset selected user
       }
-      const response = await updateUser(userId, formData)
+    }
+  };
+  // Handle admin role assignment
+  const handleMakeAdmin = (user: ExtendedUser) => {
+    setSelectedUser(user);
+    // Ensure dropdownData is loaded
+    if (!dropdownData?.roles?.length) {
+      refreshDropdownData();
+    }
+    adminDialogRef.current?.showModal();
+  };
+  const confirmMakeAdmin = async () => {
+    if (selectedUser?._id) {
+      try {
+        const response = await Makeandremoveadmin(selectedUser._id);
+        if (response?.status === 200 && response.data) {
+          // Try to get role data from the response
+          if (response.data.user?.role) {
+            setUsers((prev) => prev.map((user) => 
+              user._id === selectedUser._id ? { ...user, role: response.data.user.role } : user
+            ));
+          } else {
+            // Fallback to local update
+            const isCurrentlyAdmin = Array.isArray(selectedUser.role)
+              ? selectedUser.role.some((r: Role) => r.role_name === "ADMIN")
+              : typeof selectedUser.role === "object" && selectedUser.role?.role_name === "ADMIN";
+
+            const adminRole = dropdownData?.roles?.find((role: Role) => role.role_name === "ADMIN") || {
+              _id: "admin",
+              role_name: "ADMIN",
+              permissions: [],
+              status: "active",
+              createdAt: new Date().toISOString()
+            };
+
+            setUsers((prev) => prev.map((user) => {
+              if (user._id === selectedUser._id) {
+                const currentRoles = Array.isArray(user.role) ? user.role : [user.role].filter(Boolean);
+                return {
+                  ...user,
+                  role: isCurrentlyAdmin 
+                    ? currentRoles.filter((r: Role) => r.role_name !== "ADMIN")
+                    : [...currentRoles, adminRole]
+                };
+              }
+              return user;
+            }));
+          }
+          toast.success("User role changed successfully", {position: "top-center"});
+        } else {
+          toast.error("Failed to update user role", {position: "top-center"});
+        }
+      } catch (error) {
+        toast.error("Failed to update user role", {position: "top-center"});
+        console.error("Error updating admin role:", error);
+      } finally {
+        adminDialogRef.current?.close();
+        setSelectedUser(null);
+      }
+    }
+  };
+
+  // Handle user data saving
+  const handleSaveUser = async () => {
+    if (!selectedUser) return;
+    try {
+      setIsSaving(true);
+      const userId = selectedUser._id;
+      if (!userId) throw new Error("User ID is required");
+      
+      const formData = new FormData();
+      formData.append("first_name", edited.first_name || "");
+      
+      // Only send the level name, not the level object
+      const levelName = typeof edited.level === "object" && edited.level !== null 
+        ? edited.level.name 
+        : edited.level || "";
+      formData.append("level", levelName);
+
+      const response = await updateUser(userId, formData);
+      console.log("Response from updateUser:", response);
+      
       if (response && response.success) {
-        setUsers((prevUsers) => prevUsers.map((user) => (user._id === userId ? { ...user, ...editedData } : user)))
-        toast.success("User updated successfully")
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId
+              ? { ...user, ...response.data }
+              : user
+          )
+        );
+        
+        toast.success("User updated successfully", { position: "top-center" });
+        editDialogRef.current?.close();
+        setSelectedUser(null);
+        setEdited({});
       } else {
-        toast.error("Failed to update user")
+        toast.error("Failed to update user", { position: "top-center" });
       }
     } catch (error) {
-      console.error("Error saving user:", error)
-      toast.error("Failed to update user")
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user", { position: "top-center" });
     } finally {
-      setEditingUser(null)
+      setIsSaving(false);
     }
-  }
+  };
+
+  const closeEditDialog = () => {
+    editDialogRef.current?.close();
+    setSelectedUser(null);
+    setEdited({});
+    setImagePreview(null);
+    setIsRolesOpen(false);
+    setIsLevelOpen(false);
+    setIsCategoriesOpen(false);
+  };
+
+  useEffect(() => {
+    // Handle click outside for dialogs
+    const handleDialogClick = (e: MouseEvent) => {
+      const target = e.target as HTMLDialogElement;
+      if (target.tagName.toLowerCase() === 'dialog') {
+        target.close();
+      }
+    };
+
+    const dialogs = document.querySelectorAll<HTMLDialogElement>('dialog');
+    dialogs.forEach(dialog => {
+      dialog.addEventListener('click', handleDialogClick);
+    });
+
+    return () => {
+      dialogs.forEach(dialog => {
+        dialog.removeEventListener('click', handleDialogClick);
+      });
+    };
+  }, []);
 
   return (
     <div className="space-y-4 p-6">
       <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <UserTable
-        users={getSortedAndFilteredUsers()}
-        sortColumn={sortColumn}
-        sortDirection={sortDirection}
-        onSort={(col) => {
-          if (col === sortColumn) setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-          else {
-            setSortColumn(col)
-            setSortDirection("asc")
-          }
+        users={getFilteredUsers()}
+        onEdit={(user) => {
+          setSelectedUser(user);
+          editDialogRef.current?.showModal();
         }}
-        onEdit={setEditingUser}
         onDeactivate={handleDeactivateUser}
         onMakeAdmin={handleMakeAdmin}
       />
 
-      <EditUserDialog
-        user={editingUser}
-        isOpen={!!editingUser}
-        onClose={() => setEditingUser(null)}
-        onSave={handleSave}
-      />
-
       {/* Admin Role Dialog */}
-      <Dialog open={adminDialog.isOpen} onOpenChange={(open) => !open && setAdminDialog({ isOpen: false, user: null })}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
-          </DialogHeader>
-          <p>
-            {Array.isArray(adminDialog.user?.role)
-              ? adminDialog.user?.role.some((r) => r && typeof r === "object" && r.role_name === "ADMIN")
-                ? `Are you sure you want to remove ${adminDialog.user?.first_name} as admin?`
-                : `Are you sure you want to make ${adminDialog.user?.first_name} an admin?`
-              : typeof adminDialog.user?.role === "object" && adminDialog.user?.role?.role_name === "ADMIN"
-                ? `Are you sure you want to remove ${adminDialog.user?.first_name} as admin?`
-                : `Are you sure you want to make ${adminDialog.user?.first_name} an admin?`}
+      <dialog ref={adminDialogRef} className={`${dialogStyles.base} ${dialogStyles.width.default} ${dialogStyles.backdrop}`}>
+        <div className="p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">Confirm Action</h2>
+          </div>
+          <p className="mb-4">
+            {Array.isArray(selectedUser?.role)
+              ? selectedUser?.role.some((r) => r && typeof r === "object" && r.role_name === "ADMIN")
+                ? `Are you sure you want to remove ${selectedUser?.first_name} as admin?`
+                : `Are you sure you want to make ${selectedUser?.first_name} an admin?`
+              : typeof selectedUser?.role === "object" && selectedUser?.role?.role_name === "ADMIN"
+                ? `Are you sure you want to remove ${selectedUser?.first_name} as admin?`
+                : `Are you sure you want to make ${selectedUser?.first_name} an admin?`}
           </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAdminDialog({ isOpen: false, user: null })}>
-              Cancel
-            </Button>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => adminDialogRef.current?.close()}>Cancel</Button>
             <Button onClick={confirmMakeAdmin}>
-              {Array.isArray(adminDialog.user?.role)
-                ? adminDialog.user?.role.some((r) => r && typeof r === "object" && r.role_name === "ADMIN")
+              {Array.isArray(selectedUser?.role)
+                ? selectedUser?.role.some((r) => r && typeof r === "object" && r.role_name === "ADMIN")
                   ? "Remove Admin"
                   : "Make Admin"
-                : typeof adminDialog.user?.role === "object" && adminDialog.user?.role?.role_name === "ADMIN"
+                : typeof selectedUser?.role === "object" && selectedUser?.role?.role_name === "ADMIN"
                   ? "Remove Admin"
                   : "Make Admin"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+      </dialog>
 
       {/* Deactivate User Dialog */}
-      <Dialog
-        open={deactivateDialog.isOpen}
-        onOpenChange={(open) => !open && setDeactivateDialog({ isOpen: false, user: null })}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{deactivateDialog.user?.status ? "Deactivate User" : "Activate User"}</DialogTitle>
-          </DialogHeader>
-          <p>
-            Are you sure you want to {deactivateDialog.user?.status ? "deactivate" : "activate"}{" "}
-            {deactivateDialog.user?.first_name}?
+      <dialog ref={deactivateDialogRef} className={`${dialogStyles.base} ${dialogStyles.width.default} ${dialogStyles.backdrop}`}>
+        <div className="p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">
+              {selectedUser?.status ? "Deactivate User" : "Activate User"}
+            </h2>
+          </div>
+          <p className="mb-4">
+            Are you sure you want to {selectedUser?.status ? "deactivate" : "activate"} {selectedUser?.first_name}?
           </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeactivateDialog({ isOpen: false, user: null })}>
-              Cancel
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => deactivateDialogRef.current?.close()}>Cancel</Button>
+            <Button onClick={confirmDeactivateUser} variant={selectedUser?.status ? "destructive" : "default"}>
+              {selectedUser?.status ? "Deactivate" : "Activate"}
             </Button>
-            <Button onClick={confirmDeactivateUser} variant={deactivateDialog.user?.status ? "destructive" : "default"}>
-              {deactivateDialog.user?.status ? "Deactivate" : "Activate"}
+          </div>
+        </div>
+      </dialog>
+
+      {/* Edit User Dialog */}
+      <dialog ref={editDialogRef} className={`${dialogStyles.base} ${dialogStyles.width.large} ${dialogStyles.backdrop}`}>
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Edit User</h2>
+            <Button variant="ghost" size="icon" onClick={closeEditDialog}>
+              <X className="h-4 w-4" />
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+          {selectedUser && (
+            <div className="space-y-6">
+              {/* Profile Section */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative">
+                  <Avatar className="h-24 w-24 border-2 border-muted">
+                    <AvatarImage src={imagePreview || selectedUser?.profile_img || "/placeholder.svg"} alt="User avatar" />
+                    <AvatarFallback>{selectedUser?.first_name?.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+     
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Editable Fields */}
+              <div>
+                <h3 className="text-sm font-medium mb-3">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Name</label>
+                    <Input
+                      value={edited.first_name || ""}
+                      onChange={(e) => setEdited({ ...edited, first_name: e.target.value })}
+                      placeholder="Enter name"
+                    />
+                  </div>                  <div className="space-y-2" ref={levelDropdownRef}>
+                    <label className="text-sm font-medium">Level</label>
+                    <div className="relative">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left h-auto min-h-10 py-2"
+                        onClick={() => setIsLevelOpen(!isLevelOpen)}
+                      >                      {dropdownLoading ? (
+                          <span className="text-muted-foreground">Loading...</span>
+                        ) : typeof edited.level === "object" && edited.level?.name ? (
+                          <span>{edited.level.name}</span>
+                        ) : typeof edited.level === "string" && dropdownData?.levelList ? (
+                          <span>
+                            {dropdownData.levelList.find((level: Level) => level._id === edited.level)?.name || "Select level"}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">Select level</span>
+                        )}
+                      </Button>
+
+                      {isLevelOpen && (
+                        <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
+                          <ScrollArea className="h-fit max-h-[200px]">
+                            <div className="p-2 space-y-1">
+                              {dropdownLoading ? (
+                                <div className="p-2 text-sm text-muted-foreground">Loading levels...</div>
+                              ) : dropdownError ? (
+                                <div className="p-2 text-sm text-destructive">Error loading levels</div>
+                              ) : dropdownData?.levelList && dropdownData.levelList.length > 0 ? (
+                                dropdownData.levelList.map((level: Level) => (
+                                  <div
+                                    key={level._id}
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
+                                    onClick={() => {
+                                      setEdited((prev) => ({ ...prev, level }));
+                                      setIsLevelOpen(false);
+                                    }}
+                                  >
+                                    <span className="text-sm flex-1">{level.name}</span>
+                                    {typeof edited.level === "object" && edited.level !== null && edited.level._id === level._id && (
+                                      <KeenIcon icon="check" className="h-4 w-4" />
+                                    )}
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="p-2 text-sm text-muted-foreground">No levels available</div>
+                              )}
+                            </div>
+                          </ScrollArea>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Roles Section */}
+              <div>
+                <h3 className="text-sm font-medium mb-3">Roles & Categories</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2" ref={rolesDropdownRef}>
+                    <label className="text-sm font-medium">Roles</label>
+                    <div className="relative">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left h-auto min-h-10 py-2"
+                        onClick={() => setIsRolesOpen(!isRolesOpen)}
+                      >
+                        {Array.isArray(edited.role) && edited.role.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {edited.role.map((r: Role) => (
+                              <Badge key={r._id} variant="default" className="text-xs">
+                                {r.role_name}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : typeof edited.role === "string" && dropdownData?.roles ? (
+                          <span>
+                            {dropdownData.roles.find((r: Role) => typeof edited.role === "string" && r._id === edited.role)?.role_name || "Select roles"}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">Select roles</span>
+                        )}
+                      </Button>
+
+                      {isRolesOpen && (
+                        <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
+                          <ScrollArea className="h-fit max-h-[200px]">
+                            <div className="p-2 space-y-1">
+                              {dropdownData.roles.map((role: Role) => {
+                                const isChecked = Array.isArray(edited.role)
+                                  ? edited.role.some((r: Role) => r._id === role._id)
+                                  : false;
+
+                                return (
+                                  <div
+                                    key={role._id}
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
+                                    onClick={() => handleRoleChange(role, !isChecked, setEdited)}
+                                  >
+                                    <Checkbox
+                                      id={`role-${role._id}`}
+                                      checked={isChecked}
+                                      onCheckedChange={(checked) => {
+                                        handleRoleChange(role, checked as boolean, setEdited);
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor={`role-${role._id}`}
+                                      className="text-sm cursor-pointer flex-1"
+                                    >
+                                      {role.role_name}
+                                    </label>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </ScrollArea>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2" ref={categoriesDropdownRef}>
+                    <label className="text-sm font-medium">Categories</label>
+                    <div className="relative">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left h-auto min-h-10 py-2"
+                        onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                      >
+                        {Array.isArray(edited.categories) && edited.categories.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {edited.categories.map((c: Category) => (
+                              <Badge key={c._id} variant="outline" className="text-xs">
+                                {c.title}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">Select categories</span>
+                        )}
+                      </Button>
+
+                      {isCategoriesOpen && (
+                        <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
+                          <ScrollArea className="h-[200px]">
+                            <div className="p-2 space-y-1">
+                              {dropdownData.categories.map((category: Category) => {
+                                const isChecked = Array.isArray(edited.categories)
+                                  ? edited.categories.some((c: Category) => c._id === category._id)
+                                  : false;
+
+                                return (
+                                  <div
+                                    key={category._id}
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-accent p-2 rounded-md"
+                                    onClick={() => handleCategoryChange(category, !isChecked, setEdited)}
+                                  >
+                                    <Checkbox
+                                      id={`category-${category._id}`}
+                                      checked={isChecked}
+                                      onCheckedChange={(checked) =>
+                                        handleCategoryChange(category, checked as boolean, setEdited)
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={`category-${category._id}`}
+                                      className="text-sm cursor-pointer flex-1"
+                                    >
+                                      {category.title}
+                                    </label>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </ScrollArea>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Non-editable Info */}
+              <div>
+                <h3 className="text-sm font-medium mb-3">Account Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Email</label>
+                    <div className="text-sm p-2 bg-muted rounded-md">{selectedUser?.email || "N/A"}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Status</label>
+                    <div className="text-sm p-2">
+                      <Badge variant={selectedUser?.status ? "default" : "destructive"} className="text-xs">
+                        {selectedUser?.status ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Created At</label>
+                    <div className="text-sm p-2 bg-muted rounded-md">
+                      {selectedUser?.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : "N/A"}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Updated At</label>
+                    <div className="text-sm p-2 bg-muted rounded-md">
+                      {selectedUser?.updatedAt ? new Date(selectedUser.updatedAt).toLocaleString() : "N/A"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end gap-2 pt-4 border-t">
+                <Button variant="outline" onClick={closeEditDialog}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveUser} disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </dialog>
     </div>
-  )
+  );
 }
+

@@ -329,7 +329,7 @@ export const Updatesupport = async (id: string, ) => {
 
 export const deleteAnnouncement = async (id: string) => {
   try {
-    const response = await axiosInstance.post(`/admin/announcements/delete/${id}`);
+    const response = await axiosInstance.get(`/admin/announcements/delete/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting announcement:', error);

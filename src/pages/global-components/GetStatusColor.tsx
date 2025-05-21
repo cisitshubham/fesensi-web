@@ -80,28 +80,28 @@ export function getPriorityBadge(priority: TicketPriority) {
       };
     case TicketPriority.Medium:
       return {
-        border: "border-amber-200",
+        border: "border-amber-400",
         color: "bg-amber-100 text-amber-600 border-amber-200",
         hex: "#FCD34D", // amber-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     case TicketPriority.High:
       return {
-        border: "border-orange-200",
+        border: "border-orange-400",
         color: "bg-orange-100 text-orange-600 border-orange-200",
         hex: "#FDBA74", // orange-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     case TicketPriority.Critical:
       return {
-        border: "border-red-200",
+        border: "border-red-400",
         color: "bg-red-100 text-red-600 border-red-200",
         hex: "#FCA5A5", // red-500
         icon: <Clock className="w-3 h-3 mr-1" />,
       };
     default:
       return {
-        border: "border-gray-200",
+        border: "border-gray-400",
         color: "bg-gray-100 text-gray-600 border-gray-200",
         hex: "#6B7280", // gray-500
         icon: null,

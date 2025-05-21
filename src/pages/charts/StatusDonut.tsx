@@ -1,12 +1,13 @@
 import ReactApexChart from "react-apexcharts";
 import React from "react";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getStatusBadge } from "../global-components/GetStatusColor";
 import { TicketStatus } from "@/types";
 
 const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
   const getColorFromStatus = (status: TicketStatus) => {
     const badge = getStatusBadge(status);
+    console.log(series, labels);
     return badge.hex;
   };
 

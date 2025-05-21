@@ -17,7 +17,11 @@ export default function SupportPageAgent() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
     e.preventDefault();
-  
+    console.log("Form submitted", formData.get("phone") );
+    console.log("Form submitted",  formData.get("issue"));
+    console.log("Form submitted",  formData.get("date") );
+    console.log("Form submitted", formData.get("time") );
+    console.log("Form submitted",formData.get("email"));
 
     const responce = await CreateSupport(formData);
     if (responce.success == true) {
