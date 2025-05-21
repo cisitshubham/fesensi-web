@@ -113,18 +113,6 @@ function UserTable({
   onDeactivate: (user: ExtendedUser) => void
   onMakeAdmin: (user: ExtendedUser) => void
 }) {
-  // Helper function to get role name safely
-  const getRoleName = (role: Role | string): string => {
-    if (typeof role === "string") return role;
-    return role?.role_name || "N/A";
-  };
-
-  // Helper function to get category title safely
-  const getCategoryTitle = (category: Category | string): string => {
-    if (typeof category === "string") return category;
-    return category?.title || "N/A";
-  };
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -151,39 +139,38 @@ function UserTable({
                 </div>
               </TableCell>
               <TableCell>{user.email}</TableCell>
+              <TableCell>{typeof user.level === "string" ? user.level : String(user.level)}</TableCell>
               <TableCell>
-                {typeof user.level === "object" ? user.level.name : user.level || "N/A"}
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {Array.isArray(user.role) ? (
-                    user.role.map((r, i) => (
-                      <span
-                        key={i}
-                        className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
-                      >
-                        {getRoleName(r)}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                      {getRoleName(user.role)}
+                {Array.isArray(user.role) ? (
+                  user.role.map((r, i) => (
+                    <span
+                      key={i}
+                      className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
+                    >
+                      {typeof r === "object" && r !== null ? r.role_name : String(r)}
                     </span>
-                  )}
-                </div>
+                  ))
+                ) : typeof user.role === "object" && user.role !== null ? (
+                  <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                    {user.role.role_name}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">N/A</span>
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {Array.isArray(user.categories) && user.categories.length > 0 ? (
-                    user.categories.map((category, i) => (
+                  {Array.isArray(user.categories) ? (
+                    user.categories.map((r, i) => (
                       <span
                         key={i}
                         className="inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 mr-1"
                       >
-                        {getCategoryTitle(category)}
+                        {typeof r === "object" && r !== null ? r.title : String(r)}
                       </span>
                     ))
-                  ) : (
+                  ) : null}
+                  {!Array.isArray(user.categories) && (
                     <span className="text-muted-foreground">N/A</span>
                   )}
                 </div>
@@ -493,35 +480,35 @@ export default function AdminUsersPage() {
       
       const formData = new FormData();
       formData.append("first_name", edited.first_name || "");
+      const levelId = typeof edited.level === "object" && edited.level !== null ? edited.level._id : edited.level;
+      formData.append("level", levelId || "");
       
-      // Only send the level name, not the level object
-      const levelName = typeof edited.level === "object" && edited.level !== null 
-        ? edited.level.name 
-        : edited.level || "";
-      formData.append("level", levelName);
-
+      if (Array.isArray(edited.categories)) {
+        edited.categories.forEach((c: Category) => c._id && formData.append("categories[]", c._id));
+      }
+      
+      if (Array.isArray(edited.role)) {
+        edited.role.forEach((r: Role) => r._id && formData.append("role[]", r._id));
+      }
+      
+      if (edited.profile_img) {
+        formData.append("profile_img", edited.profile_img);
+      }
+      
       const response = await updateUser(userId, formData);
       console.log("Response from updateUser:", response);
-      
       if (response && response.success) {
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user._id === userId
-              ? { ...user, ...response.data }
-              : user
-          )
-        );
-        
-        toast.success("User updated successfully", { position: "top-center" });
+        setUsers((prevUsers) => prevUsers.map((user) => (user._id === userId ? { ...user, ...edited } : user)));
+        toast.success("User updated successfully",{position:"top-center"});
         editDialogRef.current?.close();
         setSelectedUser(null);
         setEdited({});
       } else {
-        toast.error("Failed to update user", { position: "top-center" });
+        toast.error("Failed to update user", {position:"top-center"});
       }
     } catch (error) {
-      console.error("Error updating user:", error);
-      toast.error("Failed to update user", { position: "top-center" });
+      console.error("Error saving user:", error);
+      toast.error("Failed to update user", {position:"top-center"});
     } finally {
       setIsSaving(false);
     }
@@ -669,7 +656,7 @@ export default function AdminUsersPage() {
                           <span>{edited.level.name}</span>
                         ) : typeof edited.level === "string" && dropdownData?.levelList ? (
                           <span>
-                            {dropdownData.levelList.find((level: Level) => level._id === edited.level)?.name || "Select level"}
+                            {dropdownData.levelList.find((level: { _id: string | Level | undefined }) => level._id === edited.level)?.name || "Select level"}
                           </span>
                         ) : (
                           <span className="text-muted-foreground">Select level</span>
@@ -734,7 +721,7 @@ export default function AdminUsersPage() {
                           </div>
                         ) : typeof edited.role === "string" && dropdownData?.roles ? (
                           <span>
-                            {dropdownData.roles.find((r: Role) => typeof edited.role === "string" && r._id === edited.role)?.role_name || "Select roles"}
+                            {dropdownData.roles.find((r: { _id: Role | Role[] | undefined }) => r._id === edited.role)?.role_name || "Select roles"}
                           </span>
                         ) : (
                           <span className="text-muted-foreground">Select roles</span>
@@ -888,3 +875,17 @@ export default function AdminUsersPage() {
   );
 }
 
+// Create a separate EditUserForm component to handle the form logic
+function EditUserForm({ user, onSave }: { user: ExtendedUser; onSave: (data: Partial<ExtendedUser>) => void }) {
+  const { dropdownData } = useMasterDropdown();
+    const [edited, setEdited] = useState<Partial<ExtendedUser>>({
+      first_name: user.first_name,
+      level: user.level,
+      role: Array.isArray(user.role) ? user.role : [user.role],
+      categories: user.categories,
+      profile_img: user.profile_img,
+    });
+  
+    // Placeholder return to avoid syntax error; implement as needed
+    return null;
+  }

@@ -15,6 +15,7 @@ export default function TrustPgeAgent() {
                 setLoading(false);
                 setError(null);
                 setTrustLevel(response.data);
+                console.log("trustLevel", response.data);
             } else {
                 throw new Error(response.message || "Failed to fetch trust level");
             }

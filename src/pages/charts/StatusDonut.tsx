@@ -7,7 +7,6 @@ import { TicketStatus } from "@/types";
 const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
   const getColorFromStatus = (status: TicketStatus) => {
     const badge = getStatusBadge(status);
-    console.log(series, labels);
     return badge.hex;
   };
 

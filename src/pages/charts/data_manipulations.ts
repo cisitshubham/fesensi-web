@@ -40,7 +40,6 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
 
       // Ensure ticketsbyCategory has the required structure
       const ticketsbyCategory = fetchedData.TicketsByCategory;
-      console.log(fetchedData, 'ticketsbyCategory');
       return {
         statusData,
         statusLabels,
