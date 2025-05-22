@@ -55,13 +55,13 @@ const Signup = () => {
     initialValues,
     validationSchema: signupSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
-      setLoading(true);
       try {
-        if (!register) {
+        if (register) {
+          await register(values.first_name, values.email, values.password);
+          navigate(from, { replace: true });
+        } else {
           throw new Error('JWTProvider is required for this form.');
         }
-        await register(values.first_name, values.last_name, values.email, values.password);
-        navigate(from, { replace: true });
       } catch (error) {
         console.error(error);
         setStatus('The sign up details are incorrect');

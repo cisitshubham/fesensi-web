@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, Award, CheckCircle, Star, ThumbsUp, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
-
+import ReactSpeedometer from "react-d3-speedometer"
 // Custom progress bar component
 const CustomProgress = ({ value }: { value: number }) => (
   <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -98,45 +98,23 @@ export default function TrustPageAgent() {
     <div className="container mx-auto py-6 space-y-6 max-w-5xl">
       <div className="flex flex-col md:flex-row gap-6">
         <Card className="w-full md:w-1/3">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl">Trust Score</CardTitle>
-            <CardDescription>Agent's current trust rating</CardDescription>
+          <CardHeader className="">
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="relative w-40 h-40 flex items-center justify-center">
-                <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <circle
-                    className="text-gray-200"
-                    strokeWidth="10"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="40"
-                    cx="50"
-                    cy="50"
-                  />
-                  <circle
-                    className="text-green-500"
-                    strokeWidth="10"
-                    strokeDasharray={251.2}
-                    strokeDashoffset={251.2 - (251.2 * trustLevel.scoreOutOf100) / 100}
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="40"
-                    cx="50"
-                    cy="50"
-                  />
-                </svg>
-                <div className="absolute flex flex-col items-center">                  <span className="text-4xl font-bold">{trustLevel.scoreOutOf100 || 0}</span>
-                  <span className="text-sm text-gray-500">out of 100</span>
-                </div>
-              </div>
-              <Badge className={`text-lg py-1 px-4 ${getBadgeColor(trustLevel.level || 'low')}`}>
+                   <ReactSpeedometer
+                value={trustLevel.scoreOutOf100}
+                currentValueText={(trustLevel.scoreOutOf100 || 0).toFixed(0) }
+                needleHeightRatio={0.7}
+                minValue={0}
+                maxValue={trustLevel.maxNumber}
+                needleColor="black"
+                ringWidth={10}
+                />
+               
+              <Badge className={`text-lg  px-4 ${getBadgeColor(trustLevel.level || 'low')}`}>
                 <Award className="mr-1 h-4 w-4" />
-                {trustLevel.level || 'Not Rated'} Trust
+                {trustLevel.level || 'Not Rated'} 
               </Badge>
-            </div>
           </CardContent>
         </Card>
 

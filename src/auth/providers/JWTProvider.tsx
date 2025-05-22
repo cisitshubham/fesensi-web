@@ -33,7 +33,6 @@ interface AuthContextProps {
   loginWithGithub?: () => Promise<void>;
   register: (
     first_name: string,
-    last_name: string,
     email: string,
     password: string
   ) => Promise<void>;
@@ -97,18 +96,20 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const register = async (
     first_name: string,
-    last_name: string,
     email: string,
     password: string
   ) => {
+    const { data: auth } = await axios.post(REGISTER_URL, {
+      first_name,
+      email,
+      password,
+    });
+    console.log(auth);
+    console.log(first_name, email, password);
     try {
-      const { data: auth } = await axios.post(REGISTER_URL, {
-        first_name,
-        last_name,
-        email,
-        password
-      });
-    } catch (error) {
+      const formData = new FormData();
+    } 
+    catch (error) {
       saveAuth(undefined);
       throw new Error(`Error ${error}`);
     }
