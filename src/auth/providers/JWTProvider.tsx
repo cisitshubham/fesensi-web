@@ -82,8 +82,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         password
       });
       if (data?.token) {
-        localStorage.setItem('token', data.token);
-
+        sessionStorage.setItem('token', data.data.tokens.access_token);
+        
       }
       saveAuth(data.data.tokens);
       setCurrentUser(data.data.user);
