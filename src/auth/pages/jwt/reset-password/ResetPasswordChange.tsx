@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { useLayout } from '@/providers';
 import { AxiosError } from 'axios';
-import { updatepassword } from '@/api/api';
+import { Resetpassword, updatepassword } from '@/api/api';
 import { toast } from 'sonner';
 
 const passwordSchema = Yup.object().shape({
@@ -61,10 +61,10 @@ const ResetPasswordChange = () => {
 			}
 
 			try {
-				const response = await updatepassword(data);
+				const response = await Resetpassword(data);
 				const { success } = response?.data;
-				if (success) {
-					toast.success('Password updated successfully!', { position: "top-right", });
+				if (response.success) {
+					toast.success('Password updated successfully!', { position: "top-center", });
 					setLoading(false);
 					setSubmitting(false);
 					setHasErrors(false);

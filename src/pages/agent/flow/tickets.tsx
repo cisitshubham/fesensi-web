@@ -64,12 +64,9 @@ export default function Tickets() {
 
   const handlecloseTicket = async () => {
     try {
-      setLoading(true);
       const formData = new FormData();
       formData.append('ticket_id', ticketData._id as any);
       await closeTicket(formData); // Assuming this function is defined elsewhere
-      setLoading(false);
-      //   navigate('/')
       toast.success('Ticket closed successfully!', { position: 'top-center' });
       setTimeout(() => {
         navigate('/agent/mytickets'); // Redirect to the desired page after 3 seconds

@@ -83,10 +83,26 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       });
       if (data?.token) {
         localStorage.setItem('token', data.token);
-      
+
       }
       saveAuth(data.data.tokens);
       setCurrentUser(data.data.user);
+      sessionStorage.setItem('user', JSON.stringify(data.data.user));
+      sessionStorage.setItem('role', JSON.stringify(data.data.user.role));
+
+      if (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+        sessionStorage.setItem("selectedRole", 'ADMIN');
+      } else if (
+        data.data.user.role.length === 1 &&
+        (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
+          data.data.user.role.some((role: { role_name: string }) => role.role_name === 'USER'))
+      ) {
+        sessionStorage.setItem("selectedRole", data.data.user.role.map((role: { role_name: any }) => role.role_name));
+      } else if (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+        sessionStorage.setItem("selectedRole", 'AGENT');
+      }
+
+      console.log(sessionStorage);
       window.location.href = '/';
     } catch (error) {
       saveAuth(undefined);
@@ -108,7 +124,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     console.log(first_name, email, password);
     try {
       const formData = new FormData();
-    } 
+    }
     catch (error) {
       saveAuth(undefined);
       throw new Error(`Error ${error}`);
@@ -147,9 +163,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     saveAuth(undefined);
     setCurrentUser(undefined);
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('role');
-    localStorage.removeItem('selectedRoles');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('selectedRoles');
   };
 
   return (

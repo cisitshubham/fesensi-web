@@ -18,19 +18,19 @@ const statusConfig = [
     key: 'open',
     icon: 'arrows-circle',
     status: TicketStatus.Open,
-    link:'Mytickets(category{"OPEN"})'
+    link: 'Mytickets(category{"OPEN"})'
   },
   {
     key: 'inProgress',
     icon: 'watch',
     status: TicketStatus.InProgress,
-    link:'Mytickets(category{"IN-PROGRESS})'
+    link: 'Mytickets(category{"IN-PROGRESS})'
   },
   {
     key: 'resolved',
     icon: 'check-circle',
     status: TicketStatus.Resolved,
-    link:'Mytickets(category{"RESOLVED"})'
+    link: 'Mytickets(category{"RESOLVED"})'
   },
   {
     key: 'closed',
@@ -38,7 +38,7 @@ const statusConfig = [
     status: TicketStatus.Closed,
   },
 ] as const;
-const selectedrole = localStorage.getItem('selectedRole');
+const selectedrole = sessionStorage.getItem('selectedRole');
 
 export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
   return (
@@ -54,14 +54,14 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
             to={linkTo}
             state={{ status }}
           >
-            <Card className={clsx("p-2 flex flex-col justify-between aspect-square h-full  overflow-auto", badge.color, badge.border)}>
+            <Card onClick={() => console.log(sessionStorage)} className={clsx("p-2 flex flex-col justify-between aspect-square h-full  overflow-auto", badge.color, badge.border)}>
               <div className="flex items-center gap-2 mb-2 ">
                 <div
                   className={clsx(
                     'p-2  rounded-lg flex items-center justify-center aspect-square '
                   )}
                 >
-                  <KeenIcon icon={icon} className=""/>
+                  <KeenIcon icon={icon} className="" />
                 </div>
                 <h3 className="text-sm font-semibold">{status}</h3>
               </div>

@@ -43,6 +43,7 @@ export default function TrustPageAgent() {
         setLoading(false)
         setError(null)
         setTrustLevel(response.data)
+        console.log(response.data)
       } else {
         throw new Error(response.message || "Failed to fetch trust level")
       }

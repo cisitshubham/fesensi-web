@@ -193,7 +193,7 @@ function UserTable({
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => onEdit(user)}>Edit user</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600" onClick={() => onDeactivate(user)}>
+                    <DropdownMenuItem className="" onClick={() => onDeactivate(user)}>
                       {user.status ? "Deactivate user" : "Activate user"}
                     </DropdownMenuItem>
                     <DropdownMenuItem className="font-medium" onClick={() => onMakeAdmin(user)}>
@@ -216,25 +216,7 @@ function UserTable({
   )
 }
 
-const triggerFileInput = (ref: React.RefObject<HTMLInputElement>) => {
-  ref.current?.click();
-};
 
-const handleImageChange = (
-  e: React.ChangeEvent<HTMLInputElement>,
-  setImagePreview: (value: string | null) => void,
-  setEdited: (update: (prev: Partial<ExtendedUser>) => Partial<ExtendedUser>) => void
-) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-      setEdited((prev) => ({ ...prev, profile_img: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
-  }
-};
 
 const handleRoleChange = (
   role: Role,
@@ -279,7 +261,6 @@ export default function AdminUsersPage() {
   const deactivateDialogRef = useRef<HTMLDialogElement>(null);
   const editDialogRef = useRef<HTMLDialogElement>(null);
   const [selectedUser, setSelectedUser] = useState<ExtendedUser | null>(null);
-  const navigate = useNavigate();
   const { dropdownData, loading: dropdownLoading, error: dropdownError, refreshDropdownData } = useMasterDropdown();
   
   // Debug dropdownData
@@ -297,7 +278,6 @@ export default function AdminUsersPage() {
 
   const [edited, setEdited] = useState<Partial<ExtendedUser>>({})
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isRolesOpen, setIsRolesOpen] = useState(false)
   const [isLevelOpen, setIsLevelOpen] = useState(false)
@@ -324,7 +304,7 @@ export default function AdminUsersPage() {
   }, [])
 
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedUser && dropdownData?.levelList?.length) {
       const initialRole = Array.isArray(selectedUser.role)
         ? [...new Map(selectedUser.role.filter((r) => r && r._id).map((r) => [r._id, r])).values()]
         : selectedUser.role && selectedUser.role._id
@@ -335,16 +315,23 @@ export default function AdminUsersPage() {
         ? [...new Map(selectedUser.categories.map((c) => [c._id, c])).values()]
         : []
 
+      // Find the matching level object from dropdownData
+      const matchingLevel = dropdownData.levelList.find((l: Level) => 
+        typeof selectedUser.level === "string" 
+          ? l.name === selectedUser.level 
+          : selectedUser.level && typeof selectedUser.level === "object" && l._id === selectedUser.level._id
+      );
+
       setEdited({
         first_name: selectedUser.first_name,
-        level: selectedUser.level,
+        level: matchingLevel || selectedUser.level, // Use the matching level object if found
         role: initialRole,
         categories: initialCategories,
         profile_img: selectedUser.profile_img,
       })
       setImagePreview(selectedUser.profile_img || null)
     }
-  }, [selectedUser])
+  }, [selectedUser, dropdownData?.levelList]) // Add dropdownData.levelList as dependency
 
   // Fetch users data
   useEffect(() => {
@@ -480,7 +467,7 @@ export default function AdminUsersPage() {
       
       const formData = new FormData();
       formData.append("first_name", edited.first_name || "");
-      const levelId = typeof edited.level === "object" && edited.level !== null ? edited.level._id : edited.level;
+      const levelId = typeof edited.level === "object" && edited.level !== null ? edited.level.name : edited.level;
       formData.append("level", levelId || "");
       
       if (Array.isArray(edited.categories)) {
@@ -496,9 +483,20 @@ export default function AdminUsersPage() {
       }
       
       const response = await updateUser(userId, formData);
-      console.log("Response from updateUser:", response);
-      if (response && response.success) {
-        setUsers((prevUsers) => prevUsers.map((user) => (user._id === userId ? { ...user, ...edited } : user)));
+      console.log("Response from updateUser:", response);      if (response && response.success) {
+        setUsers((prevUsers) => prevUsers.map((user) => {
+          if (user._id === userId) {
+            // Convert edited data for table display
+            const updatedUser: ExtendedUser = {
+              ...user,
+              ...edited,
+              // Ensure level is either a string or Level object, defaulting to original value if undefined
+              level: levelId || user.level || "N/A"
+            };
+            return updatedUser;
+          }
+          return user;
+        }));
         toast.success("User updated successfully",{position:"top-center"});
         editDialogRef.current?.close();
         setSelectedUser(null);

@@ -287,8 +287,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/reassign" element={<CresteReassign />} />
           <Route path="/admin/feedback-options" element={<FeedbackOptions />} />
           <Route path="/admin/requested-reassignment/pending" element={<RequestedReassignmentAdminPending />} />
-          <Route path="/admin/requested-reassignment/denied" element={<RequestedReassignmentAdminApproved />} />
-          <Route path="/admin/requested-reassignment/approved" element={<RequestedReassignmentAdminDenied />} />
+          <Route path="/admin/requested-reassignment/approved" element={<RequestedReassignmentAdminApproved />} />
           <Route path="/admin/requested-reassign/:id" element={<ReasseignTicketsDetailAdmin />} />
           <Route path="/admin/priorities" element={<PrioritiesManagement />} />
           <Route path="/admin/support-list" element={<AdminSupportList />} />

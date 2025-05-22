@@ -162,7 +162,7 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
           {
 
             title: "Approved",
-            path: "/admin/requested-reassignment/denied"
+            path: "/admin/requested-reassignment/approved"
           }
         ]
       },

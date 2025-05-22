@@ -73,7 +73,7 @@ export function getPriorityBadge(priority: TicketPriority) {
   switch (priority) {
     case TicketPriority.Low:
       return {
-        border: "border-blue-200",
+        border: "border-blue-400",
         color: "bg-blue-100 text-blue-600 border-blue-200",
         hex: "#93C5FD", // blue-500
         icon: <Clock className="w-3 h-3 mr-1" />,

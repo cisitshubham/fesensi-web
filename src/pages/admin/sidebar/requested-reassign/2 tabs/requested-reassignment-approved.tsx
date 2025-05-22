@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { getApprovedReassignlist } from '@/api/admin';
 import { toast} from 'sonner';
+import { NoTicketsPage } from '@/errors/no-ticketspage';
 export default function RequestedReassignmentAdminApproved() {
   const [data, setData] = useState<Tickettype[]>([]);
 
@@ -89,9 +90,7 @@ export default function RequestedReassignmentAdminApproved() {
           );
         })
       ) : (
-        <div className="col-span-full text-center text-gray-500 py-8">
-          No approved reassignment tickets found.
-        </div>
+      <NoTicketsPage />
       )}
     </div>
   );

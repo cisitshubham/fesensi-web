@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { GetStatusColor, getPriorityColor } from '@/pages/global-components/GetStatusColor';
+import { GetStatusColor, getPriorityBadge, getPriorityColor, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import type { Tickettype } from '@/types';
 import { ticketIncomplete } from '@/api/api';
 import { toast } from 'sonner';
@@ -85,12 +85,12 @@ export default function IncompleteTicket() {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-sm text-muted-foreground">Ticket #{ticket._id}</div>
+                <div className="text-sm text-muted-foreground">Ticket #{ticket.ticket_number}</div>
                 <CardTitle className="text-2xl mt-1">{ticket.title}</CardTitle>
               </div>
               <div className="flex gap-2">
-                <Badge className={`bg-${GetStatusColor(ticket.status)}`}>{ticket.status}</Badge>
-                <Badge className={`bg-${getPriorityColor(ticket.priority)}`}>
+                <Badge className={`${getStatusBadge(ticket.status).color}`}>{ticket.status}</Badge>
+                <Badge className={`${getPriorityBadge(ticket.priority).color}`}>
                   {ticket.priority}
                 </Badge>
               </div>

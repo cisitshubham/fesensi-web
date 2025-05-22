@@ -44,6 +44,21 @@ export const updatepassword = async (formData:any) => {
   return null;
 };
 
+
+
+export const Resetpassword = async (formData: any) => {
+  try {
+    const response = await axiosInstance.post('/users/reset-password', formData);
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error updating password:', error);
+  }
+  return null;
+};
+
+
 export const dashaboardTicket = async () => {
   try {
     const response = await axiosInstance.get('/tickets/ticket-status');

@@ -85,7 +85,8 @@ export default function DashboardPage() {
       setSelectedRoles([]);
     } else {
       setSelectedRoles([role]);
-      localStorage.setItem('selectedRole', role);
+      sessionStorage.setItem('selectedRole', role);
+      console.log(sessionStorage)
     }
     console.log('Selected Roles:', selectedRoles);
   }, [selectedRoles]);
@@ -106,7 +107,7 @@ export default function DashboardPage() {
   const roles = user?.role || [];
 
   useEffect(() => {
-    const storedRoles = localStorage.getItem('selectedRoles');
+    const storedRoles = sessionStorage.getItem('selectedRoles');
 
     let parsedRoles: string[] = [];
     try {

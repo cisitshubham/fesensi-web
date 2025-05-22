@@ -82,7 +82,7 @@ export default function UserResolveTicket() {
 
       setTimeout(() => {
         navigate("/user/MyTickets");
-      }, 3000);
+      }, 1000);
     } catch (err) {
       console.error("Failed to submit feedback:", err);
       toast.error("Failed to submit feedback. Please try again.", { position: "top-center" });
