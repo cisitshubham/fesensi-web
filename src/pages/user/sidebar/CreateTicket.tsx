@@ -241,7 +241,7 @@ const UserCreateTicketForm = () => {
               {validationErrors.files && <Alert variant="danger">{validationErrors.files}</Alert>}
             </div>
             {/* Show selected files */}
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="mt-2 text-sm text-gray-600 flex flex-row gap-2">
               {files.map((file, index) => (
                 <div key={index} className="relative w-16 h-16">
                   <img

@@ -8,6 +8,7 @@ import { toAbsoluteUrl } from '@/utils';
 import { useAuthContext } from '@/auth';
 import { useLayout } from '@/providers';
 import { Alert } from '@/components';
+import { set } from 'date-fns';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -36,7 +37,7 @@ const Login = () => {
   const from = location.state?.from?.pathname || '/';
   const [showPassword, setShowPassword] = useState(false);
   const { currentLayout } = useLayout();
-
+  const [error, setError] = useState<string | null>(null);
   const formik = useFormik({
     initialValues,
     validationSchema: loginSchema,
@@ -47,14 +48,15 @@ const Login = () => {
           throw new Error('JWTProvider is required for this form.');
         }
 
-        await login(values.email, values.password);
+       const res= await login(values.email, values.password);
         if (values.remember) {
           localStorage.setItem('email', values.email);
         } else {
+
           localStorage.removeItem('email');
         }
         navigate(from, { replace: true });
-      } catch {
+      } catch(error) {
         setStatus('The login details are incorrect');
         setSubmitting(false);
       }

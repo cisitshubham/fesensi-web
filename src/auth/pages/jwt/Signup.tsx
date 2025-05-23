@@ -24,7 +24,7 @@ const signupSchema = Yup.object().shape({
   first_name: Yup.string()
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
-    .required('First Name is required'),
+    .required('User name is required'),
   last_name: Yup.string().optional().min(3, 'Minimum 3 symbols').max(50, 'Maximum 50 symbols'),
   email: Yup.string()
     .email('Wrong email format')
@@ -141,7 +141,7 @@ const Signup = () => {
         <div className="flex flex-col gap-1">
           <label className="input">
             <input
-              placeholder="First Name"
+              placeholder="User name "
               type="text"
               autoComplete="off"
               {...formik.getFieldProps('first_name')}

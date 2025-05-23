@@ -232,7 +232,7 @@ export default function Tickets() {
             }}
             className="block"
           >
-            <Button className="mt-6">Update Resoulation</Button>
+            <Button className="mt-6">View Issue</Button>
           </Link>
         )}
 

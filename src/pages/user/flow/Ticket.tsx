@@ -166,7 +166,7 @@ export default function UserTicketDetails() {
           </CardHeader>
           <CardContent className="p-4 bg-muted rounded-md">
             <p className="text-sm whitespace-pre-wrap">{ticket.latest_agent_comment.comment_text}</p>
-
+<div className="flex flex-row gap-2">
             {ticket.latest_agent_comment.attachments?.map((attachment:any, idx) => (
                 <img
                   key={idx}
@@ -175,6 +175,7 @@ export default function UserTicketDetails() {
                   className="w-32 h-32 object-cover border rounded-md"
                 />
             ))}
+            </div>
           </CardContent>
           <CardContent className="pt-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
