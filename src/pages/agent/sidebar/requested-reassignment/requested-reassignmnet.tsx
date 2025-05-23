@@ -30,13 +30,14 @@ useEffect(() => {
             {loading ? (
                 <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>
             ) : error ? (
-                <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>
-            ) : tickets.length === 0 ? (
+                <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>            ) : tickets.length === 0 ? (
                 <NoTicketsPage />
             ) : (
-                tickets.map((ticket) => (
-                    <Ticket key={ticket._id} ticket={ticket} />
-                ))
+                <div className="flex flex-col space-y-4">
+                    {tickets.map((ticket) => (
+                        <Ticket key={ticket._id} ticket={ticket} />
+                    ))}
+                </div>
             )}
-        </div>  
+        </div>
     )}
