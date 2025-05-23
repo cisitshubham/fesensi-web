@@ -1,14 +1,15 @@
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Fragment, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 import { useAuthContext } from '../../useAuthContext';
 import { toAbsoluteUrl } from '@/utils';
 import { Alert, KeenIcon } from '@/components';
 import { useLayout } from '@/providers';
-import { Dialog } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const initialValues = {
   first_name: '',
@@ -61,7 +62,6 @@ const Signup = () => {
           await register(values.first_name, values.email, values.password);
 
           setShowDialog(true); // Show the dialog
-          navigate(from, { replace: true });
         } else {
           throw new Error('JWTProvider is required for this form.');
         }
@@ -89,19 +89,27 @@ const Signup = () => {
   };
 
   return (
-    <div className=" max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
-            <Dialog open={showDialog}>
-        <div className="p-6">
-          <h2 className="text-lg font-bold">Signup Successful</h2>
+    <div className="max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className='p-4'>
+          <DialogTitle>Signup Successful</DialogTitle>
           <p className="mt-2">Your signup was successful. Waiting for admin approval.</p>
-          <button
-            className="btn btn-primary mt-4"
+          <div className="flex flex-row justify-between items-center mt-4">
+          <Button
+            className="w-fit "
             onClick={handleCloseDialog}
           >
             Close
-          </button>
-        </div>
+          </Button>
+          <Button className='w-fit'>
+            <Link to={from} className=" ">
+              Go to Login
+            </Link>
+          </Button>
+          </div>
+        </DialogContent>
       </Dialog>
+
       <form
         className="card-body flex flex-col gap-5 p-10"
         noValidate
