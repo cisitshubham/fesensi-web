@@ -1,7 +1,7 @@
 import { getReassignList } from "@/api/api"
 import { useEffect, useState } from "react"
 import { Tickettype } from "@/types"
-import Ticket from "../my-tickets/ticket-component"
+import Ticket from "./Ticket"
 import { NoTicketsPage } from '@/errors/no-ticketspage';
 export default function RequestedReassignment() {
     const [loading, setLoading] = useState(true)

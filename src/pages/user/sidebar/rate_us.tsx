@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { getPriorityBadge } from "@/pages/global-components/GetStatusColor"
+import { getPriorityBadge, getStatusBadge } from "@/pages/global-components/GetStatusColor"
 
 export default function RateUsUser() {
   const [feedback, setFeedback] = useState<any[]>([])
@@ -121,9 +121,14 @@ export default function RateUsUser() {
                   <CardTitle className="text-xs text-muted-foreground font-medium">
                     Ticket #{item.ticket_number}
                   </CardTitle>
+                  <div className="flex flex-row gap-2">
                   <Badge className={`${getPriorityBadge(item.priority).color}`}>
                     {item.priority}
                   </Badge>
+                  <Badge className={`${getStatusBadge(item.status).color}`}>
+                    {item.status}
+                  </Badge>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-4 flex flex-row justify-between">
