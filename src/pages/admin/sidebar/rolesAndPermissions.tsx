@@ -237,6 +237,11 @@ export default function RolesAndPermissions({
 	}, [initialSelectedPermissions, activeRoleId]);
 
 	const handleRoleChange = (roleId: string) => {
+		if (!masterdropdown.dropdownData || !masterdropdown.dropdownData.roles) {
+			console.error('Dropdown data or roles are null');
+			return;
+		}
+
 		const selectedRoleData = masterdropdown.dropdownData.roles.find(
 			(role: SelectedRole) => role._id === roleId
 		);
@@ -298,6 +303,9 @@ export default function RolesAndPermissions({
 		try {
 			await UpdatePermissions(formData);
 			toast.success('Permissions updated successfully');
+
+			// Set the real state to the updated state
+			setInitialSelectedPermissions(Object.keys(selectedPermissions).filter((key) => selectedPermissions[key]));
 			setHasChanges(false);
 			setRemovedPermissions([]);
 		} catch (error) {
@@ -334,35 +342,30 @@ export default function RolesAndPermissions({
 
 	const handleResetPermissions = () => {
 		if (!selectedRole) return;
+
+		// Reset to the permissions currently assigned to the selected role
 		const resetState = permissionsList.reduce((acc: Record<string, boolean>, p: Permission) => {
-			acc[p._id] = initialSelectedPermissions.includes(p._id);
+			acc[p._id] = selectedRole.permissions.includes(p._id);
 			return acc;
 		}, {});
+
 		setSelectedPermissions(resetState);
 		setRemovedPermissions([]);
 		setHasChanges(false);
 	};
 
-	const handleSelectAllPermissions = () => {
+
+
+
+	// Add a toggle function to switch between Select All and Deselect All
+	const handleToggleSelectAll = () => {
 		if (!activeRoleId) return;
 
 		const allPermissions = permissionsByRole[activeRoleId]?.map((p) => p._id) || [];
+		const areAllSelected = allPermissions.every((id) => selectedPermissions[id]);
+
 		const updatedPermissions = allPermissions.reduce((acc: Record<string, boolean>, id) => {
-			acc[id] = true;
-			return acc;
-		}, {});
-
-		setSelectedPermissions((prev) => ({ ...prev, ...updatedPermissions }));
-		setRemovedPermissions([]);
-		setHasChanges(true);
-	};
-
-	const handleDeselectAllPermissions = () => {
-		if (!activeRoleId) return;
-
-		const allPermissions = permissionsByRole[activeRoleId]?.map((p) => p._id) || [];
-		const updatedPermissions = allPermissions.reduce((acc: Record<string, boolean>, id) => {
-			acc[id] = false;
+			acc[id] = !areAllSelected; // Toggle selection state
 			return acc;
 		}, {});
 
@@ -422,13 +425,13 @@ export default function RolesAndPermissions({
 											)}
 										</CardTitle>
 										<div className="flex items-center gap-2">
-											<Button
+											{/* <Button
 												variant="outline"
 												onClick={handleResetPermissions}
 												disabled={!hasChanges}
 											>
 												Reset
-											</Button>
+											</Button> */}
 											<Button
 												variant="destructive"
 												onClick={handleDeletePermissions}
@@ -450,12 +453,13 @@ export default function RolesAndPermissions({
 											>
 												<Save className="h-4 w-4 mr-1" /> Add Permissions
 											</Button>
+									
 											<Button
 												variant="default"
-												onClick={handleDeselectAllPermissions}
+												onClick={handleToggleSelectAll}
 												disabled={!activeRoleId || filteredPermissions.length === 0}
 											>
-												Deselect All
+												{activeRoleId && permissionsByRole[activeRoleId]?.every((p) => selectedPermissions[p._id]) ? 'Deselect All' : 'Select All'}
 											</Button>
 										</div>
 									</div>
