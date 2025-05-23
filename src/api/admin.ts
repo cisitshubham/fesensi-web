@@ -268,7 +268,7 @@ export const updatePriorities = async (id: string, formData: FormData) => {
 
 export const getApprovedReassignlist = async () => {
   try {
-    const response = await axiosInstance.get('/admin/request/reassign/tickets/approve');
+    const response = await axiosInstance.get('/admin/request/reassign/tickets/approved');
     return response.data;
 
   }
@@ -277,6 +277,16 @@ export const getApprovedReassignlist = async () => {
   }
 }
 
+
+export const UpdateReassignOptions = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/reassignement/post/update/${id}`, formData);
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error updating reassign options:', error);
+  }
+}
 
 
 export const Makeandremoveadmin = async (id: String) => {

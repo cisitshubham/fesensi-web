@@ -1,4 +1,4 @@
-"use client"
++"use client"
 
 import { getTrustlevel } from "@/api/agent"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

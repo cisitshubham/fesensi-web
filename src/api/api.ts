@@ -278,7 +278,7 @@ export const getRoles = async () => {
 export const createCategories = async (formData: FormData) => {
   console.log('formData', formData.get('title'));
   try {
-    const response = await axiosInstance.post('/admin/categories/create', );
+    const response = await axiosInstance.post('/admin/categories/create',formData );
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);

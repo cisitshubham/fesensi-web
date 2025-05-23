@@ -24,14 +24,14 @@ import { updateFeedbackOptions } from "@/api/admin"
 
 export default function FeedbackOptions() {
   const { dropdownData } = useMasterDropdown()
-  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>(dropdownData.feedbackOptions || [])     
+  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>(dropdownData.feedbackOptions || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [editedOption, setEditedOption] = useState({ title: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [newOptionTitle, setNewOptionTitle] = useState("")
-  const navigate = useNavigate()  
+  const navigate = useNavigate()
   const filtered = feedbackOptions.filter((c: { title: string }) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const handleEdit = (index: number) => {
@@ -40,28 +40,31 @@ export default function FeedbackOptions() {
   }
 
   const handleSave = async () => {
-    if (!editedOption.title.trim()) return toast.error("Feedback option cannot be empty",{
-      position:"top-center"
+    if (!editedOption.title.trim()) return toast.error("Feedback option cannot be empty", {
+      position: "top-center"
     })
     setIsSubmitting(true)
-
     try {
       const formData = new FormData()
       formData.append("title", editedOption.title.trim())
       const response = await updateFeedbackOptions(editedOption._id, formData)
 
       if (response.success && editIndex !== null) {
-        const updated = [...feedbackOptions]
-        updated[editIndex].title = editedOption.title.trim()
-        setFeedbackOptions(updated)
+        const updatedOptions = [...feedbackOptions]
+        updatedOptions[editIndex] = { ...updatedOptions[editIndex], title: editedOption.title }
+        setFeedbackOptions(updatedOptions)
         setEditIndex(null)
-        toast.success("Feedback option updated successfully",{
-          position:"top-center"
+
+        setEditedOption({ title: "", _id: "" })
+        toast.success("Feedback option updated successfully", {
+          position: "top-center"
         })
+        navigate('/admin/feedback-options')
+
       }
     } catch {
-      toast.error("Failed to update feedback option",{
-        position:"top-center"
+      toast.error("Failed to update feedback option", {
+        position: "top-center"
       })
     } finally {
       setIsSubmitting(false)
@@ -73,8 +76,8 @@ export default function FeedbackOptions() {
   }
 
   const handleAddOptionSubmit = async () => {
-    if (!newOptionTitle.trim()) return toast.error("Feedback option cannot be empty",{
-      position:"top-center"
+    if (!newOptionTitle.trim()) return toast.error("Feedback option cannot be empty", {
+      position: "top-center"
     })
     setIsSubmitting(true)
 
@@ -84,15 +87,17 @@ export default function FeedbackOptions() {
       const response = await CreateFeedbackOptions(formData)
 
       if (response.success) {
-        toast.success("Feedback option added successfully",{
-          position:"top-center"
+        toast.success("Feedback option added successfully", {
+          position: "top-center"
         })
+        setFeedbackOptions((prev) => [...prev, { title: newOptionTitle, _id: response.data._id }])
+        setNewOptionTitle("")
         setShowAddDialog(false)
         navigate('/admin/feedback-options')
       }
     } catch {
-      toast.error("Failed to add feedback option",{
-        position:"top-center"
+      toast.error("Failed to add feedback option", {
+        position: "top-center"
       })
     } finally {
       setIsSubmitting(false)
@@ -194,13 +199,13 @@ export default function FeedbackOptions() {
                       <TableRow key={option._id} className="group hover:bg-slate-50">
                         <TableCell>
                           {isEditing ? (
-                            <Input 
-                              name="title" 
-                              value={editedOption.title} 
+                            <Input
+                              name="title"
+                              value={editedOption.title}
                               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedOption({ title: e.target.value, _id: editedOption._id })}
-                              autoFocus 
-                              className="max-w-md" 
-                              placeholder="Enter feedback option" 
+                              autoFocus
+                              className="max-w-md"
+                              placeholder="Enter feedback option"
                             />
                           ) : (
                             <div className="flex items-center gap-3">

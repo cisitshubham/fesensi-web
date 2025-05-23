@@ -87,7 +87,13 @@ export default function CategoryManagement() {
         toast.success("Category added successfully",{
           position:"top-center"
         })
+        const newCategory = {
+          _id: response.data._id,
+          title: newCategoryTitle.trim(),
+        }
+        setCategories(prev => [...prev, newCategory])
         setShowAddDialog(false)
+
         navigate('/admin/categories')
       }
     } catch {

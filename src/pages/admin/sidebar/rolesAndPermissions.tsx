@@ -343,6 +343,34 @@ export default function RolesAndPermissions({
 		setHasChanges(false);
 	};
 
+	const handleSelectAllPermissions = () => {
+		if (!activeRoleId) return;
+
+		const allPermissions = permissionsByRole[activeRoleId]?.map((p) => p._id) || [];
+		const updatedPermissions = allPermissions.reduce((acc: Record<string, boolean>, id) => {
+			acc[id] = true;
+			return acc;
+		}, {});
+
+		setSelectedPermissions((prev) => ({ ...prev, ...updatedPermissions }));
+		setRemovedPermissions([]);
+		setHasChanges(true);
+	};
+
+	const handleDeselectAllPermissions = () => {
+		if (!activeRoleId) return;
+
+		const allPermissions = permissionsByRole[activeRoleId]?.map((p) => p._id) || [];
+		const updatedPermissions = allPermissions.reduce((acc: Record<string, boolean>, id) => {
+			acc[id] = false;
+			return acc;
+		}, {});
+
+		setSelectedPermissions((prev) => ({ ...prev, ...updatedPermissions }));
+		setRemovedPermissions([]);
+		setHasChanges(true);
+	};
+
 	return (
 		<Fragment>
 			<PageNavbar />
@@ -421,6 +449,13 @@ export default function RolesAndPermissions({
 												}
 											>
 												<Save className="h-4 w-4 mr-1" /> Add Permissions
+											</Button>
+											<Button
+												variant="default"
+												onClick={handleDeselectAllPermissions}
+												disabled={!activeRoleId || filteredPermissions.length === 0}
+											>
+												Deselect All
 											</Button>
 										</div>
 									</div>

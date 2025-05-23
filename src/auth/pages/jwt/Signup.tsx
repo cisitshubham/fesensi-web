@@ -8,6 +8,7 @@ import { useAuthContext } from '../../useAuthContext';
 import { toAbsoluteUrl } from '@/utils';
 import { Alert, KeenIcon } from '@/components';
 import { useLayout } from '@/providers';
+import { Dialog } from '@/components/ui/dialog';
 
 const initialValues = {
   first_name: '',
@@ -45,11 +46,11 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuthContext();
   const navigate = useNavigate();
-  const location = useLocation();
   const from = '/auth/login';
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { currentLayout } = useLayout();
+  const [showDialog, setShowDialog] = useState(false);
 
   const formik = useFormik({
     initialValues,
@@ -58,6 +59,8 @@ const Signup = () => {
       try {
         if (register) {
           await register(values.first_name, values.email, values.password);
+
+          setShowDialog(true); // Show the dialog
           navigate(from, { replace: true });
         } else {
           throw new Error('JWTProvider is required for this form.');
@@ -81,8 +84,24 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+
   return (
     <div className=" max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
+            <Dialog open={showDialog}>
+        <div className="p-6">
+          <h2 className="text-lg font-bold">Signup Successful</h2>
+          <p className="mt-2">Your signup was successful. Waiting for admin approval.</p>
+          <button
+            className="btn btn-primary mt-4"
+            onClick={handleCloseDialog}
+          >
+            Close
+          </button>
+        </div>
+      </Dialog>
       <form
         className="card-body flex flex-col gap-5 p-10"
         noValidate
@@ -259,6 +278,7 @@ const Signup = () => {
         </Link></div>
     
       </form>
+
     </div>
   );
 };
