@@ -80,13 +80,14 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const { selectedRoles, setSelectedRoles } = useRole();
 
+  // Update handleRoleToggle to ensure roles are saved properly
   const handleRoleToggle = useCallback((role: string) => {
     if (selectedRoles.includes(role)) {
       setSelectedRoles([]);
+      sessionStorage.setItem('selectedRoles', JSON.stringify([]));
     } else {
       setSelectedRoles([role]);
-      sessionStorage.setItem('selectedRole', role);
-      console.log(sessionStorage)
+      sessionStorage.setItem('selectedRoles', JSON.stringify([role]));
     }
     console.log('Selected Roles:', selectedRoles);
   }, [selectedRoles]);
@@ -106,8 +107,10 @@ export default function DashboardPage() {
 
   const roles = user?.role || [];
 
+  // Update the logic to ensure selectedRoles are correctly saved and retrieved
   useEffect(() => {
     const storedRoles = sessionStorage.getItem('selectedRoles');
+    console.log('Stored Roles:', storedRoles);
 
     let parsedRoles: string[] = [];
     try {
@@ -120,16 +123,20 @@ export default function DashboardPage() {
       setSelectedRoles(parsedRoles);
     } else {
       // Run your fallback logic
-      if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+      if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+        setSelectedRoles(['AGENT']);
+        sessionStorage.setItem('selectedRoles', JSON.stringify(['AGENT']));
+      } else if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
         setSelectedRoles(['ADMIN']);
+        sessionStorage.setItem('selectedRoles', JSON.stringify(['ADMIN']));
       } else if (
         roles.length === 1 &&
         (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
           roles.some((role: { role_name: string }) => role.role_name === 'USER'))
       ) {
-        setSelectedRoles(roles.map((role: { role_name: any }) => role.role_name));
-      } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-        setSelectedRoles(['AGENT']);
+        const roleNames = roles.map((role: { role_name: any }) => role.role_name);
+        setSelectedRoles(roleNames);
+        sessionStorage.setItem('selectedRoles', JSON.stringify(roleNames));
       }
     }
   }, [roles]);
@@ -327,58 +334,58 @@ export default function DashboardPage() {
 
         <div className="flex flex-col lg:flex-row gap-6 ">
           {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
-          <div className="grid grid-cols-2 w-full lg:w-5/12  gap-4  ">
-            <TicketStatusCards ticketCounts={ticketCounts} />
-          </div>
+            <div className="grid grid-cols-2 w-full lg:w-5/12  gap-4  ">
+              <TicketStatusCards ticketCounts={ticketCounts} />
+            </div>
           )}
           {(selectedRoles.includes('CUSTOMER') && (
             <div className="flex flex-row justify-between lg:gap-4 gap-1 w-full">
               <TicketStatusCards ticketCounts={ticketCounts} />
             </div>
-            ))}
+          ))}
 
           <div className="w-full">
             {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
-            <TicketProgression
-              ticketStatusTotal={ticketStatusTotal}
-              ticketStatusTotalPercentage={ticketStatusTotalPercentage}
-              resolvedPercentage={percentages.resolvedPercentage}
-              inProgressPercentage={percentages.inProgressPercentage}
-              openPercentage={percentages.openPercentage}
-              categories={categories}
-              renderCategory={renderCategory}
-            />
+              <TicketProgression
+                ticketStatusTotal={ticketStatusTotal}
+                ticketStatusTotalPercentage={ticketStatusTotalPercentage}
+                resolvedPercentage={percentages.resolvedPercentage}
+                inProgressPercentage={percentages.inProgressPercentage}
+                openPercentage={percentages.openPercentage}
+                categories={categories}
+                renderCategory={renderCategory}
+              />
             )}
           </div>
         </div>
 
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-  {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
-    <LineChart
-      series={chartData.ticketVolumeData}
-      labels={chartData.ticketVolumeLabels}
-      key={`line-${chartData.ticketVolumeData.join('-')}`}
-    />
-  )}
-  <Donut
-    series={chartData.statusData}
-    labels={chartData.statusLabels}
-    key={`donut-${chartData.statusData.join('-')}`}
-  />
-  <Pie
-    series={chartData.priorityData}
-    labels={chartData.priorityLabels}
-    key={`pie-${chartData.priorityData.join('-')}`}
-  />
-  {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
-    <BarChart
-      resolved={chartData.categoryDataresolved}
-      inprogress={chartData.categoryDataInprogress}
-      labels={chartData.categoryLabels}
-      key={`bar-${chartData.categoryDataresolved.join('-')}`}
-    />
-  )}
-</div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
+            <LineChart
+              series={chartData.ticketVolumeData}
+              labels={chartData.ticketVolumeLabels}
+              key={`line-${chartData.ticketVolumeData.join('-')}`}
+            />
+          )}
+          <Donut
+            series={chartData.statusData}
+            labels={chartData.statusLabels}
+            key={`donut-${chartData.statusData.join('-')}`}
+          />
+          <Pie
+            series={chartData.priorityData}
+            labels={chartData.priorityLabels}
+            key={`pie-${chartData.priorityData.join('-')}`}
+          />
+          {(selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT')) && (
+            <BarChart
+              resolved={chartData.categoryDataresolved}
+              inprogress={chartData.categoryDataInprogress}
+              labels={chartData.categoryLabels}
+              key={`bar-${chartData.categoryDataresolved.join('-')}`}
+            />
+          )}
+        </div>
       </Container>
     </Fragment>
   );
