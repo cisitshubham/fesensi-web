@@ -233,7 +233,7 @@ export default function PrioritiesManagement() {
               autoFocus
             />
             <Input
-              placeholder="Sla time "
+              placeholder="escalation hours "
               onChange={e => setNewprioritySla(e.target.value)}
             />
           </div>

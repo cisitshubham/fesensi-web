@@ -1,4 +1,4 @@
-import AnnouncementsViewUserAgent from '@/pages/global-components/AnnouncementsView';
+import AnnouncementsViewUserAgent from './../../../global-components/announcementsView';
 import { getAnnouncements } from '@/api/api';
 import { Announcement } from '@/types';
 import { useEffect, useState } from 'react';
