@@ -434,13 +434,9 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
-  const cacheKey = JSON.stringify(Array.from(formData.entries()));
-  if (chartDataCache[cacheKey]) {
-    return chartDataCache[cacheKey];
-  }
   try {
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
-    chartDataCache[cacheKey] = response.data;
+    console.log('response', response);
     return response.data;
   } catch (error) {
     console.error('Error fetching chart data:', error);

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Clock,  CheckCircle2, Star } from "lucide-react"
+import { Clock, CheckCircle2, Star } from "lucide-react"
 import { GetSkippedFeedback } from "@/api/user"
 import {
   Card,
@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { getPriorityBadge } from "@/pages/global-components/GetStatusColor"
+import { getPriorityBadge, getStatusBadge } from "@/pages/global-components/GetStatusColor"
 
 export default function RateUsUser() {
   const [feedback, setFeedback] = useState<any[]>([])
@@ -121,20 +121,26 @@ export default function RateUsUser() {
                   <CardTitle className="text-xs text-muted-foreground font-medium">
                     Ticket #{item.ticket_number}
                   </CardTitle>
-                  <Badge className={`${getPriorityBadge(item.priority).color}`}>
-                    {item.priority}
-                  </Badge>
+                  <div className=" gap-4">
+                    <Badge className={`${getPriorityBadge(item.priority).color}`}>
+                      {item.priority}
+                    </Badge>
+
+                    <Badge className={`${getStatusBadge(item.status).color}`}>
+                      {item.status}
+                    </Badge>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-4 flex flex-row justify-between">
                 <div className="">
-                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                  {item.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge variant="outline">{item.category}</Badge>
-                </div>
+                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {item.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge variant="outline">{item.category}</Badge>
+                  </div>
                 </div>
                 <div className="space-y-1 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">

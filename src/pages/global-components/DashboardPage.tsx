@@ -118,7 +118,11 @@ export default function DashboardPage() {
 
     if (parsedRoles.length > 0) {
       setSelectedRoles(parsedRoles);
-    } else {
+    }
+    else if(roles.length === 0){
+      setSelectedRoles([]);
+    }
+    else {
       // Run your fallback logic
       if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
         setSelectedRoles(['ADMIN']);
@@ -130,6 +134,9 @@ export default function DashboardPage() {
         setSelectedRoles(roles.map((role: { role_name: any }) => role.role_name));
       } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
         setSelectedRoles(['AGENT']);
+      }
+      else{
+        setSelectedRoles([]);
       }
     }
   }, [roles]);

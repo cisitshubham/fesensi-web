@@ -101,6 +101,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       } else if (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
         sessionStorage.setItem("selectedRole", 'AGENT');
       }
+      else{
+        sessionStorage.setItem("selectedRole", '');
+      }
 
       console.log(sessionStorage);
       window.location.href = '/';

@@ -1,7 +1,6 @@
 import { KeenIcon } from '@/components';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Announcement } from '@/types';
-import { Calendar } from 'lucide-react';
 
 interface AnnouncementsViewProps {
   announcements: Announcement[];
@@ -12,7 +11,6 @@ export default function AnnouncementsViewUserAgent({
   announcements,
   isLoading
 }: AnnouncementsViewProps) {
-  // Ensure announcements is always an array
   const safeAnnouncements = Array.isArray(announcements) ? announcements : [];
 
   return (
