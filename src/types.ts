@@ -115,6 +115,7 @@ export type MasterDropdownDatatype = {
   priorities: {
     _id: string;
     name: string;
+    esclationHrs: number;
   }[];
   roles: {
     _id: string;

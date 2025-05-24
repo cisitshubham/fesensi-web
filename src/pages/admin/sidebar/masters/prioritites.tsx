@@ -24,7 +24,7 @@ export default function PrioritiesManagement() {
   const { dropdownData } = useMasterDropdown()
   const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>(dropdownData.priorities || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [editedpriority, setEditedpriority] = useState({ title: "", _id: "" })
+  const [editedpriority, setEditedpriority] = useState({ title: "", esclationHrs: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -32,27 +32,33 @@ export default function PrioritiesManagement() {
   const [newprioritySla, setNewprioritySla] = useState("")
   const navigate = useNavigate()
   const filtered = priorities.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-
+  console.log(dropdownData, "dropdownData")
   const handleEdit = (index: number) => {
     setEditIndex(index)
-    setEditedpriority({ title: priorities[index].name, _id: priorities[index]._id })
+    setEditedpriority({
+      title: priorities[index].name,
+      esclationHrs: priorities[index].esclationHrs?.toString() || "",
+      _id: priorities[index]._id,
+    })
   }
 
   const handleSave = async () => {
-    if (!editedpriority.title.trim()) return toast.error("priority title cannot be empty", { position: "top-center" })
+    if (!editedpriority.title.trim()) return toast.error("Priority title cannot be empty", { position: "top-center" })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
       formData.append("title", editedpriority.title.trim())
+      formData.append("esclationHrs", editedpriority.esclationHrs.trim())
       const response = await updatePriorities(editedpriority._id, formData)
 
       if (response.success && editIndex !== null) {
         const updated = [...priorities]
         updated[editIndex].name = editedpriority.title.trim()
+        updated[editIndex].esclationHrs = parseInt(editedpriority.esclationHrs.trim(), 10)
         setpriorities(updated)
         setEditIndex(null)
-        toast.success("priority saved successfully", { position: "top-center" })
+        toast.success("Priority saved successfully", { position: "top-center" })
       }
     } catch {
       toast.error("Failed to save", { position: "top-center" })
@@ -81,7 +87,7 @@ export default function PrioritiesManagement() {
         const newPriority = {
           _id: response.data._id,
           name: newpriorityTitle.trim(),
-          esclationHrs: newprioritySla.trim(),
+          esclationHrs: parseInt(newprioritySla.trim(), 10),
         }
         setpriorities(prev => [...prev, newPriority])
         setShowAddDialog(false)
@@ -176,7 +182,8 @@ export default function PrioritiesManagement() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="w-[70%]">Title</TableHead>
+                    <TableHead className="w-[30%]">Title</TableHead>
+                    <TableHead className="w-[20%]">Escalation Hours</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -188,7 +195,7 @@ export default function PrioritiesManagement() {
                       <TableRow key={cat._id} className="group hover:bg-slate-50">
                         <TableCell>
                           {isEditing ? (
-                            <Input name="title" value={editedpriority.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedpriority({ title: e.target.value, _id: editedpriority._id })}
+                            <Input name="title" value={editedpriority.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedpriority({ ...editedpriority, title: e.target.value })}
                               autoFocus className="max-w-md" placeholder="Enter priority title" />
                           ) : (
                             <div className="flex items-center gap-3">
@@ -197,6 +204,21 @@ export default function PrioritiesManagement() {
                                 <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">New</Badge>
                               )}
                             </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {isEditing ? (
+                            <Input
+                              name="esclationHrs"
+                              value={editedpriority.esclationHrs}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEditedpriority({ ...editedpriority, esclationHrs: e.target.value })
+                              }
+                              className="max-w-md"
+                              placeholder="Enter escalation hours"
+                            />
+                          ) : (
+                            <span>{cat.esclationHrs || "N/A"}</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
