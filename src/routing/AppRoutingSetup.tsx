@@ -137,6 +137,7 @@ import RequestedReassignmentAdminDenied from '@/pages/admin/sidebar/requested-re
 import AdminSupportList from '@/pages/admin/sidebar/admin-support-list';
 import FilteredTicketsUser from '@/pages/user/filteredTickets';
 import TrustPgeAgent from '@/pages/agent/sidebar/trustAgent';
+import EscalatedTicketDetail from '@/pages/agent/sidebar/escalted-tickets/escalatedTicketDetails';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -264,6 +265,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/bulk-reassignment" element={<BulkReassign />} />
           <Route path="/agent/requested-reassignment/" element={<RequestedReassignment />} />
           <Route path="/agent/escalated-tickets" element={<EscalatedAgent />} />
+          <Route path="/agent/escalated-tickets/detail/:id" element={<EscalatedTicketDetail />} />
           <Route path="/agent/Sla-Status" element={<SlastatusAgent />} />
           <Route path="/agent/announcements" element={<AnnouncementsAgent />} />
           <Route path="/agent/knowledgeBase" element={<KnowledgebaseAgent />} />

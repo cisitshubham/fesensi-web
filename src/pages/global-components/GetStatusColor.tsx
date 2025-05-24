@@ -69,7 +69,7 @@ export function getStatusBadge(status: string) {
   }
 }
 
-export function getPriorityBadge(priority: TicketPriority) {
+export function getPriorityBadge(priority: string) {
   switch (priority) {
     case TicketPriority.Low:
       return {

@@ -169,3 +169,14 @@ export const getTrustlevel = async () => {
   }
   return null;
 }
+
+
+export const getEscalatedTicketsById = async (ticketId: string) => {
+  try {
+    const response = await axiosInstance.get(`/agent/myTicket/escalated/${ticketId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching escalated ticket by ID:', error);
+  }
+  return null;
+}

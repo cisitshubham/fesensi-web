@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { Accordion,AccordionItem } from "@/components/accordion"
 import { getStatusBadge, getPriorityBadge } from "@/pages/global-components/GetStatusColor"
 import { TicketStatus, TicketPriority } from "@/types"
+import { Link } from "react-router-dom"
 
 
 
@@ -65,6 +66,7 @@ export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) 
   }
 
   return (
+    <Link to={`/agent/escalated-tickets/detail/${ticket._id}`}  className="block w-full">
     <Card
       className={cn(
         "overflow-hidden transition-all duration-200 shadow-sm hover:shadow-md",
@@ -126,98 +128,9 @@ export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) 
           </div>
         )}
 
-        {/* Escalation Timeline with Accordion */}
-        <div className="mt-4">
-          <Accordion   className="w-full">
-            <AccordionItem title="Escalation Timeline" >
-            
-                <div className="overflow-x-auto pb-2">
-                  <div className="flex items-center min-w-max">
-                    {/* Initial assignment */}
-                    <div className="flex flex-col items-center w-40">
-                     
-                      <div className="mt-2 text-center">
-                        <div className="mt-1 text-xs text-gray-500">
-                          <div className="flex items-center justify-center gap-1">
-                            <User className="w-3 h-3" />
-                            <span>{ticket.esclated_user}</span>
-                          </div>
-                          <div className="flex items-center justify-center gap-1 mt-1">
-                            <Calendar className="w-3 h-3" />
-                            <span>{(ticket.escalation_date)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Escalation steps */}
-                    {escalation.map((esc, index) => (
-                      <div key={esc._id} className="flex items-center">
-                        {/* Arrow */}
-                        <div className="flex items-center px-2">
-                          <ArrowRight className="h-4 w-4 text-gray-400" />
-                        </div>
-
-                        {/* Escalation content */}
-                        <div className="flex flex-col items-center w-40">
-                          <div
-                            className={cn(
-                              "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium",
-                              getLevelColor(esc.level_of_user),
-                            )}
-                          >
-                            {esc.level_of_user}
-                          </div>
-                          <div className="mt-2 text-center">
-                            <div className="text-xs font-medium text-gray-700">{esc.assigned_to}</div>
-                            <div className="mt-1 text-xs text-gray-500">
-                              <div className="flex items-center justify-center gap-1">
-                                <Calendar className="w-3 h-3" />
-                                <span>{(esc.escalation_time)}</span>
-                              </div>
-                              {esc.escalation_reason && (
-                                <div className="mt-1 px-2 py-1 bg-gray-50 rounded-md border border-gray-100 max-w-[160px]">
-                                  <div className="flex items-start gap-1">
-                                    <MessageSquare className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                    <span className="text-xs line-clamp-2 text-left">{esc.escalation_reason}</span>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Current status */}
-                    <div className="flex items-center">
-                      {/* Arrow */}
-                      <div className="flex items-center px-2">
-                        <ArrowRight className="h-4 w-4 text-gray-400" />
-                      </div>
-
-                      {/* Current status content */}
-                      <div className="flex flex-col items-center w-40">
-                        <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
-                          <CheckCircle className="w-3 h-3" />
-                        </div>
-                        <div className="mt-2 text-center">
-                          <div className="text-xs font-medium text-gray-700">Current Status</div>
-                          <div className="mt-1">
-                            <Badge className={cn("text-xs", statusBadge.color)}>
-                              {statusBadge.icon}
-                              <span className="ml-1">{ticket.status}</span>
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </AccordionItem>
-          </Accordion>
-        </div>
       </CardContent>
     </Card>
+    </Link>
   )
 }
