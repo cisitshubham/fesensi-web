@@ -12,9 +12,12 @@ import { TicketStatus, TicketPriority } from "@/types"
 interface TicketProps {
   ticket: {
     _id: string
+    escalation_date?: string
+    esclated_user?: string
     ticket_number: number
     title: string
     description?: string
+    escalation_reason?: string
     status: TicketStatus
     priority: TicketPriority
     category: string
@@ -35,24 +38,9 @@ interface TicketProps {
 export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) {
   const statusBadge = getStatusBadge(ticket?.status || TicketStatus.Open)
   const priorityBadge = getPriorityBadge(ticket?.priority || TicketPriority.Medium)
+  console.log("Ticket Data:", ticket)
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    if (!dateString) return ""
-    try {
-      const date = new Date(dateString)
-      if (isNaN(date.getTime())) return "Invalid Date"
-      return date.toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    } catch (error) {
-      console.error("Error formatting date:", error)
-      return "Invalid Date"
-    }
-  }
+
 
   // Early return if no ticket data
   if (!ticket) {
@@ -119,17 +107,14 @@ export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) 
           </div>
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            <span>{formatDate(ticket.createdAt)}</span>
+            <span>{(ticket.createdAt)}</span>
           </div>
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
             <span>{ticket.assigned_to}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <ArrowUpRight className="w-3 h-3" />
-            <span>Escalations: {escalation.length}</span>
-          </div>
         </div>
+        <div className="text-xs text-gray-500 mt-2">{ticket.escalation_reason}</div>
 
         {/* SLA Timer */}
         {ticket.sla && ticket.sla.length > 0 && (
@@ -150,19 +135,16 @@ export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) 
                   <div className="flex items-center min-w-max">
                     {/* Initial assignment */}
                     <div className="flex flex-col items-center w-40">
-                      <div className="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs font-medium">
-                        L1
-                      </div>
+                     
                       <div className="mt-2 text-center">
-                        <div className="text-xs font-medium text-gray-700">Initial Assignment</div>
                         <div className="mt-1 text-xs text-gray-500">
                           <div className="flex items-center justify-center gap-1">
                             <User className="w-3 h-3" />
-                            <span>{ticket.assigned_to}</span>
+                            <span>{ticket.esclated_user}</span>
                           </div>
                           <div className="flex items-center justify-center gap-1 mt-1">
                             <Calendar className="w-3 h-3" />
-                            <span>{formatDate(ticket.createdAt)}</span>
+                            <span>{(ticket.escalation_date)}</span>
                           </div>
                         </div>
                       </div>
@@ -191,7 +173,7 @@ export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) 
                             <div className="mt-1 text-xs text-gray-500">
                               <div className="flex items-center justify-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                <span>{formatDate(esc.escalation_time)}</span>
+                                <span>{(esc.escalation_time)}</span>
                               </div>
                               {esc.escalation_reason && (
                                 <div className="mt-1 px-2 py-1 bg-gray-50 rounded-md border border-gray-100 max-w-[160px]">
