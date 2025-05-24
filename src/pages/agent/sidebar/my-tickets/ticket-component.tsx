@@ -33,7 +33,7 @@ export default function Ticket({ ticket }: TicketProps) {
       state={ticket.isAgentReAssign ? { ticket } : undefined}
       className={clsx(
         'block w-full',
-        !ticket.isAgentReAssign && 'pointer-events-none bg-gray-200 opacity-50'
+        !ticket.isAgentReAssign && ' cursor-not-allowed bg-gray-200 opacity-50'
       )}
     >
       <Card
