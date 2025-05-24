@@ -43,6 +43,10 @@ const Login = () => {
     validationSchema: loginSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
+      setStatus('');
+
+
+
       try {
         if (!login) {
           throw new Error('JWTProvider is required for this form.');
@@ -57,10 +61,21 @@ const Login = () => {
         }
         navigate(from, { replace: true });
       } catch(error) {
-        setStatus('The login details are incorrect');
+        const res = sessionStorage.getItem('response');
+        console.log(res, "res");
+        if (res) {
+          try {
+            const parsedRes = JSON.parse(res);
+            setStatus(parsedRes.message);
+          } catch (e) {
+            setStatus('An error occurred.');
+          }
+        } else {
+          setStatus('An error occurred.');
+        }
         setSubmitting(false);
+        setLoading(false);
       }
-      setLoading(false);
     }
   });
 
