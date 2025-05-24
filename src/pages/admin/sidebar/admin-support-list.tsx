@@ -64,13 +64,7 @@ export default function AdminSupportList() {
     setUpdating(false)
   }
 
-  function formatDate(date: string) {
-    try {
-      return format(new Date(date), "MMM d, yyyy 'at' h:mm a")
-    } catch {
-      return date
-    }
-  }
+
 console.log(requests, "requests")
   return (
     <div className=" mx-8">
@@ -109,7 +103,7 @@ console.log(requests, "requests")
                 <TableRow key={item._id}>                  <TableCell>{item.created_by}</TableCell>
                   <TableCell>{item.calling_time || "—"}</TableCell>
                   <TableCell className="hidden md:table-cell max-w-[200px] truncate">{item.message}</TableCell>
-                  <TableCell className="hidden md:table-cell">{formatDate(item.createdAt)}</TableCell>
+                  <TableCell className="hidden md:table-cell">{(item.createdAt)}</TableCell>
                   <TableCell>
                     <Badge variant={item.is_resolved ? "default" : "destructive"}>
                       {item.is_resolved ? <Check className="mr-1 h-3 w-3" /> : <Clock className="mr-1 h-3 w-3" />}

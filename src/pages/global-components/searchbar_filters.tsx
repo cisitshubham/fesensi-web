@@ -38,15 +38,16 @@ interface SearchbarFiltersProps {
 }
 
 export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersProps) {
+    // Correct the variable name and ensure proper typing
     const { dropdownData } = useMasterDropdown();
     const [categories, setCategories] = useState<MasterDropdownDatatype['categories']>(
-        dropdownData.categories || []
+        dropdownData?.categories || []
     );
     const [priorities, setPriorities] = useState<MasterDropdownDatatype['priorities']>(
-        dropdownData.priorities || []
+        dropdownData?.priorities || []
     );
-    const [statuses, setStatus] = useState<MasterDropdownDatatype['status']>(
-        dropdownData.status || []
+    const [statuses, setStatuses] = useState<MasterDropdownDatatype['status']>(
+        dropdownData?.status || []
     );
     const { isRTL } = useLanguage()
     const [filters, setFilters] = useState<{

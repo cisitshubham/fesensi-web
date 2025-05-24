@@ -40,7 +40,6 @@ import { getStatusBadge, getPriorityBadge } from '@/pages/global-components/GetS
 import { Accordion, AccordionItem } from '@/components/accordion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Agent } from 'node:http';
 export default function ReassignTicketsDetailAdmin() {
   const { id } = useParams();
   const [ticket, setTicket] = useState<Tickettype | null>(null);
@@ -128,17 +127,6 @@ export default function ReassignTicketsDetailAdmin() {
       </div>
     );
   }
-
-  // Group activity logs by date for better organization
-  const groupedLogs =
-    ticket?.activity_logs?.reduce((groups: Record<string, any[]>, log) => {
-      const date = log.createdAt ? log.createdAt : 'Unknown Date';
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(log);
-      return groups;
-    }, {}) || {};
 
   return (
     <div className="space-y-6 mx-8">
@@ -298,32 +286,22 @@ export default function ReassignTicketsDetailAdmin() {
           <CardContent>
             {ticket?.activity_logs && ticket.activity_logs.length > 0 ? (
               <Accordion>
-                {Object.entries(groupedLogs).map(([date, logs], groupIndex) => (
-                  <AccordionItem key={groupIndex} title={date}>
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-medium">{date}</span>
-                      <span className="text-xs text-muted-foreground mr-2">
-                        {logs.length} {logs.length === 1 ? 'activity' : 'activities'}
-                      </span>
-                    </div>
-                    <div className="space-y-4 pt-2">
-                      {logs.map((log, index) => (
-                        <div key={index} className="rounded-lg border bg-card p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <User className="h-4 w-4 text-primary" />
-                              </div>
-                              <span className="font-medium">{log.creator}</span>
-                            </div>
-                            <div className="flex items-center text-xs text-muted-foreground">
-                              <Clock className="mr-1 h-3 w-3" />
-                              {log.createdAt}
-                            </div>
+                {ticket.activity_logs.map((log, index) => (
+                  <AccordionItem key={index} title={log.createdAt || 'Unknown Date'}>
+                    <div className="rounded-lg border bg-card p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <User className="h-4 w-4 text-primary" />
                           </div>
-                          <div className="text-sm">{log.comment}</div>
+                          <span className="font-medium">{log.creator}</span>
                         </div>
-                      ))}
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <Clock className="mr-1 h-3 w-3" />
+                          {log.createdAt}
+                        </div>
+                      </div>
+                      <div className="text-sm">{log.comment}</div>
                     </div>
                   </AccordionItem>
                 ))}
