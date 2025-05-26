@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { type TMenuConfig } from '@/components/menu';
 import { verifyRole } from '@/api/api';
-import { title } from 'process';
 import path from 'path';
 
 let role: string[] = [];
@@ -13,11 +12,9 @@ let role: string[] = [];
 // const res = await verifyRole();
 // const role = res?.data?.role ?? [];
 
-export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
-
-
+export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
   // Customer Tabs
-  ...(roles.includes('CUSTOMER')
+  ...(role === 'CUSTOMER'
     ? [
       {
         title: 'Dashboard',
@@ -25,9 +22,9 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/'
       },
       {
-        title: "Create Ticket",
-        icon: "plus",
-        path: "/user/create-ticket"
+        title: 'Create Ticket',
+        icon: 'plus',
+        path: '/user/create-ticket'
       },
       {
         title: 'MyTickets',
@@ -39,28 +36,23 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'knowledge base',
         icon: 'book-open',
         path: '/user/knowledgeBase'
-
       },
 
       {
         title: 'Announcements',
         icon: 'notification-status',
         path: '/user/announcements'
-
       },
       {
         title: 'Rate Us/Feedback',
         icon: 'star',
         path: '/user/rate-us'
-      },
-
-
-
+      }
     ]
     : []),
 
-  // Aegent Tabs
-  ...(roles.includes('AGENT')
+  // Agent Tabs
+  ...(role === 'AGENT'
     ? [
       {
         title: 'Dashboard',
@@ -84,7 +76,7 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/agent/requested-reassignment'
       },
       {
-        title: 'Escalated tickets',
+        title: 'Escalated Tickets',
         icon: 'flag',
         path: '/agent/escalated-tickets'
       },
@@ -94,18 +86,15 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         path: '/agent/sla-status'
       },
 
-
       {
         title: 'Announcements',
         icon: 'notification-status',
         path: '/agent/announcements'
-
       },
       {
-        title: 'knowledge base',
+        title: 'knowledge Base',
         icon: 'book-open',
         path: '/agent/knowledgeBase'
-
       },
       {
         title: 'Contact Support',
@@ -116,13 +105,12 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'Trust Level',
         icon: 'like-shapes',
         path: '/agent/Trust'
-      },
-
+      }
     ]
     : []),
 
-  // admin Tabs
-  ...(roles.includes('ADMIN')
+  // Admin Tabs
+  ...(role === 'ADMIN'
     ? [
       {
         title: 'Dashboard',
@@ -133,6 +121,11 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'Analytics',
         icon: 'compass',
         path: '/admin/analytics'
+      },
+      {
+        title: 'All Tickets',
+        icon: 'file-sheet',
+        path: '/admin/AllTickets'
       },
       {
         title: 'Users',
@@ -148,21 +141,18 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
         title: 'Announcements',
         icon: 'notification-status',
         path: '/admin/announcements'
-
       },
       {
-        title: "Requested for Reassignment",
+        title: 'Requested for Reassignment',
         icon: 'update-file',
         children: [
           {
-            title: "Pending",
-            path: '/admin/requested-reassignment/pending',
+            title: 'Pending',
+            path: '/admin/requested-reassignment/pending'
           },
-
           {
-
-            title: "Approved",
-            path: "/admin/requested-reassignment/approved"
+            title: 'Approved',
+            path: '/admin/requested-reassignment/approved'
           }
         ]
       },
@@ -173,7 +163,7 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
           {
             title: 'Configuration',
             icon: 'setting',
-            path: '/admin/configurations',
+            path: '/admin/configurations'
           },
           {
             title: 'Priorities',
@@ -191,23 +181,19 @@ export const getSidebarMenu = (type: string, roles: string[]): TMenuConfig => [
             path: '/admin/force-reasons'
           },
           {
-            title: 'reassign options',
+            title: 'Reassign Options',
             path: '/admin/reassign'
           },
           {
             title: 'FeedBack Options',
             path: '/admin/feedback-options'
-          },
-
-
-
-
+          }
         ]
       },
       {
-        title: 'knowledge base',
+        title: 'knowledge Base',
         icon: 'book-open',
-        path: '/admin/knowledgeBase',
+        path: '/admin/knowledgeBase'
       },
       {
         title: 'Support List Ticket',
@@ -227,7 +213,7 @@ export const getMegaMenu = (roles: string[]): TMenuConfig => [
   {
     title: 'Home',
     path: '/'
-  },
+  }
   // ...(roles.includes('ADMIN')
   //   ? [
   //       {

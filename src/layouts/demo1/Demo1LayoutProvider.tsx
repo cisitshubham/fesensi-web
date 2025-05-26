@@ -58,8 +58,10 @@ const useDemo1Layout = () => useContext(Demo1LayoutContext);
 const Demo1LayoutProvider = ({ children }: PropsWithChildren) => {
   const { pathname } = useLocation();
   const { setMenuConfig } = useMenus();
-  const roles = ['ADMIN'];
-  const menu = getSidebarMenu('primary', roles);
+  const roles = [''];
+  const selectedRole = localStorage.getItem('selectedRole') ?? '';
+  console.log(selectedRole, "selectedRole");
+  const menu = getSidebarMenu('primary', selectedRole);
   const secondaryMenu = useMenuChildren(pathname, menu, 0);
 
   useEffect(() => {

@@ -146,7 +146,7 @@ export default function ReassignTicketsDetailAdmin() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Link
-              to="/admin/reassign-tickets"
+              to="/admin/requested-reassignment/pending"
               className="text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />

@@ -81,34 +81,48 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       password
     })
       .then(({ data }) => {
-        sessionStorage.setItem('response', JSON.stringify(data));
+        localStorage.setItem('response', JSON.stringify(data));
         console.log(data, "data");
         if (data?.token) {
-          sessionStorage.setItem('token', data.data.tokens.access_token);
+          localStorage.setItem('token', data.data.tokens.access_token);
         }
         saveAuth(data.data.tokens);
         setCurrentUser(data.data.user);
-        sessionStorage.setItem('user', JSON.stringify(data.data.user));
-        sessionStorage.setItem('role', JSON.stringify(data.data.user.role));
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        localStorage.setItem('role', JSON.stringify(data.data.user.role));
+debugger;
+        // Handle role selection
+        const userRoles = data.data.user.role;
+        let selectedRole = '';
 
-        if (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
-          sessionStorage.setItem("selectedRole", 'ADMIN');
-        } else if (
-          data.data.user.role.length === 1 &&
-          (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
-            data.data.user.role.some((role: { role_name: string }) => role.role_name === 'USER'))
-        ) {
-          sessionStorage.setItem("selectedRole", data.data.user.role.map((role: { role_name: any }) => role.role_name));
-        } else if (data.data.user.role.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-          sessionStorage.setItem("selectedRole", 'AGENT');
+        // Check for ADMIN role first
+        if (userRoles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+          selectedRole = 'ADMIN';
+        }
+        // Then check for AGENT role
+        else if (userRoles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+          selectedRole = 'AGENT';
+        }
+        // Finally, check for USER role
+        else if (userRoles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER')) {
+          selectedRole = 'CUSTOMER';
         }
 
-        console.log(sessionStorage);
+        // Set the selected role in localStorage
+        console.log(selectedRole, "selectedRole");
+        localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
+        if (selectedRole) {
+          localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
+        }
+
+        console.log('Selected Role:', selectedRole);
+        
+        // Redirect to the same path for all roles
         window.location.href = '/';
       })
       .catch((error) => {
         const errorResponse = error.response?.data || { message: 'An error occurred' };
-        sessionStorage.setItem('response', JSON.stringify(errorResponse));
+        localStorage.setItem('response', JSON.stringify(errorResponse));
         saveAuth(undefined);
         throw new Error(`Error ${error}`);
       });
@@ -163,13 +177,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
+  // Clear all local storage items on logout
   const logout = () => {
     saveAuth(undefined);
     setCurrentUser(undefined);
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('role');
-    sessionStorage.removeItem('selectedRoles');
+    localStorage.clear();
   };
 
   return (

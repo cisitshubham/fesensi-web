@@ -61,7 +61,7 @@ const Login = () => {
         }
         navigate(from, { replace: true });
       } catch(error) {
-        const res = sessionStorage.getItem('response');
+        const res = localStorage.getItem('response');
         console.log(res, "res");
         if (res) {
           try {

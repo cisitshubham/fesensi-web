@@ -1,14 +1,14 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type RoleContextType = {
-  selectedRoles: string[];
-  setSelectedRoles: (roles: string[]) => void;
+  selectedRoles: string;
+  setSelectedRoles: (roles: string) => void;
 };
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(() => {
+  const [selectedRoles, setSelectedRoles] = useState<string>(() => {
     // Initialize from localStorage if available
     const savedRoles = localStorage.getItem('selectedRoles');
     return savedRoles ? JSON.parse(savedRoles) : [];
@@ -16,7 +16,7 @@ export const RoleProvider = ({ children }: { children: ReactNode }) => {
 
   // Save to localStorage whenever selectedRoles changes
   useEffect(() => {
-    localStorage.setItem('selectedRoles', JSON.stringify(selectedRoles));
+    localStorage.setItem('selectedRole', JSON.stringify(selectedRoles));
   }, [selectedRoles]);
 
   return (

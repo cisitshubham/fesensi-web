@@ -345,3 +345,13 @@ export const deleteAnnouncement = async (id: string) => {
     console.error('Error deleting announcement:', error);
   }
 }
+
+
+export const getAllTicketsAdmin = async (formData:FormData) => {
+  try {
+    const response = await axiosInstance.get(`/admin/tickets?page=${formData.get('page')}&limit=${formData.get('ticketsPerPage')}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all tickets:', error);
+  }
+}

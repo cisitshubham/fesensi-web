@@ -54,22 +54,6 @@ interface CategoryCount {
   percentageChange: string;
 }
 
-interface DashboardResponse {
-  statusData: number[];
-  statusLabels: string[];
-  categoryData: number[];
-  categoryLabels: string[];
-  priorityData: number[];
-  priorityLabels: string[];
-  ticketVolumeData: number[];
-  ticketVolumeLabels: string[];
-  ticketsbyCategory: {
-    overallPercentageChange: string;
-    totalTicketCount: number;
-    totalLastMonthCount: number;
-    counts: CategoryCount[];
-  };
-}
 
 export default function DashboardPage() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -80,16 +64,11 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const { selectedRoles, setSelectedRoles } = useRole();
 
-  // Update handleRoleToggle to ensure roles are saved properly
   const handleRoleToggle = useCallback((role: string) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles([]);
-      sessionStorage.setItem('selectedRoles', JSON.stringify([]));
-    } else {
-      setSelectedRoles([role]);
-      sessionStorage.setItem('selectedRoles', JSON.stringify([role]));
-    }
-    console.log('Selected Roles:', selectedRoles);
+    const newRoles = role;
+    setSelectedRoles(newRoles);
+    localStorage.setItem('selectedRole', JSON.stringify(newRoles));
+    console.log('New Selected Roles:', newRoles);
   }, [selectedRoles]);
 
   useEffect(() => {
@@ -107,36 +86,32 @@ export default function DashboardPage() {
 
   const roles = user?.role || [];
 
-  // Update the logic to ensure selectedRoles are correctly saved and retrieved
+  // Updated logic to handle `selectedRoles` as a string instead of an array
   useEffect(() => {
-    const storedRoles = sessionStorage.getItem('selectedRoles');
-    console.log('Stored Roles:', storedRoles);
+    const storedRole = localStorage.getItem('selectedRole');
+    console.log(localStorage);
+    console.log('Stored Role:', storedRole);
 
-    let parsedRoles: string[] = [];
+    let parsedRole = '';
     try {
-      parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
+      parsedRole = storedRole ? JSON.parse(storedRole) : '';
     } catch {
-      parsedRoles = [];
+      parsedRole = '';
     }
 
-    if (parsedRoles.length > 0) {
-      setSelectedRoles(parsedRoles);
+    if (parsedRole) {
+      setSelectedRoles(parsedRole);
     } else {
-      // Run your fallback logic
-      if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-        setSelectedRoles(['AGENT']);
-        sessionStorage.setItem('selectedRoles', JSON.stringify(['AGENT']));
-      } else if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
-        setSelectedRoles(['ADMIN']);
-        sessionStorage.setItem('selectedRoles', JSON.stringify(['ADMIN']));
-      } else if (
-        roles.length === 1 &&
-        (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
-          roles.some((role: { role_name: string }) => role.role_name === 'USER'))
-      ) {
-        const roleNames = roles.map((role: { role_name: any }) => role.role_name);
-        setSelectedRoles(roleNames);
-        sessionStorage.setItem('selectedRoles', JSON.stringify(roleNames));
+      // Default role selection logic
+      if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+        setSelectedRoles('ADMIN');
+        localStorage.setItem('selectedRole', JSON.stringify('ADMIN'));
+      } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+        setSelectedRoles('AGENT');
+        localStorage.setItem('selectedRole', JSON.stringify('AGENT'));
+      } else if (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER')) {
+        setSelectedRoles('CUSTOMER');
+        localStorage.setItem('selectedRole', JSON.stringify('CUSTOMER'));
       }
     }
   }, [roles]);
@@ -300,7 +275,7 @@ export default function DashboardPage() {
                 <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
                   <SelectValue
                     placeholder={
-                      selectedRoles.length > 0 ? selectedRoles.join(', ') : 'Select Roles'
+                      selectedRoles.length > 0 ? selectedRoles : 'Select Roles'
                     }
                   ></SelectValue>
                 </SelectTrigger>

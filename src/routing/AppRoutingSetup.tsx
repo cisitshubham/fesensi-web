@@ -118,7 +118,6 @@ import SupportPageAdmin from '@/pages/admin/sidebar/Support-page-admin';
 import KnowledgeBasePageUser from '@/pages/user/sidebar/knowledgeBase';
 import AnnouncementsUser from '@/pages/user/sidebar/announcements';
 import RateUsUser from '@/pages/user/sidebar/rate_us';
-import TrustPgeUser from '@/pages/user/sidebar/trust';
 import SupportPageUser from '@/pages/user/sidebar/support';
 import EscalatedAgent from '@/pages/agent/sidebar/escalted-tickets/escalated';
 import SlastatusAgent from '@/pages/agent/sidebar/sla/slastatus';
@@ -133,11 +132,11 @@ import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassig
 import PrioritiesManagement from '@/pages/admin/sidebar/masters/prioritites';
 import FilteredTickets from '@/pages/agent/filteredTickets';
 import RequestedReassignmentAdminApproved from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-approved';
-import RequestedReassignmentAdminDenied from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-deined';
 import AdminSupportList from '@/pages/admin/sidebar/admin-support-list';
 import FilteredTicketsUser from '@/pages/user/filteredTickets';
 import TrustPgeAgent from '@/pages/agent/sidebar/trustAgent';
 import EscalatedTicketDetail from '@/pages/agent/sidebar/escalted-tickets/escalatedTicketDetails';
+import GetAllTicketsAdmin from '@/pages/admin/sidebar/getalltickets';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -276,6 +275,7 @@ const AppRoutingSetup = (): ReactElement => {
 
 
           {/* admin */}
+          <Route path="/admin/AllTickets" element={<GetAllTicketsAdmin />} />
           <Route path="/admin/allUsers" element={<AdminUsersPage />} />
           <Route path="/admin/user/:id?" element={<UserDetailPage />} />
           <Route path="/admin/categories" element={<CreateCategory />} />
