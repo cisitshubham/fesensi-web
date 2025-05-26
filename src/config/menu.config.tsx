@@ -196,7 +196,7 @@ export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
         path: '/admin/knowledgeBase'
       },
       {
-        title: 'Support List Ticket',
+        title: 'Support List ',
         icon: 'file-sheet',
         path: '/admin/support-list'
       },

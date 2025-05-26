@@ -5,6 +5,7 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
     const formData = new FormData();
     formData.append('fromDate', fromDate);
     formData.append('toDate', toDate);
+    console.log('Fetching dashboard data for role:', role);
 
     let apiResponse;
     if (role === 'ADMIN') {
