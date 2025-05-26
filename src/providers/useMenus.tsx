@@ -5,8 +5,9 @@ export const useMenus = () => {
 
   const { selectedRoles } = useRole();
   const getMenuConfig = (roles: string[]) => {
-    return getSidebarMenu('primary', selectedRoles);
-
+    // Use the first role from the array, or fallback to an empty string if none
+    const selectedRole = roles[0] || '';
+    return getSidebarMenu('primary', selectedRole);
   };
 
   return { getMenuConfig };

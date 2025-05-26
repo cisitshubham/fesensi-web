@@ -42,6 +42,7 @@ const SidebarMenu = () => {
     const config = getMenuConfig(selectedRoles || []);
     setMenuConfig(config);
   }, [selectedRoles]); 
+  console.log(selectedRoles)
 
   
 

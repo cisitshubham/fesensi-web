@@ -182,6 +182,7 @@ debugger;
     saveAuth(undefined);
     setCurrentUser(undefined);
     localStorage.clear();
+    sessionStorage.clear();
   };
 
   return (
