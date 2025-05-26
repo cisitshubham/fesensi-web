@@ -80,17 +80,11 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const { selectedRoles, setSelectedRoles } = useRole();
 
-  // Update handleRoleToggle to ensure roles are saved properly
   const handleRoleToggle = useCallback((role: string) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles([]);
-      sessionStorage.setItem('selectedRoles', JSON.stringify([]));
-    } else {
-      setSelectedRoles([role]);
-      sessionStorage.setItem('selectedRoles', JSON.stringify([role]));
-    }
-    console.log('Selected Roles:', selectedRoles);
-  }, [selectedRoles]);
+    const newRoles = selectedRoles.includes(role) ? [] : [role];
+    setSelectedRoles(newRoles);
+    sessionStorage.setItem('selectedRoles', JSON.stringify(newRoles));
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -107,12 +101,12 @@ export default function DashboardPage() {
 
   const roles = user?.role || [];
 
-  // Update the logic to ensure selectedRoles are correctly saved and retrieved
   useEffect(() => {
-    const storedRoles = sessionStorage.getItem('selectedRoles');
-    console.log('Stored Roles:', storedRoles);
+    if (!user) return;
 
+    const storedRoles = sessionStorage.getItem('selectedRoles');
     let parsedRoles: string[] = [];
+    
     try {
       parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
     } catch {
@@ -122,7 +116,6 @@ export default function DashboardPage() {
     if (parsedRoles.length > 0) {
       setSelectedRoles(parsedRoles);
     } else {
-      // Run your fallback logic
       if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
         setSelectedRoles(['AGENT']);
         sessionStorage.setItem('selectedRoles', JSON.stringify(['AGENT']));
@@ -139,7 +132,7 @@ export default function DashboardPage() {
         sessionStorage.setItem('selectedRoles', JSON.stringify(roleNames));
       }
     }
-  }, [roles]);
+  }, [user, roles]);
 
   const isDropdownReadonly = useMemo(() => roles.length === 1, [roles.length]);
 
@@ -190,7 +183,6 @@ export default function DashboardPage() {
     );
   }, []);
 
-  // Chart data states
   const [chartData, setChartData] = useState<ChartData>({
     statusData: [],
     statusLabels: [],
@@ -216,7 +208,6 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    // Default to 'Today'
     const today = new Date();
     const formatDate = (date: Date) => {
       const day = String(date.getDate()).padStart(2, '0');
