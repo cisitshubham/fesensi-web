@@ -81,10 +81,10 @@ export default function DashboardPage() {
   const { selectedRoles, setSelectedRoles } = useRole();
 
   const handleRoleToggle = useCallback((role: string) => {
-    const newRoles = selectedRoles.includes(role) ? [] : [role];
+    const newRoles = selectedRoles.includes(role) ? [role] : [role];
     setSelectedRoles(newRoles);
     sessionStorage.setItem('selectedRoles', JSON.stringify(newRoles));
-  }, []);
+  }, [selectedRoles]);
 
   useEffect(() => {
     const getUser = async () => {

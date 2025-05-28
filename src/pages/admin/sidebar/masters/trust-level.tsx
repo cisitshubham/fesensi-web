@@ -60,18 +60,45 @@ export default function TrustLevels() {
     setEditMap((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  const handleSave = (id: string) => {
-    const updated = {
+  const handleSave = async (id: string) => {
+    const updatedItem = {
       ...editData[id],
       updatedAt: new Date().toISOString(),
-    }
-    setData((prev) =>
-      prev.map((item) => (item._id === id ? updated : item))
-    )
-    setEditMap((prev) => ({ ...prev, [id]: false }))
+    };
 
-    const responce = await updateTrustLevelInfo(editData,id)
-  }
+    // Calculate the sum of weights with tolerance for floating-point precision
+    const weightSum = Object.values(updatedItem.weights).reduce((sum, value) => sum + value, 0);
+    const tolerance = 0.0000001; // Small tolerance for floating-point comparison
+    
+    if (Math.abs(weightSum - 1) > tolerance) {
+      toast.error("The sum of weights must equal 1", { position: "top-center" });
+      return;
+    }
+
+    // Format data according to required structure
+    const formData = new FormData();
+    
+    // Add base fields
+    formData.append("level", updatedItem.level );
+    formData.append("levelInfo", updatedItem.levelInfo );
+    formData.append("min", updatedItem.min.toString() );
+    
+    // Add weights
+    Object.entries(updatedItem.weights).forEach(([key, value]) => {
+      formData.append(`${key}`, value.toString() );
+    });
+
+    const response = await updateTrustLevelInfo(formData, id);
+    
+    if (response?.data?.success) {
+      setData((prev) => prev.map((item) => (item._id === id ? updatedItem : item)));
+      setEditMap((prev) => ({ ...prev, [id]: false }));
+      toast.success("Trust level updated", { position: "top-center" });
+    } else {
+      console.error("Update failed:", response?.data?.message || "Unknown error");
+      toast.error("Failed to update trust level", { position: "top-center" });
+    }
+  };
 
   const handleCancel = (id: string) => {
     const original = data.find((d) => d._id === id)

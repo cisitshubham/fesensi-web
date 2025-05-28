@@ -380,12 +380,13 @@ export const getTrustLevelInfo= async ()=>{
 
 
 export const updateTrustLevelInfo = async (formdata:FormData,_id:string) => {
+try{
 
-  try{
-    const responce = await axiosInstance.post(`/admin/trust/level/info/update/${_id}`,formdata)
-    return responce.data
-  }
-  catch(error){
-    console.error('Error updating data')
-  }
+  const responce = await axiosInstance.post(`/admin/trust/level/info/update/${_id}`,formdata)
+  return responce;
+}
+catch(error){
+  console.error("error fetching api")
+}
+  
 }
