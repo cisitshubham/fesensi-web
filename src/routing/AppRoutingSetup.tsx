@@ -97,7 +97,7 @@ import AdminUsersPage from '@/pages/admin/sidebar/userlist/userslist';
 import UserDetailPage from '@/pages/admin/sidebar/userlist/userdetailpage';
 import CreateCategory from '@/pages/admin/sidebar/masters/createCategory';
 import RolesAndPermissions from '@/pages/admin/sidebar/rolesAndPermissions';
-import PermissionsToggle from '@/pages/admin/sidebar/config';
+import PermissionsToggle from '@/pages/admin/sidebar/masters/config';
 import ResolveTicket from '@/pages/agent/flow/resolve';
 import CreateReasons from '@/pages/admin/sidebar/masters/force-reasons';
 import AnalyticsPage from '@/pages/admin/sidebar/analytics';
@@ -137,6 +137,8 @@ import FilteredTicketsUser from '@/pages/user/filteredTickets';
 import TrustPgeAgent from '@/pages/agent/sidebar/trustAgent';
 import EscalatedTicketDetail from '@/pages/agent/sidebar/escalted-tickets/escalatedTicketDetails';
 import GetAllTicketsAdmin from '@/pages/admin/sidebar/getalltickets';
+import TrustLevels from '@/pages/admin/sidebar/masters/trust-level';
+import FilteredTicketsAdmin from '@/pages/admin/flow/filtered-tickets';
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
@@ -293,6 +295,8 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/requested-reassign/:id" element={<ReasseignTicketsDetailAdmin />} />
           <Route path="/admin/priorities" element={<PrioritiesManagement />} />
           <Route path="/admin/support-list" element={<AdminSupportList />} />
+          <Route path="/admin/trust-levels" element={<TrustLevels />} />
+          <Route path="/admin/tickets/filtered" element={<FilteredTicketsAdmin />} />
 
           {/* users aadesh  */}
           <Route path="/user/MyTickets" element={<UserTickets />} />

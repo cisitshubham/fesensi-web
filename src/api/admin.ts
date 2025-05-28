@@ -355,3 +355,25 @@ export const getAllTicketsAdmin = async (formData:FormData) => {
     console.error('Error fetching all tickets:', error);
   }
 }
+
+
+
+export const getFilteredTickets = async (status:string) => {
+  try {
+    const response = await axiosInstance.post(`/admin/Dashboard/charts/${status}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching filtered tickets:', error);
+  }
+}
+
+
+export const getTrustLevelInfo= async ()=>{
+  try{
+    const responce = await axiosInstance.get("/admin/trust/level/info/list")
+    return responce.data;
+  }
+  catch(error){
+    console.error('Error fetcing api')
+  }
+}

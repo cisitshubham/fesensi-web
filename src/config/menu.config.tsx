@@ -187,6 +187,10 @@ export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
           {
             title: 'FeedBack Options',
             path: '/admin/feedback-options'
+          },
+          {
+            title : 'Trust Levels',
+            path : '/admin/trust-levels'
           }
         ]
       },

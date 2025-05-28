@@ -1,3 +1,4 @@
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 
 interface IPermissionsToggleItem {
@@ -60,26 +61,24 @@ export default function PermissionsToggle() {
   );
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h3 className="card-title">
-          Role Permissions for
-          <a href="#" className="link">
-            &nbsp;Project Manager
-          </a>
-        </h3>
-      </div>
-      <div className="card-body grid grid-cols-1 lg:grid-cols-2 gap-5 py-5 lg:py-7.5">
+    <Card className="mx-8">
+      <CardHeader className="">
+        <CardTitle className="card-title">
+          Configuration
+         
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="card-body grid grid-cols-1 lg:grid-cols-2 gap-5 py-5 lg:py-7.5">
         {items.map(renderItem)}
-      </div>
-      <div className="card-footer flex justify-end gap-3">
+      </CardContent>
+      <CardFooter className="card-footer flex justify-end gap-3">
         <button className="btn btn-secondary" onClick={handleReset}>
           Reset
         </button>
         <button className="btn btn-primary" onClick={handleSave}>
           Save
         </button>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }

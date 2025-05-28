@@ -82,25 +82,33 @@ export default function TicketsTableTemplate() {
     fetchTickets(1, perPage)
   }
 
- 
-
+  // Updated handleSearch to work dynamically with the input
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      fetchTickets(pagination.currentPage, pagination.ticketsPerPage);
+    } else {
+      const filteredTickets = tickets.filter(ticket =>
+        ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setTickets(filteredTickets);
+    }
+  }, [searchTerm]);
 
   return (
       <Card className="mx-8">
         <CardHeader className="flex flex-row justify-between w-full items-center">
           <CardTitle>All Tickets</CardTitle>
           <div className="flex gap-4 items-center">
-            {/* <div className="flex gap-2 flex-1">
+            <div className="flex gap-2 flex-1">
               <Input
                 placeholder="Search tickets..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-sm"
               />
-              <Button onClick={handleSearch} size="sm">
-                <Search className="w-4 h-4" />
-              </Button>
-            </div> */}
+          
+            </div>
             <Select value={pagination.ticketsPerPage.toString()} onValueChange={handlePerPageChange}>
               <SelectTrigger className="w-32">
                 <SelectValue />
@@ -122,7 +130,6 @@ export default function TicketsTableTemplate() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Ticket #</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Priority</TableHead>
@@ -134,7 +141,6 @@ export default function TicketsTableTemplate() {
                   {tickets.map((ticket) => (
                     <TableRow key={ticket._id}>
                  
-                      <TableCell className="font-mono">#{ticket.ticket_number}</TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium">{ticket.title}</div>
