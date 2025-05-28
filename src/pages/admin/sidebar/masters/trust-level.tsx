@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Edit, Save, X } from "lucide-react"
-import { getTrustLevelInfo } from "@/api/admin"
+import { getTrustLevelInfo,updateTrustLevelInfo } from "@/api/admin"
 import { toast } from "sonner"
 
 type ServiceLevel = {
@@ -69,6 +69,8 @@ export default function TrustLevels() {
       prev.map((item) => (item._id === id ? updated : item))
     )
     setEditMap((prev) => ({ ...prev, [id]: false }))
+
+    const responce = await updateTrustLevelInfo(editData,id)
   }
 
   const handleCancel = (id: string) => {
@@ -95,10 +97,10 @@ export default function TrustLevels() {
 
   return (
     <Card className="space-y-8 mx-8">
-        <CardHeader>
+        <CardHeader className="flex flex-row justify-between">
 
-      <CardTitle className="text-2xl font-bold">Trust Levels</CardTitle>
-        <Button>Add New</Button>
+      <CardTitle className="text-2xl font-bold flex flex-row justify-between">Trust Levels Configuration</CardTitle>
+        <Button className="w-fit">Add New</Button>
         </CardHeader>
       <CardContent className="space-y-4">
 
@@ -125,10 +127,11 @@ export default function TrustLevels() {
                   ) : (
                     <CardTitle>{item.level}</CardTitle>
                   )}
-                  <Badge>
+                  <Badge variant={"outline"}>
                     Minimum Score:{" "}
                     {isEditing ? (
                       <Input
+                      
                         type="number"
                         step="0.1"
                         value={current.min}
@@ -141,7 +144,7 @@ export default function TrustLevels() {
                             },
                           }))
                         }
-                        className="w-16 h-6 ml-2"
+                        className="w-16 h-6 ml-2  outline-none"
                       />
                     ) : (
                       <span className="ml-1">{item.min}</span>
@@ -210,7 +213,7 @@ export default function TrustLevels() {
                             : key}
                         </span>
                         <span className="text-sm font-semibold">
-                          {(value * 100).toFixed(0)}%
+                          {(value )}
                         </span>
                       </div>
                       {isEditing ? (
@@ -239,7 +242,6 @@ export default function TrustLevels() {
 
               <div className="pt-4 border-t space-y-2">
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>ID: {item._id}</span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Created: {new Date(item.createdAt).toLocaleString()}</span>
