@@ -8,7 +8,7 @@ import { DropdownApps } from '@/partials/dropdowns/apps';
 import { DropdownChat } from '@/partials/dropdowns/chat';
 import { ModalSearch } from '@/partials/modals/search/ModalSearch';
 import { useLanguage } from '@/i18n';
-import { fetchUser } from '../../../api/api';
+import { fetchUser, GetPushNotifications } from '../../../api/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -21,6 +21,7 @@ const HeaderTopbar = () => {
   const itemAppsRef = useRef<any>(null);
   const itemUserRef = useRef<any>(null);
   const itemNotificationsRef = useRef<any>(null);
+  const [notificationCount, setNotificationCount] = useState<number>(0);
 
   const handleShow = () => {
     window.dispatchEvent(new Event('resize'));
@@ -43,6 +44,26 @@ const HeaderTopbar = () => {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [location]);
+
+  // Fetch notifications count
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await GetPushNotifications();
+        if (Array.isArray(response.data)) {
+          setNotificationCount(response.data.length);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+    // Set up polling every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const handleOpen = () => setSearchModalOpen(true);
@@ -153,6 +174,11 @@ const HeaderTopbar = () => {
         >
           <MenuToggle className="btn btn-icon btn-icon-lg relative cursor-pointer size-9 rounded-full hover:bg-primary-light hover:text-primary dropdown-open:bg-primary-light dropdown-open:text-primary text-gray-500">
             <KeenIcon icon="notification-status" />
+            {notificationCount > 0 && (
+              <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {notificationCount}
+              </span>
+            )}
           </MenuToggle>
           {DropdownNotifications({ menuTtemRef: itemNotificationsRef })}
         </MenuItem>
