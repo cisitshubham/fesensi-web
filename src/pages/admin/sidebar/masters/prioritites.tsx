@@ -32,7 +32,6 @@ export default function PrioritiesManagement() {
   const [newprioritySla, setNewprioritySla] = useState("")
   const navigate = useNavigate()
   const filtered = priorities.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  console.log(dropdownData, "dropdownData")
   const handleEdit = (index: number) => {
     setEditIndex(index)
     setEditedpriority({

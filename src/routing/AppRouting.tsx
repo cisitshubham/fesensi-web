@@ -15,10 +15,8 @@ const AppRouting = (): ReactElement => {
   // Handle initial load
   useEffect(() => {
     if (firstLoad) {
-      console.log('Initial load: Verifying user...');
       verify()
         .then(() => {
-          console.log('User verified successfully on initial load.');
         })
         .catch((error) => {
           console.error('Error during initial user verification:', error);

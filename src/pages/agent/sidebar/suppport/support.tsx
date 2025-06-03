@@ -14,7 +14,6 @@ import { map } from "leaflet";
 
 export default function SupportPageAgent() {
   const dropdown = useMasterDropdown();
-  console.log("dropdown", dropdown);
   const [email, setEmail] = useState(false);
   const [dateTime, setDateTime] = useState({ date: "", time: "" });
   const [message, setMessage] = useState("");
@@ -45,7 +44,6 @@ export default function SupportPageAgent() {
     formData.append("query_type", query_type);
     
     const responce = await CreateSupport(formData);
-    console.log(responce);
     if (responce.success == true) {
       toast.success("Support request submitted successfully", { position: "top-center" });
       navigate("/");

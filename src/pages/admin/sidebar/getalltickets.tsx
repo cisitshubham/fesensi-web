@@ -51,7 +51,6 @@ export default function TicketsTableTemplate() {
 
       const response = await getAllTicketsAdmin(formData)
       if (response.success) {
-        console.log(response)
         setTickets(response.data.result)
         setPagination({
           currentPage: response.data.currentPage || 1,

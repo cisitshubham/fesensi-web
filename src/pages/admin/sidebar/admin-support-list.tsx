@@ -37,7 +37,6 @@ export default function AdminSupportList() {
     setLoading(true)
     try {
       const res = await getContactSupport()
-      console.log(res, "res")
       setRequests(res.data || [])
     } catch (e) {
       /* error handled silently */
@@ -65,7 +64,6 @@ export default function AdminSupportList() {
   }
 
 
-console.log(requests, "requests")
   return (
     <div className=" mx-8">
       <div className="flex items-center justify-between mb-4">

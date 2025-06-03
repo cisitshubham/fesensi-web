@@ -127,7 +127,9 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
                 to: filters.date.to,
             },
         };
+        
         onFiltersChange(transformedFilters);
+        setIsModalOpen(false)
     };
     return (
         <div className="flex flex-col space-y-6 ">

@@ -82,7 +82,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     })
       .then(({ data }) => {
         localStorage.setItem('response', JSON.stringify(data));
-        console.log(data, "data");
         if (data?.token) {
           localStorage.setItem('token', data.data.tokens.access_token);
         }
@@ -109,13 +108,11 @@ debugger;
         }
 
         // Set the selected role in localStorage
-        console.log(selectedRole, "selectedRole");
         localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
         if (selectedRole) {
           localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
         }
 
-        console.log('Selected Role:', selectedRole);
         
         // Redirect to the same path for all roles
         window.location.href = '/';
@@ -138,8 +135,7 @@ debugger;
       email,
       password,
     });
-    console.log(auth);
-    console.log(first_name, email, password);
+
     try {
       const formData = new FormData();
     }
@@ -182,7 +178,7 @@ debugger;
     saveAuth(undefined);
     setCurrentUser(undefined);
     localStorage.clear();
-    sessionStorage.clear();
+    console.log(sessionStorage)
   };
 
   return (

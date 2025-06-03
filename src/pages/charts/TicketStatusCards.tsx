@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import { Link } from 'react-router-dom';
 import { useRole } from '@/pages/global-components/role-context';
+import { memo } from 'react';
 
 interface TicketStatusCardsProps {
   ticketCounts: {
@@ -52,7 +53,7 @@ const getRouteByRole = (role: string) => {
   }
 };
 
-export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
+const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
   const { selectedRoles } = useRole();
   const currentRole = selectedRoles[0] || 'USER';
 
@@ -67,15 +68,23 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
             key={key}
             to={linkTo}
             state={{ status }}
+            className="block h-full"
           >
-            <Card className={clsx("p-2 flex flex-col justify-between aspect-square h-full overflow-auto", badge.color, badge.border)}>
+            <Card className={clsx(
+              "p-2 flex flex-col justify-between h-full overflow-auto transition-all duration-200 hover:shadow-lg",
+              badge.color,
+              badge.border
+            )}>
               <div className="flex items-center gap-2 mb-2">
                 <div className={clsx('p-2 rounded-lg flex items-center justify-center aspect-square')}>
-                  <KeenIcon icon={icon} className="" />
+                  <KeenIcon icon={icon} className="w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-semibold">{status}</h3>
               </div>
-              <Card className={clsx("text-2xl font-bold text-white text-center", badge.darkbg)}>
+              <Card className={clsx(
+                "text-2xl font-bold text-white text-center transition-all duration-200",
+                badge.darkbg
+              )}>
                 {ticketCounts[key]}
               </Card>
             </Card>
@@ -84,4 +93,6 @@ export default function TicketStatusCards({ ticketCounts }: TicketStatusCardsPro
       })}
     </>
   );
-}
+});
+
+export default TicketStatusCards;

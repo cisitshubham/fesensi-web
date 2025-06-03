@@ -3,9 +3,16 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { getPriorityBadge } from "../global-components/GetStatusColor";
-import { TicketPriority } from "@/types";
 
-export default function Pie({ series, labels }: { series: number[]; labels: string[] }) {
+// Define TicketPriority enum
+enum TicketPriority {
+  Low = "LOW",
+  Medium = "MEDIUM",
+  High = "HIGH",
+  Critical = "CRITICAL"
+}
+
+function PriorityPie({ series, labels }: { series: number[]; labels: string[] }) {
   const getColorFromPriority = (priority: TicketPriority) => {
     const badge = getPriorityBadge(priority);
     return badge.hex;
@@ -25,13 +32,12 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
       colors: labels.map(label => getColorFromPriority(label as TicketPriority)),
       title: {  
         text: "Tickets by Priority",
-        align: "center",
+        align: "center" as const,
         style: {
           fontSize: "20px",
           fontWeight: "bold",
         },
       },
-
       responsive: [
         {
           breakpoint: 480,
@@ -48,8 +54,9 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
     },
   });
 
+  // Update chart when props change
   React.useEffect(() => {
-    setState((prevState) => ({
+    setState(prevState => ({
       ...prevState,
       series: series,
       options: {
@@ -63,10 +70,9 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
   return (
     <div id="chart" className="w-full">
       <Card className="w-full p-4">
-
         <CardContent>
           <ReactApexChart
-            options={{...state.options, title: {...state.options.title, align: "center" as "center"}}}
+            options={state.options}
             series={state.series}
             type="pie"
             width={480}
@@ -76,3 +82,5 @@ export default function Pie({ series, labels }: { series: number[]; labels: stri
     </div>
   );
 }
+
+export default React.memo(PriorityPie);

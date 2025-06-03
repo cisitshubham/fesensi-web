@@ -82,7 +82,6 @@ export default function BulkReassign() {
         formData.append('AgentreAssign', selectedReason);
         formData.append('AgentreAssignComment', description);
 
-        console.log('Form data:', formData.getAll('ticket_id'), formData.get('AgentreAssign'), formData.get('AgentreAssignComment'));
 
         const response = await requestReassign(formData);
         if (response) {

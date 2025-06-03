@@ -79,7 +79,6 @@ export const updateCategory = async (id: string, formData: FormData) => {
     return response.data;
   }
   catch (error) {
-    console.log("error updating Category", error)
   }
 }
 

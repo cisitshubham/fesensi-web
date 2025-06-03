@@ -59,15 +59,24 @@ const Demo1LayoutProvider = ({ children }: PropsWithChildren) => {
   const { pathname } = useLocation();
   const { setMenuConfig } = useMenus();
   const roles = [''];
-  const selectedRole = localStorage.getItem('selectedRole') ?? '';
-  console.log(selectedRole, "selectedRole");
+  const [selectedRole, setSelectedRole] = useState(localStorage.getItem('selectedRole') ?? '');
   const menu = getSidebarMenu('primary', selectedRole);
   const secondaryMenu = useMenuChildren(pathname, menu, 0);
 
   useEffect(() => {
+    const handleStorageChange = () => {
+      const newRole = localStorage.getItem('selectedRole') ?? '';
+      setSelectedRole(newRole);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  useEffect(() => {
     setMenuConfig('primary', menu);
     setMenuConfig('secondary', secondaryMenu);
-  }, [pathname]);
+  }, [pathname, selectedRole]);
 
   const { getLayout, updateLayout, setCurrentLayout } = useLayout();
 

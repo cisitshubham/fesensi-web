@@ -39,7 +39,6 @@ interface TicketProps {
 export default function TimelineEscalationCard({ ticket}: Partial<TicketProps>) {
   const statusBadge = getStatusBadge(ticket?.status || TicketStatus.Open)
   const priorityBadge = getPriorityBadge(ticket?.priority || TicketPriority.Medium)
-  console.log("Ticket Data:", ticket)
 
 
 

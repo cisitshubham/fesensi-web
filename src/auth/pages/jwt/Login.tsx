@@ -62,7 +62,6 @@ const Login = () => {
         navigate(from, { replace: true });
       } catch(error) {
         const res = localStorage.getItem('response');
-        console.log(res, "res");
         if (res) {
           try {
             const parsedRes = JSON.parse(res);

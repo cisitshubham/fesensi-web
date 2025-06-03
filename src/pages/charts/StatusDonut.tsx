@@ -19,12 +19,11 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
           show: true
         },
       },
-   
       labels: labels,
       colors: labels.map(label => getColorFromStatus(label as TicketStatus)),
       title: {
         text: "Tickets by Status",
-        align: "center",
+        align: "center" as const,
         style: {
           fontSize: "20px",
           fontWeight: "bold",
@@ -37,7 +36,6 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
             chart: {
               width: 200,
             },
-         
             legend: {
               position: "bottom",
             },
@@ -47,8 +45,9 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
     },
   });
 
+  // Update chart when props change
   React.useEffect(() => {
-    setState((prevState) => ({
+    setState(prevState => ({
       ...prevState,
       series: series,
       options: {
@@ -63,16 +62,9 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
     <div className="w-full h-full">
       <div id="chart" className="h-full">
         <Card className="w-full h-full p-4">
-
           <CardContent>
             <ReactApexChart
-              options={{
-                ...state.options,
-                title: {
-                  ...state.options.title,
-                  align: "center" as "center"
-                }
-              }}
+              options={state.options}
               series={state.series}
               type="donut"
               width={480}
@@ -84,4 +76,4 @@ const Donut = ({ series, labels }: { series: number[]; labels: string[] }) => {
   );
 };
 
-export default Donut;
+export default React.memo(Donut);
