@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { Clock,  CheckCircle2, Star } from "lucide-react"
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Dialog,
   DialogContent,
@@ -21,6 +19,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { getPriorityBadge, getStatusBadge } from "@/pages/global-components/GetStatusColor"
+import { RateUsSkeleton } from "@/components/skeletons"
 
 export default function RateUsUser() {
   const [feedback, setFeedback] = useState<any[]>([])
@@ -75,29 +74,9 @@ export default function RateUsUser() {
       </Dialog>
 
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <Skeleton className="h-4 w-24" />
-              </CardHeader>
-              <CardContent className="pb-3">
-                <Skeleton className="h-6 w-3/4 mb-3" />
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-2/3 mb-4" />
-                <div className="flex gap-2 mb-3">
-                  <Skeleton className="h-5 w-16 rounded-full" />
-                  <Skeleton className="h-5 w-20 rounded-full" />
-                </div>
-                <Skeleton className="h-3 w-40 mt-2" />
-                <Skeleton className="h-3 w-32 mt-2" />
-              </CardContent>
-              <CardFooter className="border-t bg-muted/20 pt-3">
-                <Skeleton className="h-9 w-32" />
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <RateUsSkeleton />
+      ) : error ? (
+        <div className="text-destructive">{error}</div>
       ) : feedback.length === 0 ? (
         <Card className="bg-muted/30">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">

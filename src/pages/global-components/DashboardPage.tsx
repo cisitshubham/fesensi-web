@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback } from 'react';
+import { Fragment, useState, useEffect, useCallback, useRef } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { fetchUser, clearChartDataCache } from '@/api/api';
@@ -21,6 +21,7 @@ import BarChart from '@/pages/charts/category-bar-chart';
 import LineChart from '@/pages/charts/Volume-area-chart';
 import TicketStatusCards from '@/pages/charts/TicketStatusCards';
 import TicketProgression from '@/pages/charts/TicketProgression';
+import { DashboardSkeleton } from '@/components/skeletons';
 
 type CategoryType = 'Hardware' | 'Internet/Network' | 'Cloud Technologies' | 'Software' | 'Others';
 
@@ -57,6 +58,7 @@ export default function DashboardPage() {
   const { selectedRoles, setSelectedRoles } = useRole();
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [tenureState, setTenureState] = useState(() => {
     const today = new Date();
     const formatDate = (date: Date) => {
@@ -105,10 +107,8 @@ export default function DashboardPage() {
         role
       );
       if (response) {
-        // Use a single state update to prevent double renders
-        const newChartData = response as ChartData;
         setTenureState(newTenureState);
-        setChartData(newChartData);
+        setChartData(response as ChartData);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -117,69 +117,82 @@ export default function DashboardPage() {
     }
   }, [selectedRoles, setSelectedRoles]);
 
-  // Fetch user data first
+  // Combined initial data fetch
   useEffect(() => {
-    const getUser = async () => {
+    const initializeData = async () => {
+      setIsLoading(true);
       try {
         const userData = await fetchUser();
         setUser(userData.data);
+
+        const storedRoles = localStorage.getItem('selectedRoles');
+        let parsedRoles: string[] = [];
+        
+        try {
+          parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
+        } catch {
+          parsedRoles = [];
+        }
+
+        const roles = userData.data.role || [];
+        let newRoles: string[] = [];
+
+        if (parsedRoles.length > 0) {
+          newRoles = parsedRoles;
+        } else {
+          if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+            newRoles = ['AGENT'];
+            localStorage.setItem('selectedRole', 'AGENT');
+          } else if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+            newRoles = ['ADMIN'];
+            localStorage.setItem('selectedRole', 'ADMIN');
+          } else if (
+            roles.length === 1 &&
+            (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
+            roles.some((role: { role_name: string }) => role.role_name === 'USER'))
+          ) {
+            newRoles = roles.map((role: { role_name: any }) => role.role_name);
+          }
+          
+          if (newRoles.length > 0) {
+            localStorage.setItem('selectedRoles', JSON.stringify(newRoles));
+            localStorage.setItem('selectedRole', JSON.stringify(newRoles));
+          }
+        }
+
+        setSelectedRoles(newRoles);
+
+        if (newRoles.length > 0 && tenureState.fromDate && tenureState.toDate) {
+          const response = await fetchDashboardData(
+            tenureState.fromDate,
+            tenureState.toDate,
+            newRoles[0]
+          );
+          if (response) {
+            setChartData(response as ChartData);
+          }
+        }
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error('Error during initialization:', error);
+      } finally {
         setIsLoading(false);
+        setIsInitialLoad(false);
       }
     };
 
-    getUser();
+    initializeData();
   }, []);
 
-  // Handle role selection after user data is loaded
+  // Fetch dashboard data when roles and dates change (after initial load)
   useEffect(() => {
-    if (!user) return;
-
-    const storedRoles = localStorage.getItem('selectedRoles');
-    let parsedRoles: string[] = [];
+    if (isInitialLoad || !selectedRoles.length || !tenureState.fromDate || !tenureState.toDate) return;
     
-    try {
-      parsedRoles = storedRoles ? JSON.parse(storedRoles) : [];
-    } catch {
-      parsedRoles = [];
-    }
-
-    const roles = user.role || [];
-    let newRoles: string[] = [];
-
-    if (parsedRoles.length > 0) {
-      newRoles = parsedRoles;
-    } else {
-      if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-        newRoles = ['AGENT'];
-        localStorage.setItem('selectedRole', 'AGENT');
-      } else if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
-        newRoles = ['ADMIN'];
-        localStorage.setItem('selectedRole', 'ADMIN');
-      } else if (
-        roles.length === 1 &&
-        (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
-        roles.some((role: { role_name: string }) => role.role_name === 'USER'))
-      ) {
-        newRoles = roles.map((role: { role_name: any }) => role.role_name);
-      }
-      
-      if (newRoles.length > 0) {
-        localStorage.setItem('selectedRoles', JSON.stringify(newRoles));
-        localStorage.setItem('selectedRole', JSON.stringify(newRoles));
-      }
-    }
-
-    setSelectedRoles(newRoles);
-  }, [user, setSelectedRoles]);
-
-  // Fetch dashboard data when roles and dates are ready
-  useEffect(() => {
     const fetchData = async () => {
-      if (!selectedRoles.length || !tenureState.fromDate || !tenureState.toDate) return;
+      const isRoleChange = selectedRoles !== prevRolesRef.current;
+      if (isRoleChange) {
+        setIsLoading(true);
+      }
       
-      setIsLoading(true);
       try {
         const response = await fetchDashboardData(
           tenureState.fromDate,
@@ -187,23 +200,30 @@ export default function DashboardPage() {
           selectedRoles[0]
         );
         if (response) {
-          console.log('Dashboard data received:', response);
           setChartData(response as ChartData);
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
-        setIsLoading(false);
+        if (isRoleChange) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [selectedRoles, tenureState.fromDate, tenureState.toDate]);
+  }, [selectedRoles, tenureState.fromDate, tenureState.toDate, isInitialLoad]);
+
+  // Add a ref to track previous roles
+  const prevRolesRef = useRef(selectedRoles);
+  useEffect(() => {
+    prevRolesRef.current = selectedRoles;
+  }, [selectedRoles]);
 
   // Add debug logs for chart data
   useEffect(() => {
     if (chartData) {
-      console.log('Chart data updated:', {
+      const debugData = {
         statusData: chartData.statusData,
         statusLabels: chartData.statusLabels,
         priorityData: chartData.priorityData,
@@ -211,7 +231,8 @@ export default function DashboardPage() {
         categoryDataInprogress: chartData.categoryDataInprogress,
         categoryDataresolved: chartData.categoryDataresolved,
         categoryLabels: chartData.categoryLabels
-      });
+      };
+      console.log('Chart data updated:', debugData);
     }
   }, [chartData]);
 
@@ -253,6 +274,10 @@ export default function DashboardPage() {
 
   const isAdminOrAgent = selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT');
   const isCustomer = selectedRoles.includes('CUSTOMER');
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <Fragment>
@@ -303,93 +328,98 @@ export default function DashboardPage() {
           toDate={tenureState.toDate}
           selectedButton={tenureState.selectedButton}
           onChange={setTenureState}
+          isLoading={isLoading}
         />
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {(isAdminOrAgent || isCustomer) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 w-full lg:w-5/12 gap-4">
-              <TicketStatusCards 
-                ticketCounts={ticketCounts} 
-                key={`status-cards-${JSON.stringify(ticketCounts)}`}
-              />
-            </div>
-          )}
+        {!isLoading && (
+          <>
+            <div className="flex flex-col lg:flex-row gap-6">
+              {(isAdminOrAgent || isCustomer) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 w-full lg:w-5/12 gap-4">
+                  <TicketStatusCards 
+                    ticketCounts={ticketCounts} 
+                    key={`status-cards-${JSON.stringify(ticketCounts)}`}
+                  />
+                </div>
+              )}
 
-          {isAdminOrAgent && chartData && chartData.ticketsbyCategory && (
-            <div className="w-full">
-              <TicketProgression
-                ticketStatusTotal={chartData.ticketsbyCategory.totalTicketCount}
-                ticketStatusTotalPercentage={parseFloat(chartData.ticketsbyCategory.overallPercentageChange)}
-                resolvedPercentage={percentages.resolvedPercentage}
-                inProgressPercentage={percentages.inProgressPercentage}
-                openPercentage={percentages.openPercentage}
-                categories={chartData.ticketsbyCategory.counts}
-                key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
-                renderCategory={(category, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="text-base text-gray-500">
-                        <i className={`icon-${category.category.toLowerCase()}`}></i>
-                      </span>
-                      <span className="text-sm font-normal text-gray-900">{category.category}</span>
-                    </div>
-                    <div className="flex items-center text-sm font-medium text-gray-800 gap-4">
-                      <span className="lg:text-right">{category.ticketCount}</span>
-                      <span className="lg:text-right flex items-center gap-1 justify-end">
-                        {parseFloat(category.percentageChange) >= 0 ? (
-                          <span className="text-success">▲</span>
-                        ) : (
-                          <span className="text-danger">▼</span>
-                        )}
-                        {category.percentageChange}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              />
+              {isAdminOrAgent && chartData && chartData.ticketsbyCategory && (
+                <div className="w-full">
+                  <TicketProgression
+                    ticketStatusTotal={chartData.ticketsbyCategory.totalTicketCount}
+                    ticketStatusTotalPercentage={parseFloat(chartData.ticketsbyCategory.overallPercentageChange)}
+                    resolvedPercentage={percentages.resolvedPercentage}
+                    inProgressPercentage={percentages.inProgressPercentage}
+                    openPercentage={percentages.openPercentage}
+                    categories={chartData.ticketsbyCategory.counts}
+                    key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
+                    renderCategory={(category, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <span className="text-base text-gray-500">
+                            <i className={`icon-${category.category.toLowerCase()}`}></i>
+                          </span>
+                          <span className="text-sm font-normal text-gray-900">{category.category}</span>
+                        </div>
+                        <div className="flex items-center text-sm font-medium text-gray-800 gap-4">
+                          <span className="lg:text-right">{category.ticketCount}</span>
+                          <span className="lg:text-right flex items-center gap-1 justify-end">
+                            {parseFloat(category.percentageChange) >= 0 ? (
+                              <span className="text-success">▲</span>
+                            ) : (
+                              <span className="text-danger">▼</span>
+                            )}
+                            {category.percentageChange}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {isAdminOrAgent && chartData && (
-            <div className="w-full h-[350px]">
-              <LineChart
-                series={chartData.ticketVolumeData}
-                labels={chartData.ticketVolumeLabels}
-                key={`line-${JSON.stringify(chartData.ticketVolumeData)}-${JSON.stringify(chartData.ticketVolumeLabels)}`}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {isAdminOrAgent && chartData && (
+                <div className="w-full h-[350px]">
+                  <LineChart
+                    series={chartData.ticketVolumeData}
+                    labels={chartData.ticketVolumeLabels}
+                    key={`line-${JSON.stringify(chartData.ticketVolumeData)}-${JSON.stringify(chartData.ticketVolumeLabels)}`}
+                  />
+                </div>
+              )}
+              {chartData && (
+                <div className="w-full h-[350px]">
+                  <Donut
+                    series={chartData.statusData}
+                    labels={chartData.statusLabels}
+                    key={`donut-${JSON.stringify(chartData.statusData)}-${JSON.stringify(chartData.statusLabels)}`}
+                  />
+                </div>
+              )}
+              {chartData && (
+                <div className="w-full h-[350px]">
+                  <Pie
+                    series={chartData.priorityData}
+                    labels={chartData.priorityLabels}
+                    key={`pie-${JSON.stringify(chartData.priorityData)}-${JSON.stringify(chartData.priorityLabels)}`}
+                  />
+                </div>
+              )}
+              {isAdminOrAgent && chartData && (
+                <div className="w-full h-[350px]">
+                  <BarChart
+                    resolved={chartData.categoryDataresolved}
+                    inprogress={chartData.categoryDataInprogress}
+                    labels={chartData.categoryLabels}
+                    key={`bar-${JSON.stringify(chartData.categoryDataresolved)}-${JSON.stringify(chartData.categoryDataInprogress)}-${JSON.stringify(chartData.categoryLabels)}`}
+                  />
+                </div>
+              )}
             </div>
-          )}
-          {chartData && (
-            <div className="w-full h-[350px]">
-              <Donut
-                series={chartData.statusData}
-                labels={chartData.statusLabels}
-                key={`donut-${JSON.stringify(chartData.statusData)}-${JSON.stringify(chartData.statusLabels)}`}
-              />
-            </div>
-          )}
-          {chartData && (
-            <div className="w-full h-[350px]">
-              <Pie
-                series={chartData.priorityData}
-                labels={chartData.priorityLabels}
-                key={`pie-${JSON.stringify(chartData.priorityData)}-${JSON.stringify(chartData.priorityLabels)}`}
-              />
-            </div>
-          )}
-          {isAdminOrAgent && chartData && (
-            <div className="w-full h-[350px]">
-              <BarChart
-                resolved={chartData.categoryDataresolved}
-                inprogress={chartData.categoryDataInprogress}
-                labels={chartData.categoryLabels}
-                key={`bar-${JSON.stringify(chartData.categoryDataresolved)}-${JSON.stringify(chartData.categoryDataInprogress)}-${JSON.stringify(chartData.categoryLabels)}`}
-              />
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </Container>
     </Fragment>
   );

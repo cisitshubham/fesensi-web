@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { SLAStatustype } from "@/types"
 import { getPriorityBadge } from "@/pages/global-components/GetStatusColor"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Clock, AlertTriangle, Calendar, Timer, TrendingUp, Activity } from "lucide-react"
 import clsx from "clsx"
+import { SLAStatusSkeleton } from "@/components/skeletons"
 
 export default function SlastatusAgent() {
   const [slaData, setSlaData] = useState<SLAStatustype[]>([])
@@ -55,29 +55,7 @@ export default function SlastatusAgent() {
   }
 
   if (loading) {
-    return (
-      <div className="p-6 bg-slate-50 min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <Skeleton className="h-8 w-64 mb-2" />
-            <Skeleton className="h-4 w-96" />
-          </div>
-          <div className="grid gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardContent className="p-6">
-                  <Skeleton className="h-6 w-32 mb-4" />
-                  <div className="flex justify-between">
-                    <Skeleton className="h-4 w-48" />
-                    <Skeleton className="h-4 w-32" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return <SLAStatusSkeleton />;
   }
 
   return (

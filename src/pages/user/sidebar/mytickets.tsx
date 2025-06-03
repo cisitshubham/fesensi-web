@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import UserTicket from './ticket-component';
 import { NoTicketsPage } from '@/errors/no-ticketspage'; // Import the NoTicketsPage component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TicketSkeleton } from '@/components/skeletons';
 import { Loader2 } from "lucide-react";
 
 export default function UserTickets() {
@@ -51,24 +51,7 @@ export default function UserTickets() {
         </Select>
       </div>
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="border rounded-lg p-4 space-y-4">
-              <div className="flex justify-between items-start">
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[250px]" />
-                  <Skeleton className="h-4 w-[200px]" />
-                </div>
-                <Skeleton className="h-8 w-[100px]" />
-              </div>
-              <Skeleton className="h-4 w-full" />
-              <div className="flex gap-2">
-                <Skeleton className="h-6 w-[80px] rounded-full" />
-                <Skeleton className="h-6 w-[80px] rounded-full" />
-              </div>
-            </div>
-          ))}
-        </div>
+        <TicketSkeleton />
       ) : error ? (
         <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">{error}</div>
       ) : tickets.length === 0 ? (

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Skeleton } from "@/components/ui/skeleton"
+import { SupportListSkeleton } from "@/components/skeletons"
 
 interface SupportRequest {
   _id: string
@@ -83,13 +83,7 @@ export default function AdminSupportList() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell colSpan={7}>
-                    <Skeleton className="h-12 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
+              <SupportListSkeleton />
             ) : requests.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">

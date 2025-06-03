@@ -17,6 +17,7 @@ import { KeenIcon } from "@/components"
 import { deleteAnnouncement } from "@/api/admin"
 import { toast } from "sonner"
 import { position } from "stylis"
+import { AnnouncementSkeleton } from "@/components/skeletons"
 
 interface Announcement {
   _id: string
@@ -219,19 +220,7 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
 
 
     if (isLoading) {
-      return (
-        <Card className="w-full">
-          <CardContent className="p-0">
-            <div className="flex flex-col items-center justify-center h-64 space-y-4">
-              <div className="w-16 h-16 relative">
-                <div className="absolute inset-0 rounded-full border-4 border-muted-foreground/10 border-t-primary animate-spin"></div>
-                <MessageSquare className="h-8 w-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-muted-foreground/50" />
-              </div>
-              <p className="text-muted-foreground">Loading announcements...</p>
-            </div>
-          </CardContent>
-        </Card>
-      )
+      return <AnnouncementSkeleton />;
     }
 
     if (announcements.length === 0) {
