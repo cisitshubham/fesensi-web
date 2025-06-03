@@ -376,9 +376,9 @@ export const deletePermissions = async (formData: FormData) => {
     console.error('Error deleting permissions:', error);
   }
 };
-export const GetUserTickets = async () => {
+export const GetUserTickets = async (Status: any) => {
   try {
-    const response = await axiosInstance.get('/tickets/ticket-list');
+    const response = await axiosInstance.get(`/tickets/ticket-list/${Status}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching ticket by ID:', error);

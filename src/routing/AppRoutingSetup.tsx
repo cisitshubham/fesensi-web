@@ -104,7 +104,6 @@ import AnalyticsPage from '@/pages/admin/sidebar/analytics';
 
 import UserTickets from '@/pages/user/sidebar/mytickets';
 import UserTTicketDetails from '@/pages/user/flow/Ticket';
-import UserResolveTicket from '@/pages/user/flow/Resolve';
 import UserUpdateTicketForm from '@/pages/user/flow/update-ticket';
 import UserCreateTicketForm from '@/pages/user/sidebar/CreateTicket';
 import ReassignTicket from '@/pages/agent/sidebar/Request-Reassignment/reassign';
@@ -302,7 +301,6 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/MyTickets" element={<UserTickets />} />
           <Route path="/user/ticket/:id" element={<UserTTicketDetails />} />
           <Route path="/user/ticket/update/:id" element={<UserUpdateTicketForm />} />
-          <Route path="/user/ticket/resolution/:id" element={<UserResolveTicket />} />
           <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
           <Route path="user/feedback/:id" element={<FeedbackPage/>} />
           <Route path="user/knowledgeBase" element={<KnowledgeBasePageUser/>} />

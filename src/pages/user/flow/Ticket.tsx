@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import { Calendar, Clock, Tag, AlertCircle } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router';
+import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from 'lucide-react';
 
-import { getTicketById } from '@/api/api';
+import { getTicketById, CloseTicketUser, addcomment } from '@/api/api';
 import type { Tickettype } from '@/types';
 import { Alert } from '@/components';
 import { Badge } from '@/components/ui/badge';
@@ -12,16 +12,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getPriorityColor,getStatusBadge,getPriorityBadge } from '@/pages/global-components/GetStatusColor';
+import { getStatusBadge,getPriorityBadge } from '@/pages/global-components/GetStatusColor';
+import { Dialog, DialogContent,  } from "@/components/ui/dialog";
+import { Textarea } from '@/components/ui/textarea';
 
 export default function UserTicketDetails() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [ticket, setTicket] = useState<Tickettype | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [comment_text, setFeedback] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -76,6 +82,43 @@ export default function UserTicketDetails() {
   if (!ticket) {
     return null;
   }
+
+  const handleResolve = async () => {
+    if (!ticket?._id) return;
+
+    try {
+      await CloseTicketUser({ ticket_id: ticket._id });
+      toast.success("Ticket resolved successfully.", { position: "top-center" });
+      setShowDialog(true);
+    } catch (err) {
+      console.error("Failed to resolve ticket:", err);
+      toast.error("Failed to resolve ticket. Please try again.", { position: "top-center" });
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!comment_text.trim() || !ticket?._id) return;
+
+    try {
+      setSubmitting(true);
+      const formData = new FormData();
+      formData.append("comment_text", comment_text);
+      formData.append("ticket", String(ticket._id));
+      await addcomment(formData);
+
+      toast.success("Query submitted successfully.", { position: "top-center" });
+      setShowFeedback(false);
+
+      setTimeout(() => {
+        navigate("/user/MyTickets");
+      }, 1000);
+    } catch (err) {
+      console.error("Failed to submit feedback:", err);
+      toast.error("Failed to submit feedback. Please try again.", { position: "top-center" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Card className="  mx-6 mt-8 ">
@@ -194,20 +237,74 @@ export default function UserTicketDetails() {
         </Card>
       )}
 
-      <CardFooter className="flex pt-4">
-        <div className="flex flex-row">
-          {ticket.isCustomerTicketEdit && (
-            <Link to={`/user/ticket/update/${ticket._id}`} className="">
-              <Button variant={'destructive'}>Update Ticket</Button>
-            </Link>
-          )}
-          {ticket.isAgentCommented && ticket.status === "IN-PROGRESS" && (
-            <Link to={`/user/ticket/resolution/${ticket._id}`} className="">
-              <Button variant={'default'}>Check Resolution</Button>
-            </Link>
+      <CardFooter className="flex flex-col items-start pt-4 border-t">
+        <div className="w-full">
+          <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
+          <div className="flex gap-4 mb-4">
+            <Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
+              <CheckCircle className="h-4 w-4" />
+              Yes, mark as resolved
+            </Button>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
+              onClick={() => setShowFeedback(true)}
+            >
+              <XCircle className="h-4 w-4" />
+              No, I need more help
+            </Button>
+          </div>
+
+          {showFeedback && (
+            <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-5 duration-300">
+              <Textarea
+                placeholder="Please describe what's still not working or what additional help you need..."
+                className="min-h-[120px] w-full"
+                value={comment_text}
+                onChange={(e) => setFeedback(e.target.value)}
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setShowFeedback(false)
+                    setFeedback("")
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="default"
+                  className="flex items-center gap-2"
+                  onClick={handleSubmitFeedback}
+                  disabled={!comment_text.trim() || submitting}
+                >
+                  <Send className="h-4 w-4" />
+                  {submitting ? "Submitting..." : "Submit Feedback"}
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       </CardFooter>
+
+      {showDialog && (
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent className="">
+            <Card className="p-6">
+              <CardHeader>
+                <CardTitle>Ticket Resolved</CardTitle>
+              </CardHeader>
+              <p>Your ticket has been successfully resolved. Thank you for your patience!</p>
+              <p className="text-gray-500">Please rate your expierence</p>
+              <CardFooter className="flex flex-row justify-between items-center mt-4">
+                <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>Rate our service</Button>
+                <Button variant={"outline"} onClick={() => navigate(`/user/MyTickets/`)}>Go to My Tickets</Button>
+              </CardFooter>
+            </Card>
+          </DialogContent>
+        </Dialog>
+      )}
     </Card>
   );
 }
