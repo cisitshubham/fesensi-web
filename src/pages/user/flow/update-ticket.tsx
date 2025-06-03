@@ -315,8 +315,9 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
 
           <div className="flex gap-2 mt-4">
             <Button
+              variant={'default'}
               type="submit"
-              className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
+              // className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
               disabled={loading}
             >
               {loading ? 'Updating...' : 'Update Ticket'}

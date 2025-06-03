@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Calendar, Clock, Tag, AlertCircle, CheckCircle, XCircle, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { getTicketById, CloseTicketUser, addcomment } from '@/api/api';
 import type { Tickettype } from '@/types';
@@ -241,18 +242,27 @@ export default function UserTicketDetails() {
         <div className="w-full">
           <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
           <div className="flex gap-4 mb-4">
-            <Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
-              <CheckCircle className="h-4 w-4" />
-              Yes, mark as resolved
-            </Button>
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
-              onClick={() => setShowFeedback(true)}
-            >
-              <XCircle className="h-4 w-4" />
-              No, I need more help
-            </Button>
+            
+          {ticket.isCustomerTicketEdit && (
+            <Link to={`/user/ticket/update/${ticket._id}`} className="">
+              <Button variant={'default'}>Edit Ticket</Button>
+            </Link>
+          )}
+            
+            {
+              ticket.isAgentCommented && ticket.status === "IN-PROGRESS" &&
+            <><Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
+                <CheckCircle className="h-4 w-4" />
+                Yes, mark as resolved
+              </Button><Button
+                variant="outline"
+                className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
+                onClick={() => setShowFeedback(true)}
+              >
+                  <XCircle className="h-4 w-4" />
+                  No, I need more help
+                </Button></>
+            }
           </div>
 
           {showFeedback && (
