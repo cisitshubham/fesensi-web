@@ -301,7 +301,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/MyTickets" element={<UserTickets />} />
           <Route path="/user/ticket/:id" element={<UserTTicketDetails />} />
           <Route path="/user/ticket/update/:id" element={<UserUpdateTicketForm />} />
-          <Route path="user/create-ticket" element={<UserCreateTicketForm />} />
+          <Route path="/create-ticket" element={<UserCreateTicketForm />} />
           <Route path="user/feedback/:id" element={<FeedbackPage/>} />
           <Route path="user/knowledgeBase" element={<KnowledgeBasePageUser/>} />
           <Route path="user/announcements" element={<AnnouncementsUser/>} />

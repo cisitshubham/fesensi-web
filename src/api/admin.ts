@@ -356,10 +356,10 @@ export const getAllTicketsAdmin = async (formData:FormData) => {
 }
 
 
-
-export const getFilteredTickets = async (status:string) => {
+export const getFilteredTickets = async (status: string, pagination: { page: number; limit: number }, dateRange?: { fromDate: string; toDate: string }) => {
+  console.log(dateRange)
   try {
-    const response = await axiosInstance.post(`/admin/Dashboard/charts/${status}`);
+    const response = await axiosInstance.post(`/admin/Dashboard/charts/${status}?page=${pagination.page}&limit=${pagination.limit}`, dateRange);
     return response.data;
   } catch (error) {
     console.error('Error fetching filtered tickets:', error);

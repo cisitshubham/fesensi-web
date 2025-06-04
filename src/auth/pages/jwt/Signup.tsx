@@ -22,22 +22,21 @@ const initialValues = {
 
 const signupSchema = Yup.object().shape({
   first_name: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
+    .min(3, 'Minimum 3 characters')
+    .max(50, 'Maximum 50 characters')
     .required('User name is required'),
-  last_name: Yup.string().optional().min(3, 'Minimum 3 symbols').max(50, 'Maximum 50 symbols'),
+  last_name: Yup.string().optional().min(3, 'Minimum 3 characters').max(50, 'Maximum 50 characters'),
   email: Yup.string()
     .email('Wrong email format')
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
+   
     .required('Email is required'),
   password: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
+    .min(6, 'Minimum 6 characters')
+    .max(50, 'Maximum 50 characters')
     .required('Password is required'),
   changepassword: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
+    .min(6, 'Minimum 6 characters')
+    .max(50, 'Maximum 50 characters')
     .required('Password confirmation is required')
     .oneOf([Yup.ref('password')], "Password and Confirm Password didn't match"),
   acceptTerms: Yup.bool().required('You must accept the terms and conditions')
@@ -224,7 +223,7 @@ const Signup = () => {
                 }
               )}
             />
-            <button className="btn btn-icon" onClick={togglePassword}>
+            <button type="button" className="btn btn-icon" onClick={togglePassword}>
               <KeenIcon icon="eye" className={clsx('text-gray-500', { hidden: showPassword })} />
               <KeenIcon
                 icon="eye-slash"
@@ -256,7 +255,7 @@ const Signup = () => {
                 }
               )}
             />
-            <button className="btn btn-icon" onClick={toggleConfirmPassword}>
+            <button type="button" className="btn btn-icon" onClick={toggleConfirmPassword}>
               <KeenIcon
                 icon="eye"
                 className={clsx('text-gray-500', { hidden: showConfirmPassword })}

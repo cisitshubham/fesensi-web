@@ -2,7 +2,6 @@ import { ChartDataAgent, ChartDataAdmin, ChartDataCustomer } from '@/api/api';
 
 export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
   try {
-    console.log('Fetching dashboard data with params:', { fromDate, toDate, role });
     
     const formData = new FormData();
     formData.append('fromDate', fromDate);
@@ -20,7 +19,6 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
 
     if (apiResponse && apiResponse.success) {
       const fetchedData = apiResponse.data;
-      console.log('Raw API response:', fetchedData);
 
       // Ensure we have default values if any data is missing
       const statusCharts = fetchedData.statusCharts || {};
@@ -62,7 +60,6 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
         ticketsbyCategory
       };
 
-      console.log('Processed chart data:', processedData);
       return processedData;
     } else {
       return null;

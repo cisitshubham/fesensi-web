@@ -14,6 +14,10 @@ interface TicketStatusCardsProps {
     resolved: number;
     closed: number;
   };
+  dateRange?: {
+    fromDate: string;
+    todate: string;
+  };
 }
 
 const statusConfig = [
@@ -53,7 +57,7 @@ const getRouteByRole = (role: string) => {
   }
 };
 
-const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts }: TicketStatusCardsProps) {
+const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts, dateRange }: TicketStatusCardsProps) {
   const { selectedRoles } = useRole();
   const currentRole = selectedRoles[0] || 'USER';
 
@@ -67,7 +71,7 @@ const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts }: Tick
           <Link
             key={key}
             to={linkTo}
-            state={{ status }}
+            state={{ status, dateRange }}
             className="block h-full"
           >
             <Card className={clsx(

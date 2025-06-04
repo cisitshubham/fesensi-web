@@ -123,15 +123,12 @@ export const clearChartDataCache = () => {
 
 export const ChartDataAdmin = async (formData: FormData) => {
   const cacheKey = `ADMIN-${formData.get('fromDate')}-${formData.get('toDate')}`;
-  console.log('Admin cache key:', cacheKey);
   
   if (chartDataCache[cacheKey]) {
-    console.log('Using cached admin data');
     return chartDataCache[cacheKey];
   }
   
   try {
-    console.log('Fetching fresh admin data');
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
     chartDataCache[cacheKey] = response.data;
     return response.data;
@@ -435,17 +432,13 @@ export const addFeedback = async (formData: FormData) => {
 
 export const ChartDataCustomer = async (formData: FormData) => {
   const cacheKey = `CUSTOMER-${formData.get('fromDate')}-${formData.get('toDate')}`;
-  console.log('Customer cache key:', cacheKey);
   
   if (chartDataCache[cacheKey]) {
-    console.log('Using cached customer data');
     return chartDataCache[cacheKey];
   }
   
   try {
-    console.log('Fetching fresh customer data');
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
-    console.log('response', response);
     return response.data;
   } catch (error) {
     console.error('Error fetching customer chart data:', error);

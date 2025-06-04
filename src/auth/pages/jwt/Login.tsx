@@ -13,12 +13,10 @@ import { set } from 'date-fns';
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Wrong email format')
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
     .required('Email is required'),
   password: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
+    .min(6, 'Minimum 6 characters')
+    .max(50, 'Maximum 50 characters')
     .required('Password is required'),
   remember: Yup.boolean()
 });
@@ -152,7 +150,7 @@ const Login = () => {
                 { 'is-valid': formik.touched.password && !formik.errors.password }
               )}
             />
-            <button className="btn btn-icon" onClick={togglePassword}>
+            <button type="button" className="btn btn-icon" onClick={togglePassword}>
               <KeenIcon icon="eye" className={clsx('text-gray-500', { hidden: showPassword })} />
               <KeenIcon
                 icon="eye-slash"

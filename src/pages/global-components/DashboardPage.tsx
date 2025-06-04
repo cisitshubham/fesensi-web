@@ -84,30 +84,15 @@ export default function DashboardPage() {
     // Clear chart data cache when switching roles
     clearChartDataCache();
     
-    // Reset tenure state when switching roles
-    const today = new Date();
-    const formatDate = (date: Date) => {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      return `${year}-${month}-${day}`;
-    };
-    const newTenureState = {
-      fromDate: formatDate(today),
-      toDate: formatDate(today),
-      selectedButton: 'Today',
-    };
-    
     // Fetch new data immediately after role change
     setIsLoading(true);
     try {
       const response = await fetchDashboardData(
-        newTenureState.fromDate,
-        newTenureState.toDate,
+        tenureState.fromDate,
+        tenureState.toDate,
         role
       );
       if (response) {
-        setTenureState(newTenureState);
         setChartData(response as ChartData);
       }
     } catch (error) {
@@ -115,7 +100,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedRoles, setSelectedRoles]);
+  }, [selectedRoles, setSelectedRoles, tenureState.fromDate, tenureState.toDate]);
 
   // Combined initial data fetch
   useEffect(() => {
@@ -232,7 +217,6 @@ export default function DashboardPage() {
         categoryDataresolved: chartData.categoryDataresolved,
         categoryLabels: chartData.categoryLabels
       };
-      console.log('Chart data updated:', debugData);
     }
   }, [chartData]);
 
@@ -345,6 +329,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 w-full lg:w-5/12 gap-4">
                   <TicketStatusCards 
                     ticketCounts={ticketCounts} 
+                    dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.toDate }}
                     key={`status-cards-${JSON.stringify(ticketCounts)}`}
                   />
                 </div>

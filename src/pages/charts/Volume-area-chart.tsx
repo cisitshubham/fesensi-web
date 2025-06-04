@@ -1,6 +1,4 @@
-// LineChart.tsx
 
-import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { ApexOptions } from "apexcharts";

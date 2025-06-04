@@ -24,7 +24,7 @@ export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
       {
         title: 'Create Ticket',
         icon: 'plus',
-        path: '/user/create-ticket'
+        path: '/create-ticket'
       },
       {
         title: 'MyTickets',
@@ -64,7 +64,11 @@ export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
         icon: 'file-sheet',
         path: '/agent/mytickets'
       },
-
+      {
+        title: 'Create Ticket',
+        icon: 'plus',
+        path: '/create-ticket'
+      },
       {
         title: 'Bulk Reassignment',
         icon: 'file-sheet',
