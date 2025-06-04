@@ -26,6 +26,7 @@ interface IColumnFilterProps<TData, TValue> {
 }
 
 const Users = () => {
+  const { table } = useDataGrid();
   const ColumnInputFilter = <TData, TValue>({ column }: IColumnFilterProps<TData, TValue>) => {
     return (
       <Input
@@ -217,6 +218,10 @@ const Users = () => {
         description: `Selected row IDs: ${selectedRowIds}`,
         action: {
           label: 'Undo',
+          onClick: () => {
+            // Clear selection
+            table.resetRowSelection();
+          }
         }
       });
     }
