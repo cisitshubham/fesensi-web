@@ -1,11 +1,12 @@
-"use client"
++"use client"
 
 import { getTrustlevel } from "@/api/agent"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, Award, CheckCircle, Star, ThumbsUp, XCircle } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import ReactSpeedometer from "react-d3-speedometer"
+import { Container } from "@/components"
 // Custom progress bar component
 const CustomProgress = ({ value }: { value: number }) => (
   <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -18,6 +19,7 @@ const CustomProgress = ({ value }: { value: number }) => (
 
 interface TrustLevelData {
   level: string
+  levelInfo: string
   maxNumber: number
   metrics: {
     totalTickets: number
@@ -40,10 +42,10 @@ export default function TrustPageAgent() {
     try {
       const response = await getTrustlevel()
       if (response.success) {
+        console.log(response)
         setLoading(false)
         setError(null)
         setTrustLevel(response.data)
-        console.log(response.data)
       } else {
         throw new Error(response.message || "Failed to fetch trust level")
       }
@@ -96,8 +98,8 @@ export default function TrustPageAgent() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6 max-w-5xl">
-      <div className="flex flex-col md:flex-row gap-6">
+    <Fragment >
+      <Container className="flex flex-col md:flex-row gap-6">
         <Card className="w-full md:w-1/3">
           <CardHeader className="">
           </CardHeader>
@@ -111,11 +113,13 @@ export default function TrustPageAgent() {
                 needleColor="black"
                 ringWidth={10}
                 />
-               
+               <div className="mx-auto content-center text-center">
               <Badge className={`text-lg  px-4 ${getBadgeColor(trustLevel.level || 'low')}`}>
                 <Award className="mr-1 h-4 w-4" />
                 {trustLevel.level || 'Not Rated'} 
               </Badge>
+              <div className="">{trustLevel.levelInfo}</div>
+              </div>
           </CardContent>
         </Card>
 
@@ -175,7 +179,7 @@ export default function TrustPageAgent() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </Container>
 
       <Card>
         <CardHeader className="pb-2">
@@ -214,6 +218,6 @@ export default function TrustPageAgent() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </Fragment>
   )
 }

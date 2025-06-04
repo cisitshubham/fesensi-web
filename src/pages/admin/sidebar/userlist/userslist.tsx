@@ -265,7 +265,6 @@ export default function AdminUsersPage() {
   
   // Debug dropdownData
   useEffect(() => {
-    console.log('Dropdown Data:', dropdownData);
     if (dropdownError) {
       console.error('Dropdown Error:', dropdownError);
       toast.error("Failed to load dropdown data");
@@ -483,7 +482,7 @@ export default function AdminUsersPage() {
       }
       
       const response = await updateUser(userId, formData);
-      console.log("Response from updateUser:", response);      if (response && response.success) {
+        if (response && response.success) {
         setUsers((prevUsers) => prevUsers.map((user) => {
           if (user._id === userId) {
             // Convert edited data for table display

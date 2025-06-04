@@ -18,18 +18,21 @@ const PermissionsToggle = () => {
       description: 'Users may view and update the settings of the workspace.',
       checked: true
     },
+
     {
       icon: 'two-credit-cart',
       title: 'Billing Management',
       description: 'Users are authorized to review, update subscriptions.',
       checked: false
     },
+
     {
       icon: 'mouse-square',
       title: 'Integration Setup',
       description: 'Manage user integrations and associated tags.',
       checked: true
     },
+
     {
       icon: 'toggle-off-circle',
       title: 'Permissions Control',
@@ -110,10 +113,8 @@ const PermissionsToggle = () => {
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">
-          Role Permissions for
-          <a href="#" className="link">
-            &nbsp;Project Manager
-          </a>
+        Configuration
+         
         </h3>
       </div>
       <div className="card-body grid grid-cols-1 lg:grid-cols-2 gap-5 py-5 lg:py-7.5">

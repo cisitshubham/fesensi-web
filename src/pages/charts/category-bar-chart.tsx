@@ -9,7 +9,7 @@ interface BarChartProps {
   labels: string[];
 }
 
-export default function BarChart({ resolved, inprogress, labels }: BarChartProps) {
+function BarChart({ resolved, inprogress, labels }: BarChartProps) {
   const [state, setState] = React.useState<{
     series: { name: string; data: number[] }[];
     options: ApexOptions;
@@ -71,6 +71,24 @@ export default function BarChart({ resolved, inprogress, labels }: BarChartProps
     },
   });
 
+  // Update chart when props change
+  React.useEffect(() => {
+    setState(prevState => ({
+      ...prevState,
+      series: [
+        { name: "Resolved", data: resolved },
+        { name: "In Progress", data: inprogress },
+      ],
+      options: {
+        ...prevState.options,
+        xaxis: {
+          ...prevState.options.xaxis,
+          categories: labels,
+        },
+      },
+    }));
+  }, [resolved, inprogress, labels]);
+
   return (
     <Card>
       <div id="chart">
@@ -85,4 +103,6 @@ export default function BarChart({ resolved, inprogress, labels }: BarChartProps
     </Card>
   );
 }
+
+export default React.memo(BarChart);
 

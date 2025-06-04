@@ -1,13 +1,15 @@
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Fragment, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 import { useAuthContext } from '../../useAuthContext';
 import { toAbsoluteUrl } from '@/utils';
 import { Alert, KeenIcon } from '@/components';
 import { useLayout } from '@/providers';
+import { Button } from '@/components/ui/button';
 
 const initialValues = {
   first_name: '',
@@ -22,7 +24,7 @@ const signupSchema = Yup.object().shape({
   first_name: Yup.string()
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
-    .required('First Name is required'),
+    .required('User name is required'),
   last_name: Yup.string().optional().min(3, 'Minimum 3 symbols').max(50, 'Maximum 50 symbols'),
   email: Yup.string()
     .email('Wrong email format')
@@ -45,11 +47,11 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuthContext();
   const navigate = useNavigate();
-  const location = useLocation();
   const from = '/auth/login';
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { currentLayout } = useLayout();
+  const [showDialog, setShowDialog] = useState(false);
 
   const formik = useFormik({
     initialValues,
@@ -58,7 +60,8 @@ const Signup = () => {
       try {
         if (register) {
           await register(values.first_name, values.email, values.password);
-          navigate(from, { replace: true });
+
+          setShowDialog(true); // Show the dialog
         } else {
           throw new Error('JWTProvider is required for this form.');
         }
@@ -81,8 +84,32 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+
   return (
-    <div className=" max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
+    <div className="max-w-[470px] w-full lg:overflow-y-scroll no-scrollbar">
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className='p-4'>
+          <DialogTitle>Signup Successful</DialogTitle>
+          <p className="mt-2">Your signup was successful. Waiting for admin approval.</p>
+          <div className="flex flex-row justify-between items-center mt-4">
+          <Button
+            className="w-fit "
+            onClick={handleCloseDialog}
+          >
+            Close
+          </Button>
+          <Button className='w-fit'>
+            <Link to={from} className=" ">
+              Go to Login
+            </Link>
+          </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <form
         className="card-body flex flex-col gap-5 p-10"
         noValidate
@@ -114,7 +141,7 @@ const Signup = () => {
         <div className="flex flex-col gap-1">
           <label className="input">
             <input
-              placeholder="First Name"
+              placeholder="User name "
               type="text"
               autoComplete="off"
               {...formik.getFieldProps('first_name')}
@@ -259,6 +286,7 @@ const Signup = () => {
         </Link></div>
     
       </form>
+
     </div>
   );
 };

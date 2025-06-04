@@ -2,9 +2,11 @@ import { ChartDataAgent, ChartDataAdmin, ChartDataCustomer } from '@/api/api';
 
 export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
   try {
+    console.log('Fetching dashboard data with params:', { fromDate, toDate, role });
+    
     const formData = new FormData();
     formData.append('fromDate', fromDate);
-    formData.append('toDate', toDate);
+    formData.append('todate', toDate);
 
     let apiResponse;
     if (role === 'ADMIN') {
@@ -15,20 +17,21 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
       apiResponse = await ChartDataCustomer(formData);
     }
 
+
     if (apiResponse && apiResponse.success) {
       const fetchedData = apiResponse.data;
+      console.log('Raw API response:', fetchedData);
 
       // Ensure we have default values if any data is missing
       const statusCharts = fetchedData.statusCharts || {};
-      const statusData = Object.values(statusCharts);
+      const 
+      statusData = Object.values(statusCharts);
       const statusLabels = Object.keys(statusCharts);
 
       const categoryCharts = fetchedData.categoryCharts || {};
-      const categoryDataInprogress = categoryCharts.inprogress
-      const categoryDataresolved = categoryCharts.resolved
-      const categoryLabels = categoryCharts.categories
-
-
+      const categoryDataInprogress = categoryCharts.inprogress || [];
+      const categoryDataresolved = categoryCharts.resolved || [];
+      const categoryLabels = categoryCharts.categories || [];
 
       const priorityCharts = fetchedData.priorityCharts || {};
       const priorityData = Object.values(priorityCharts);
@@ -39,13 +42,18 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
       const ticketVolumeLabels = Object.keys(ticketsByVolume);
 
       // Ensure ticketsbyCategory has the required structure
-      const ticketsbyCategory = fetchedData.TicketsByCategory;
-      return {
+      const ticketsbyCategory = fetchedData.TicketsByCategory || {
+        overallPercentageChange: '0',
+        totalTicketCount: 0,
+        totalLastMonthCount: 0,
+        counts: []
+      };
+
+      const processedData = {
         statusData,
         statusLabels,
         categoryDataInprogress,
         categoryDataresolved,
-
         categoryLabels,
         priorityData,
         priorityLabels,
@@ -53,6 +61,9 @@ export async function fetchDashboardData(fromDate: string, toDate: string, role:
         ticketVolumeLabels,
         ticketsbyCategory
       };
+
+      console.log('Processed chart data:', processedData);
+      return processedData;
     } else {
       return null;
     }

@@ -8,6 +8,7 @@ import { toAbsoluteUrl } from '@/utils';
 import { useAuthContext } from '@/auth';
 import { useLayout } from '@/providers';
 import { Alert } from '@/components';
+import { set } from 'date-fns';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -32,33 +33,48 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuthContext();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); 
   const from = location.state?.from?.pathname || '/';
   const [showPassword, setShowPassword] = useState(false);
   const { currentLayout } = useLayout();
-
+  const [error, setError] = useState<string | null>(null);
   const formik = useFormik({
     initialValues,
     validationSchema: loginSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
+      setStatus('');
+
+
+
       try {
         if (!login) {
           throw new Error('JWTProvider is required for this form.');
         }
 
-        await login(values.email, values.password);
+       const res= await login(values.email, values.password);
         if (values.remember) {
           localStorage.setItem('email', values.email);
         } else {
+
           localStorage.removeItem('email');
         }
         navigate(from, { replace: true });
-      } catch {
-        setStatus('The login details are incorrect');
+      } catch(error) {
+        const res = localStorage.getItem('response');
+        if (res) {
+          try {
+            const parsedRes = JSON.parse(res);
+            setStatus(parsedRes.message);
+          } catch (e) {
+            setStatus('An error occurred.');
+          }
+        } else {
+          setStatus('An error occurred.');
+        }
         setSubmitting(false);
+        setLoading(false);
       }
-      setLoading(false);
     }
   });
 

@@ -290,12 +290,22 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
                 <h3 className="text-gray-500 text-xs mt-3">Selected Files</h3>
                 <div className="flex flex-wrap gap-2">
                   {files.map((file, index) => (
-                    <div key={index} className="relative w-16 h-16">
+                    <div key={index} className="relative w-16 h-16 group">
                       <img
                         src={URL.createObjectURL(file)}
                         alt="Selected File"
                         className="w-full h-full object-cover rounded-lg border"
                       />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFiles(files.filter((_, i) => i !== index));
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600"
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -305,8 +315,9 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
 
           <div className="flex gap-2 mt-4">
             <Button
+              variant={'default'}
               type="submit"
-              className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
+              // className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
               disabled={loading}
             >
               {loading ? 'Updating...' : 'Update Ticket'}

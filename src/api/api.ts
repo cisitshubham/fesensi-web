@@ -35,7 +35,6 @@ export const updateProfile = async (imageFile: File) => {
 export const updatepassword = async (formData:any) => {
   try {
     const response = await axiosInstance.post('/users/forget-password', formData);
-    console.log(response.data);
     return response.data;
   }
   catch (error) {
@@ -49,7 +48,6 @@ export const updatepassword = async (formData:any) => {
 export const Resetpassword = async (formData: any) => {
   try {
     const response = await axiosInstance.post('/users/reset-password', formData);
-    console.log(response.data);
     return response.data;
   }
   catch (error) {
@@ -117,17 +115,28 @@ export const getTicketByCategory = async () => {
 // Simple in-memory cache for chart data
 const chartDataCache: Record<string, any> = {};
 
+// Function to clear chart data cache
+export const clearChartDataCache = () => {
+  console.log('Clearing chart data cache');
+  Object.keys(chartDataCache).forEach(key => delete chartDataCache[key]);
+};
+
 export const ChartDataAdmin = async (formData: FormData) => {
-  const cacheKey = JSON.stringify(Array.from(formData.entries()));
+  const cacheKey = `ADMIN-${formData.get('fromDate')}-${formData.get('toDate')}`;
+  console.log('Admin cache key:', cacheKey);
+  
   if (chartDataCache[cacheKey]) {
+    console.log('Using cached admin data');
     return chartDataCache[cacheKey];
   }
+  
   try {
+    console.log('Fetching fresh admin data');
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
     chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
-    console.error('Error fetching chart data:', error);
+    console.error('Error fetching admin chart data:', error);
     return null;
   }
 };
@@ -214,11 +223,7 @@ export const getUserById = async (userId: string) => {
 };
 
 export const updateUser = async (userId: string, formData: FormData) => {
-  console.log('formData', formData.get('role'));
-  console.log('formData', formData.get('categories'));
-  console.log('formData', formData.get('level'));
-  console.log('formData', formData.get('first_name'));
-  console.log('userId', userId);
+ 
   try {
     const response = await axiosInstance.post(`/admin/users/update/${userId}`, formData);
     return response.data;
@@ -276,9 +281,8 @@ export const getRoles = async () => {
 };
 
 export const createCategories = async (formData: FormData) => {
-  console.log('formData', formData.get('title'));
   try {
-    const response = await axiosInstance.post('/admin/categories/create', );
+    const response = await axiosInstance.post('/admin/categories/create',formData );
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
@@ -354,8 +358,7 @@ export const GetPermissionsList = async () => {
 
 export const UpdatePermissions = async (formData: FormData) => {
   try {
-    console.log('roleId', formData.get('roleId'));
-    console.log('permissions[]', formData.get('permissions[]'));
+  
     const response = await axiosInstance.post('/admin/assign/permissions', formData);
     return response.data;
   } catch (error) {
@@ -365,8 +368,7 @@ export const UpdatePermissions = async (formData: FormData) => {
 
 
 export const deletePermissions = async (formData: FormData) => {
-  console.log('roleId', formData.get('roleId'));
-  console.log('permissionId[]', formData.get('permissionId[]'));
+
   try {
     const response = await axiosInstance.post('/admin/delete/permissions', formData);
     return response.data;
@@ -374,9 +376,9 @@ export const deletePermissions = async (formData: FormData) => {
     console.error('Error deleting permissions:', error);
   }
 };
-export const GetUserTickets = async () => {
+export const GetUserTickets = async (Status: any) => {
   try {
-    const response = await axiosInstance.get('/tickets/ticket-list');
+    const response = await axiosInstance.get(`/tickets/ticket-list/${Status}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching ticket by ID:', error);
@@ -402,10 +404,8 @@ export const GetMasterDropdown = async () => {
 };
 
 export const CloseTicketUser = async (data: { ticket_id: string | number }) => {
-  console.log(data);
   try {
     const response = await axiosInstance.post('/tickets/ticket/isTicketResolved', data);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error closing ticket:', error);
@@ -434,12 +434,21 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
+  const cacheKey = `CUSTOMER-${formData.get('fromDate')}-${formData.get('toDate')}`;
+  console.log('Customer cache key:', cacheKey);
+  
+  if (chartDataCache[cacheKey]) {
+    console.log('Using cached customer data');
+    return chartDataCache[cacheKey];
+  }
+  
   try {
+    console.log('Fetching fresh customer data');
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
     console.log('response', response);
     return response.data;
   } catch (error) {
-    console.error('Error fetching chart data:', error);
+    console.error('Error fetching customer chart data:', error);
     return null;
   }
 };
@@ -447,16 +456,21 @@ export const ChartDataCustomer = async (formData: FormData) => {
 // agent
 
 export const ChartDataAgent = async (formData: FormData) => {
-  const cacheKey = JSON.stringify(Array.from(formData.entries()));
+  const cacheKey = `AGENT-${formData.get('fromDate')}-${formData.get('toDate')}`;
+  console.log('Agent cache key:', cacheKey);
+  
   if (chartDataCache[cacheKey]) {
+    console.log('Using cached agent data');
     return chartDataCache[cacheKey];
   }
+  
   try {
+    console.log('Fetching fresh agent data');
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts', formData);
     chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
-    console.error('Error fetching chart data:', error);
+    console.error('Error fetching agent chart data:', error);
     return null;
   }
 };
@@ -464,7 +478,6 @@ export const ChartDataAgent = async (formData: FormData) => {
 export const MyTickets = async (filters: any) => {
   try {
     const response = await axiosInstance.post('/agent/myTickets', filters);
-    console.log(filters);
     return response.data;
   } catch (error: any) {
     if (error.response) {

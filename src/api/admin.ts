@@ -79,7 +79,6 @@ export const updateCategory = async (id: string, formData: FormData) => {
     return response.data;
   }
   catch (error) {
-    console.log("error updating Category", error)
   }
 }
 
@@ -268,7 +267,7 @@ export const updatePriorities = async (id: string, formData: FormData) => {
 
 export const getApprovedReassignlist = async () => {
   try {
-    const response = await axiosInstance.get('/admin/request/reassign/tickets/approve');
+    const response = await axiosInstance.get('/admin/request/reassign/tickets/approved');
     return response.data;
 
   }
@@ -277,6 +276,16 @@ export const getApprovedReassignlist = async () => {
   }
 }
 
+
+export const UpdateReassignOptions = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/reassignement/post/update/${id}`, formData);
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error updating reassign options:', error);
+  }
+}
 
 
 export const Makeandremoveadmin = async (id: String) => {
@@ -334,4 +343,49 @@ export const deleteAnnouncement = async (id: string) => {
   } catch (error) {
     console.error('Error deleting announcement:', error);
   }
+}
+
+
+export const getAllTicketsAdmin = async (formData:FormData) => {
+  try {
+    const response = await axiosInstance.get(`/admin/tickets?page=${formData.get('page')}&limit=${formData.get('ticketsPerPage')}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all tickets:', error);
+  }
+}
+
+
+
+export const getFilteredTickets = async (status:string) => {
+  try {
+    const response = await axiosInstance.post(`/admin/Dashboard/charts/${status}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching filtered tickets:', error);
+  }
+}
+
+
+export const getTrustLevelInfo= async ()=>{
+  try{
+    const responce = await axiosInstance.get("/admin/trust/level/info/list")
+    return responce.data;
+  }
+  catch(error){
+    console.error('Error fetcing api')
+  }
+}
+
+
+export const updateTrustLevelInfo = async (formdata:FormData,_id:string) => {
+try{
+
+  const responce = await axiosInstance.post(`/admin/trust/level/info/update/${_id}`,formdata)
+  return responce;
+}
+catch(error){
+  console.error("error fetching api")
+}
+  
 }

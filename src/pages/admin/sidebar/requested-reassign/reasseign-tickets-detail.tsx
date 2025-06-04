@@ -86,7 +86,7 @@ export default function ReassignTicketsDetailAdmin() {
       const response = await reassignTicketAdmin(formData);
       if (response.success) {
         toast.success('Ticket reassigned successfully');
-        navigate('/admin/requested-reassignment');
+        navigate('/admin/requested-reassignment/pending');
       } else {
         toast.error('Failed to reassign ticket');
       }
@@ -107,7 +107,7 @@ export default function ReassignTicketsDetailAdmin() {
       const response = await denyReassign(formData);
       if (response.success) {
         toast.success('Reassignment request denied successfully');
-        navigate('/admin/requested-reassignment');
+        navigate('/admin/requested-reassignment/pending');
       } else {
         toast.error('Failed to deny reassignment request');
       }
@@ -146,7 +146,7 @@ export default function ReassignTicketsDetailAdmin() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Link
-              to="/admin/reassign-tickets"
+              to="/admin/requested-reassignment/pending"
               className="text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />

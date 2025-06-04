@@ -1,9 +1,4 @@
-/**
- * Ticket Component
- *
- * Input data must be of type TicketType:
- * refer to src/types.ts
- */
+
 
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +14,6 @@ interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
 }
 
-// Map priority colors to Tailwind classes
 
 export default function Ticket({ ticket }: TicketProps) {
   const statusBadge = getStatusBadge(ticket.status);
@@ -33,7 +27,7 @@ export default function Ticket({ ticket }: TicketProps) {
       state={ticket.isAgentReAssign ? { ticket } : undefined}
       className={clsx(
         'block w-full',
-        !ticket.isAgentReAssign && ' cursor-not-allowed bg-gray-200 opacity-50'
+        
       )}
     >
       <Card
@@ -46,6 +40,7 @@ export default function Ticket({ ticket }: TicketProps) {
           <Badge className="absolute right-0 top-0 bg-red-700/80 rounded-full p-1">
             <Bell className="h-4 w-4" />
           </Badge>
+
         )}
 
         <CardContent className="p-5">

@@ -65,7 +65,6 @@ export default function CreateReasons() {
       const formData = new FormData();
       formData.append('title', editedReason.title.trim());
       const response = await updateForceCloseReason(editedReason._id, formData);
-debugger;
       if (response.success && editIndex !== null) {
         const updated = [...reasons];
         updated[editIndex].title = editedReason.title.trim();
@@ -105,6 +104,13 @@ debugger;
         toast.success('Reason added successfully',{
           position:"top-center"
         });
+        const newReason = {
+          _id: response.data._id,
+          title: newReasonTitle.trim(),
+          createdAt: new Date().toISOString(),
+        };
+        setReasons(prev => [...prev, newReason]);
+        setNewReasonTitle('');
         setShowAddDialog(false);
         navigate('/admin/force-reasons');
       }

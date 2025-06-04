@@ -21,6 +21,7 @@ interface TicketProps {
 
 // Map priority colors to Tailwind classes
 
+
 export default function Ticket({ ticket }: TicketProps) {
   const statusBadge = getStatusBadge(ticket.status);
   const priorityBadge = getPriorityBadge(ticket.priority);
@@ -28,18 +29,12 @@ export default function Ticket({ ticket }: TicketProps) {
   const [remainingMinutes, setRemainingMinutes] = useState(ticket.remainingMinutes);
   const [remainingSeconds, setRemainingSeconds] = useState(ticket.remainingSeconds);
   return (
-    <Link
-      to={ticket.isAgentReAssign ? `/agent/ticket/${ticket._id}` : '#'}
-      state={ticket.isAgentReAssign ? { ticket } : undefined}
-      className={clsx(
-        'block w-full',
-        !ticket.isAgentReAssign && ' cursor-not-allowed bg-gray-200 opacity-50'
-      )}
-    >
+
       <Card
         className={clsx(
           'relative border-[1px] overflow-hidden transition-all duration-200 hover:shadow-md group',
-          priorityBadge.border
+         priorityBadge.border
+
         )}
       >
         {ticket.IsCumstomerCommneted === true && (
@@ -80,15 +75,13 @@ export default function Ticket({ ticket }: TicketProps) {
                   <Clock className="w-3.5 h-3.5" />
                   <span>created at: {ticket.createdAt}</span>
                 </div>
-                {ticket.status === TicketStatus.InProgress && (
-                  <Timer hours={remainingHours ?? 0} minutes={remainingMinutes ?? 0} seconds={0} />
-                )}
+          
               </div>
             </div>
           </div>
         </CardContent>
 
-        <CardFooter className={clsx('px-5 py-3  flex justify-between items-center')}>
+        <CardFooter className={clsx("px-5 py-3  flex justify-between items-center")}>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="w-4 h-4 mr-1.5" />
             <span>Escalation date: {ticket.due_date}</span>
@@ -101,6 +94,5 @@ export default function Ticket({ ticket }: TicketProps) {
           </div>
         </CardFooter>
       </Card>
-    </Link>
   );
 }

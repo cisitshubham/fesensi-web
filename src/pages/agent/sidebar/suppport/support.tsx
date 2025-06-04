@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,33 +8,53 @@ import { CalendarClock } from "lucide-react";
 import { CreateSupport } from "@/api/agent";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { map } from "leaflet";
 
 export default function SupportPageAgent() {
+  const dropdown = useMasterDropdown();
   const [email, setEmail] = useState(false);
   const [dateTime, setDateTime] = useState({ date: "", time: "" });
+  const [message, setMessage] = useState("");
+  const [query_type, setQueryType] = useState("");
   const navigate = useNavigate();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    const formData = new FormData(e.currentTarget);
     e.preventDefault();
-    console.log("Form submitted", formData.get("phone") );
-    console.log("Form submitted",  formData.get("issue"));
-    console.log("Form submitted",  formData.get("date") );
-    console.log("Form submitted", formData.get("time") );
-    console.log("Form submitted",formData.get("email"));
+    const formData = new FormData();
 
+    // Combine date and time if they exist
+
+
+
+    if(email) {
+    
+    }
+    if (!email) {
+       if (dateTime.date && dateTime.time) {
+      const combinedDateTime = `${dateTime.date}T${dateTime.time}`;
+      formData.set("calling_time", combinedDateTime);
+    }
+
+    
+    }
+
+    // Add message and query_type to formData
+    formData.append("message", message);
+    formData.append("query_type", query_type);
+    
     const responce = await CreateSupport(formData);
     if (responce.success == true) {
       toast.success("Support request submitted successfully", { position: "top-center" });
       navigate("/");
-    }
-    else {
+    } else {
       toast.error("Failed to submit support request", { position: "top-center" });
     }
-
-
-
   };
+
+  const isFormValid = email
+    ? message.trim() !== ""
+    : message.trim() !== "" && dateTime.date !== "" && dateTime.time !== "";
 
   return (
     <Card className="mx-8">
@@ -51,21 +71,37 @@ export default function SupportPageAgent() {
             Phone
           </Button>
         </div>
+        <div className="mb-4">
+          <Select value={query_type} onValueChange={(value) => setQueryType(value)}>
+            <SelectTrigger>
+              <span>{query_type ? dropdown.dropdownData.contactSupportOptions.find((option: { _id: string; title: string }) => option._id === query_type)?.title : "Select a query type"}</span>
+            </SelectTrigger>
+            <SelectContent>
+              {dropdown.dropdownData.contactSupportOptions.map((query: { _id: string; title: string }) => (
+                <SelectItem key={query._id} value={query._id}>
+                  {query.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {email ? (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Textarea placeholder="Describe your issue" required />
-            <Button type="submit">Submit</Button>
+            <Textarea
+              placeholder="Describe your issue"
+              required
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
+            />
+            <Button type="submit" disabled={!isFormValid}>Submit</Button>
           </form>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input type="tel" placeholder="Phone Number" required />
-
             {/* Custom DateTime Dropdown */}
             <div className="w-1/3">
               <label className="block text-sm font-medium mb-1">Select Date and Time</label>
               <Popover>
-                <PopoverTrigger asChild >
+                <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
                     <span>
                       {dateTime.date && dateTime.time
@@ -83,9 +119,11 @@ export default function SupportPageAgent() {
                       className="justify-between"
                       placeholder="Select Date"
                       value={dateTime.date}
-                      onChange={(e) =>
-                        setDateTime((prev) => ({ ...prev, date: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const newDate = e.target.value;
+                        setDateTime((prev) => ({ ...prev, date: newDate }));
+                      }}
+                      name="date"
                     />
                   </div>
                   <div>
@@ -95,17 +133,23 @@ export default function SupportPageAgent() {
                       className="justify-between"
                       placeholder="Select Time"
                       value={dateTime.time}
-                      onChange={(e) =>
-                        setDateTime((prev) => ({ ...prev, time: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const newTime = e.target.value;
+                        setDateTime((prev) => ({ ...prev, time: newTime }));
+                      }}
+                      name="time"
                     />
                   </div>
                 </PopoverContent>
               </Popover>
             </div>
 
-            <Textarea placeholder="Please enter your issue" required />
-            <Button type="submit">Submit</Button>
+            <Textarea
+              placeholder="Please enter your issue"
+              required
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
+            />
+            <Button type="submit" disabled={!isFormValid}>Submit</Button>
           </form>
         )}
       </CardContent>

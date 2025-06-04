@@ -71,7 +71,7 @@ const SidebarMenu = () => {
             <MenuTitle className="text-sm font-medium text-gray-800">{item.title}</MenuTitle>
             {buildMenuArrow()}
           </MenuLink>
-          <MenuSub className={clsx('relative', itemsGap, accordionBorderLeft[0], accordionPl[0])}>
+          <MenuSub className={clsx('relative ', itemsGap, accordionBorderLeft[0], accordionPl[0])}>
             {buildMenuItemChildren(item.children, index, 1)}
           </MenuSub>
         </MenuItem>

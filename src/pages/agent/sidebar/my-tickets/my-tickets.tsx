@@ -53,7 +53,14 @@ export default function AgentTickets() {
         <NoTicketsPage />
       ) : (
         tickets.map((ticket) => (
-          <Ticket key={ticket._id} ticket={ticket} />
+          <div
+            key={ticket._id}
+            className={`$ {
+              ticket.isAgentReassign === false ? 'bg-gray-200 pointer-events-none' : ''
+            }`}
+          >
+            <Ticket ticket={ticket} />
+          </div>
         ))
       )}
     </div>

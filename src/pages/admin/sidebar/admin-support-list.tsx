@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Skeleton } from "@/components/ui/skeleton"
+import { SupportListSkeleton } from "@/components/skeletons"
 
 interface SupportRequest {
   _id: string
@@ -37,7 +37,6 @@ export default function AdminSupportList() {
     setLoading(true)
     try {
       const res = await getContactSupport()
-      console.log(res, "res")
       setRequests(res.data || [])
     } catch (e) {
       /* error handled silently */
@@ -64,14 +63,7 @@ export default function AdminSupportList() {
     setUpdating(false)
   }
 
-  function formatDate(date: string) {
-    try {
-      return format(new Date(date), "MMM d, yyyy 'at' h:mm a")
-    } catch {
-      return date
-    }
-  }
-console.log(requests, "requests")
+
   return (
     <div className=" mx-8">
       <div className="flex items-center justify-between mb-4">
@@ -91,13 +83,7 @@ console.log(requests, "requests")
           </TableHeader>
           <TableBody>
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell colSpan={7}>
-                    <Skeleton className="h-12 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
+              <SupportListSkeleton />
             ) : requests.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
@@ -109,7 +95,7 @@ console.log(requests, "requests")
                 <TableRow key={item._id}>                  <TableCell>{item.created_by}</TableCell>
                   <TableCell>{item.calling_time || "—"}</TableCell>
                   <TableCell className="hidden md:table-cell max-w-[200px] truncate">{item.message}</TableCell>
-                  <TableCell className="hidden md:table-cell">{formatDate(item.createdAt)}</TableCell>
+                  <TableCell className="hidden md:table-cell">{(item.createdAt)}</TableCell>
                   <TableCell>
                     <Badge variant={item.is_resolved ? "default" : "destructive"}>
                       {item.is_resolved ? <Check className="mr-1 h-3 w-3" /> : <Clock className="mr-1 h-3 w-3" />}

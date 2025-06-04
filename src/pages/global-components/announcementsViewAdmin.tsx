@@ -17,6 +17,7 @@ import { KeenIcon } from "@/components"
 import { deleteAnnouncement } from "@/api/admin"
 import { toast } from "sonner"
 import { position } from "stylis"
+import { AnnouncementSkeleton } from "@/components/skeletons"
 
 interface Announcement {
   _id: string
@@ -144,38 +145,82 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
     }
 
 
+    // Ensure the component refreshes by invoking fetchAnnouncements directly
     const handleDeleteAnnouncement = async (id: string) => {
       try {
-        const response = await deleteAnnouncement(id)
+        const response = await deleteAnnouncement(id);
         if (response.success) {
-          toast.success("Announcement deleted successfully",{position:"top-center"})  
+          toast.success("Announcement deleted successfully", { position: "top-center" });
+
+          // Optionally, you can also remove the announcement from the state
+          setEditModes((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+          setTitles((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+          setContents((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+          setOriginalTitles((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+          setOriginalContents((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+          setSuccessIds((prev) => {
+            const updated = new Set(prev);
+            updated.delete(id);
+            return updated;
+          });
+          setSavingIds((prev) => {
+            const updated = new Set(prev);
+            updated.delete(id);
+            return updated;
+          });
+
+          // Refresh sortedAnnouncements
+          const updatedAnnouncements = announcements.filter((announcement) => announcement._id !== id);
+          const sorted = [...updatedAnnouncements].sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+          });
+
+          // Update the announcements state
+          announcements.length = 0;
+          announcements.push(...sorted);
+
+          // Refresh the component by invoking fetchAnnouncements
+          if (typeof ref === 'function') {
+            ref({ fetchAnnouncements: () => { } }); // Ensure ref is invoked correctly
+          } else if (ref?.current?.fetchAnnouncements) {
+            ref.current.fetchAnnouncements();
+          }
         } else {
-          // Handle error
           console.error("Failed to delete announcement")
         }
       }
       catch (error) {
         console.error("Error deleting announcement:", error)
-        toast.error("Failed to delete announcement",{position:"top-center"})
+        toast.error("Failed to delete announcement", { position: "top-center" })
       }
 
     }
 
 
     if (isLoading) {
-      return (
-        <Card className="w-full">
-          <CardContent className="p-0">
-            <div className="flex flex-col items-center justify-center h-64 space-y-4">
-              <div className="w-16 h-16 relative">
-                <div className="absolute inset-0 rounded-full border-4 border-muted-foreground/10 border-t-primary animate-spin"></div>
-                <MessageSquare className="h-8 w-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-muted-foreground/50" />
-              </div>
-              <p className="text-muted-foreground">Loading announcements...</p>
-            </div>
-          </CardContent>
-        </Card>
-      )
+      return <AnnouncementSkeleton />;
     }
 
     if (announcements.length === 0) {
@@ -237,114 +282,113 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
                 const timeAgo = getTimeAgo(announcement.createdAt)
 
                 return (
-                  <div key={id} className="group">
-                    <div className={`rounded-lg transition-all duration-200 ${isEditing ? "bg-muted/50 p-4 -mx-4" : ""}`}>
-                      <div className="flex gap-4">
-                        <Avatar className="h-10 w-10 mt-1">
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {getInitials(originalTitle)}
-                          </AvatarFallback>
-                        </Avatar>
+                  <Card key={id} className="group">
+                    <CardContent className="pt-4">
+                      <div className={`rounded-lg transition-all duration-200 ${isEditing ? "bg-muted/50 p-4 -mx-4" : ""}`}>
+                        <div className="flex gap-4">
+                          <Avatar className="h-10 w-10 mt-1">
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {getInitials(originalTitle)}
+                            </AvatarFallback>
+                          </Avatar>
 
-                        <div className="flex-1 space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div className="space-y-1">
-                              {isEditing ? (
-                                <Input
-                                  value={currentTitle}
-                                  onChange={(e) => handleTitleChange(id, e.target.value)}
-                                  className="font-medium"
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-start justify-between">
+                              <div className="space-y-1">
+                                {isEditing ? (
+                                  <Input
+                                    value={currentTitle}
+                                    onChange={(e) => handleTitleChange(id, e.target.value)}
+                                    className="font-medium"
                                   placeholder="Announcement title"
+                                  />
+                                ) : (
+                                  <h4 className="text-base font-medium">{currentTitle}</h4>
+                                )}
+
+                                <div className="flex items-center text-xs text-muted-foreground">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  <span>{timeAgo}</span>
+
+                                  {isSuccess && (
+                                    <Badge variant="outline" className="ml-2 text-green-500 border-green-200 bg-green-50">
+                                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                                      Saved
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+
+                              {!isEditing && (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8  transition-opacity"
+                                    >
+                                      <MoreVertical className="h-4 w-4" />
+                                      <span className="sr-only">Actions</span>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleToggleEdit(id, originalTitle, originalContent)}>
+                                      <Pencil className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleDeleteAnnouncement(id)}>
+                                      <KeenIcon icon="trash" className="h-4 w-4 mr-2" />
+                                      Deactivate
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              )}
+                            </div>
+
+                            <div className="relative">
+                              {isEditing ? (
+                                <Textarea
+                                  value={currentContent}
+                                  onChange={(e) => handleContentChange(id, e.target.value)}
+                                  className="min-h-[100px]"
+                                  placeholder="Announcement content"
                                 />
                               ) : (
-                                <h4 className="text-base font-medium">{currentTitle}</h4>
+                                <div className="text-sm text-muted-foreground whitespace-pre-wrap">{currentContent}</div>
                               )}
+                            </div>
 
-                              <div className="flex items-center text-xs text-muted-foreground">
-                                <Clock className="h-3 w-3 mr-1" />
-                                <span>{timeAgo}</span>
-
-                                {isSuccess && (
-                                  <Badge variant="outline" className="ml-2 text-green-500 border-green-200 bg-green-50">
-                                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                                    Saved
-                                  </Badge>
-                                )}
+                            {isEditing && (
+                              <div className="flex justify-end gap-2 pt-2">
+                                <Button variant="outline" size="sm" onClick={() => handleCancel(id)}>
+                                  <X className="h-3.5 w-3.5 mr-1" />
+                                  Cancel
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => handleSave(id, currentTitle, currentContent)}
+                                  disabled={!isDirty || isSaving}
+                                >
+                                  {isSaving ? (
+                                    <>
+                                      <RefreshCw className="h-3.5 w-3.5 mr-1 animate-spin" />
+                                      Saving
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save className="h-3.5 w-3.5 mr-1" />
+                                      Save
+                                    </>
+                                  )}
+                                </Button>
                               </div>
-                            </div>
-
-                            {!isEditing && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  >
-                                    <MoreVertical className="h-4 w-4" />
-                                    <span className="sr-only">Actions</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => handleToggleEdit(id, originalTitle, originalContent)}>
-                                    <Pencil className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteAnnouncement(id)}>
-                                    <KeenIcon icon="trash" className="h-4 w-4 mr-2" />
-                                    Deactivate
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
                             )}
                           </div>
-
-                          <div className="relative">
-                            {isEditing ? (
-                              <Textarea
-                                value={currentContent}
-                                onChange={(e) => handleContentChange(id, e.target.value)}
-                                className="min-h-[100px]"
-                                placeholder="Announcement content"
-                              />
-                            ) : (
-                              <div className="text-sm text-muted-foreground whitespace-pre-wrap">{currentContent}</div>
-                            )}
-                          </div>
-
-                          {isEditing && (
-                            <div className="flex justify-end gap-2 pt-2">
-                              <Button variant="outline" size="sm" onClick={() => handleCancel(id)}>
-                                <X className="h-3.5 w-3.5 mr-1" />
-                                Cancel
-                              </Button>
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => handleSave(id, currentTitle, currentContent)}
-                                disabled={!isDirty || isSaving}
-                              >
-                                {isSaving ? (
-                                  <>
-                                    <RefreshCw className="h-3.5 w-3.5 mr-1 animate-spin" />
-                                    Saving
-                                  </>
-                                ) : (
-                                  <>
-                                    <Save className="h-3.5 w-3.5 mr-1" />
-                                    Save
-                                  </>
-                                )}
-                              </Button>
-                            </div>
-                          )}
                         </div>
                       </div>
-                    </div>
-
-                    {/* Only add separator if not the last item */}
-                    {id !== sortedAnnouncements[sortedAnnouncements.length - 1]._id && <Separator className="my-6" />}
-                  </div>
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>

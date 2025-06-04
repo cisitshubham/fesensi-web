@@ -232,7 +232,7 @@ export default function Tickets() {
             }}
             className="block"
           >
-            <Button className="mt-6">Update Resoulation</Button>
+            <Button className="mt-6">View Issue</Button>
           </Link>
         )}
 
@@ -263,7 +263,7 @@ export default function Tickets() {
             state={{ ticket }} // Pass the complete ticket data as state
             className="block"
           >
-            <Button variant={'destructive'} className="mt-6 ">
+            <Button  className="mt-6 bg-slate-400">
               Incomplete Ticket
             </Button>
           </Link>

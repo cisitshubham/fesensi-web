@@ -12,6 +12,7 @@ import { TicketStatus, Tickettype } from '@/types';
 import { Bell, Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
 import { getPriorityBadge, getStatusBadge } from '@/pages/global-components/GetStatusColor';
 import clsx from 'clsx';
+import Timer from '@/pages/global-components/timer';
 
 interface TicketProps {
   ticket: Tickettype; // Use the Tickettype type directly
@@ -67,8 +68,20 @@ export default function Ticket({ ticket }: TicketProps) {
 
               <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
                 <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col space-y-2 items-center gap-1">
                   <Tag className="w-3.5 h-3.5" />
                   <span>{ticket.category}</span>
+                  {
+                    ticket.status === TicketStatus.InProgress && (
+                     <Timer
+                    hours={ticket.remainingHours ?? 0}
+                    minutes={ticket.remainingMinutes ?? 0}
+                    seconds={ticket.remainingSeconds ?? 0}
+                  />
+                    )
+                  }
+               
+                  </div>
                 </div>
 
             

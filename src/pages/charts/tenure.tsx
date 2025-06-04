@@ -8,11 +8,13 @@ interface TenureProps {
   toDate: string;
   selectedButton: string;
   onChange: (update: { fromDate: string; toDate: string; selectedButton: string }) => void;
+  isLoading?: boolean;
 }
 
-const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, onChange }: TenureProps) {
+const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, onChange, isLoading = false }: TenureProps) {
   // Button click handler
   const handleButtonClick = useCallback((button: string) => {
+    if (isLoading) return;
     // Calculate new date range based on button
     const today = new Date();
     let from = today;
@@ -35,16 +37,17 @@ const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, on
       toDate: formatDate(to),
       selectedButton: button,
     });
-  }, [onChange]);
+  }, [onChange, isLoading]);
 
   // Date input change handler
   const handleDateChange = useCallback((type: 'from' | 'to', value: string) => {
+    if (isLoading) return;
     if (type === 'from') {
       onChange({ fromDate: value, toDate, selectedButton });
     } else {
       onChange({ fromDate, toDate: value, selectedButton });
     }
-  }, [fromDate, toDate, selectedButton, onChange]);
+  }, [fromDate, toDate, selectedButton, onChange, isLoading]);
 
   // Memoize the buttons to prevent unnecessary re-renders
   const buttons = useMemo(() => (
@@ -52,49 +55,54 @@ const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, on
       <Button
         variant={selectedButton === 'Today' ? 'default' : 'outline'}
         onClick={() => handleButtonClick('Today')}
-        className={cn('mr-2 transition-all duration-200')}
+        className={cn('mr-2 transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
+        disabled={isLoading}
       >
         Today
       </Button>
       <Button
         variant={selectedButton === 'Weekly' ? 'default' : 'outline'}
         onClick={() => handleButtonClick('Weekly')}
-        className={cn('mr-2 transition-all duration-200')}
+        className={cn('mr-2 transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
+        disabled={isLoading}
       >
         Weekly
       </Button>
       <Button
         variant={selectedButton === 'Fortnightly' ? 'default' : 'outline'}
         onClick={() => handleButtonClick('Fortnightly')}
-        className={cn('mr-2 transition-all duration-200')}
+        className={cn('mr-2 transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
+        disabled={isLoading}
       >
         Fortnightly
       </Button>
     </>
-  ), [selectedButton, handleButtonClick]);
+  ), [selectedButton, handleButtonClick, isLoading]);
 
   return (
-    <Card className="p-5 w-full flex flex-row justify-between shadow-md my-4">
-      <div className="mb-2 my-auto">
+    <Card className="p-4 sm:p-5 w-full flex flex-col sm:flex-row justify-between shadow-md my-4 gap-4">
+      <div className="flex flex-wrap gap-2">
         {buttons}
       </div>
-      <div>
-        <label className="mr-2">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+        <label className="flex items-center gap-2">
           From:
           <input
             type="date"
             value={fromDate}
             onChange={(e) => handleDateChange('from', e.target.value)}
-            className={cn('ml-1 transition-all duration-200')}
+            className={cn('transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
+            disabled={isLoading}
           />
         </label>
-        <label className="ml-5">
+        <label className="flex items-center gap-2">
           To:
           <input
             type="date"
             value={toDate}
             onChange={(e) => handleDateChange('to', e.target.value)}
-            className={cn('ml-1 transition-all duration-200')}
+            className={cn('transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
+            disabled={isLoading}
           />
         </label>
       </div>

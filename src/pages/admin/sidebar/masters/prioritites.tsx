@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Pencil, Trash2, Plus, X, Check, Loader2, Search, Filter, ArrowUpDown } from "lucide-react"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import type { MasterDropdownDatatype } from "@/types"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -22,39 +22,45 @@ import { useNavigate } from "react-router-dom"
 import { CreatePriorities, updatePriorities } from "@/api/admin"
 export default function PrioritiesManagement() {
   const { dropdownData } = useMasterDropdown()
-  const [categories, setCategories] = useState<MasterDropdownDatatype["priorities"]>(dropdownData.priorities         || [])
+  const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>(dropdownData.priorities || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [editedCategory, setEditedCategory] = useState({ title: "", _id: "" })
+  const [editedpriority, setEditedpriority] = useState({ title: "", esclationHrs: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAddDialog, setShowAddDialog] = useState(false)
-  const [newCategoryTitle, setNewCategoryTitle] = useState("")
-  const navigate = useNavigate()  
-  const filtered = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-
+  const [newpriorityTitle, setNewpriorityTitle] = useState("")
+  const [newprioritySla, setNewprioritySla] = useState("")
+  const navigate = useNavigate()
+  const filtered = priorities.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
   const handleEdit = (index: number) => {
     setEditIndex(index)
-    setEditedCategory({ title: categories[index].name, _id: categories[index]._id })
+    setEditedpriority({
+      title: priorities[index].name,
+      esclationHrs: priorities[index].esclationHrs?.toString() || "",
+      _id: priorities[index]._id,
+    })
   }
 
   const handleSave = async () => {
-    if (!editedCategory.title.trim()) return toast.error("Category title cannot be empty")
+    if (!editedpriority.title.trim()) return toast.error("Priority title cannot be empty", { position: "top-center" })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
-      formData.append("title", editedCategory.title.trim())
-      const response = await updatePriorities(editedCategory._id, formData)
+      formData.append("title", editedpriority.title.trim())
+      formData.append("esclationHrs", editedpriority.esclationHrs.trim())
+      const response = await updatePriorities(editedpriority._id, formData)
 
       if (response.success && editIndex !== null) {
-        const updated = [...categories]
-        updated[editIndex].name = editedCategory.title.trim()
-        setCategories(updated)
+        const updated = [...priorities]
+        updated[editIndex].name = editedpriority.title.trim()
+        updated[editIndex].esclationHrs = parseInt(editedpriority.esclationHrs.trim(), 10)
+        setpriorities(updated)
         setEditIndex(null)
-        toast.success("Category saved successfully")
+        toast.success("Priority saved successfully", { position: "top-center" })
       }
     } catch {
-      toast.error("Failed to save")
+      toast.error("Failed to save", { position: "top-center" })
     } finally {
       setIsSubmitting(false)
     }
@@ -64,33 +70,40 @@ export default function PrioritiesManagement() {
     setEditIndex(null)
   }
 
-  const handleAddCategorySubmit = async () => {
-    if (!newCategoryTitle.trim()) return toast.error("Category title cannot be empty")
+  const handleAddprioritySubmit = async () => {
+    if (!newpriorityTitle.trim()) return toast.error("priority title cannot be empty", { position: "top-center" })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
-      formData.append("title", newCategoryTitle.trim())
+      formData.append("title", newpriorityTitle.trim())
+      formData.append("esclationHrs", newprioritySla.trim())
       const response = await CreatePriorities(formData)
 
       if (response.success) {
-   
-        toast.success("Priority added successfully")
+
+        toast.success("Priority added successfully", { position: "top-center" })
+        const newPriority = {
+          _id: response.data._id,
+          name: newpriorityTitle.trim(),
+          esclationHrs: parseInt(newprioritySla.trim(), 10),
+        }
+        setpriorities(prev => [...prev, newPriority])
         setShowAddDialog(false)
         navigate('/admin/priorities')
       }
     } catch {
-      toast.error("Failed to add priority")
+      toast.error("Failed to add priority", { position: "top-center" })
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const sortByTitle = (order: "asc" | "desc") => {
-    const sorted = [...categories].sort((a, b) =>
+    const sorted = [...priorities].sort((a, b) =>
       order === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
     )
-    setCategories(sorted)
+    setpriorities(sorted)
   }
 
   const ActionButtons = ({ index }: { index: number }) => {
@@ -137,7 +150,7 @@ export default function PrioritiesManagement() {
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search categories..."
+                placeholder="Search priorities..."
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
@@ -160,28 +173,29 @@ export default function PrioritiesManagement() {
           {filtered.length === 0 ? (
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
               <Filter className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-lg font-medium text-slate-700">No categories found</h3>
-              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add Category" to create one'}</p>
+              <h3 className="text-lg font-medium text-slate-700">No priorities found</h3>
+              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add priority" to create one'}</p>
             </div>
           ) : (
             <div className="rounded-md border overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="w-[70%]">Title</TableHead>
+                    <TableHead className="w-[30%]">Title</TableHead>
+                    <TableHead className="w-[20%]">Escalation Hours</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((cat, i) => {
-                    const index = categories.findIndex(c => c._id === cat._id)
+                    const index = priorities.findIndex(c => c._id === cat._id)
                     const isEditing = editIndex === index
                     return (
                       <TableRow key={cat._id} className="group hover:bg-slate-50">
                         <TableCell>
                           {isEditing ? (
-                            <Input name="title" value={editedCategory.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedCategory({ title: e.target.value, _id: editedCategory._id })}
-                              autoFocus className="max-w-md" placeholder="Enter category title" />
+                            <Input name="title" value={editedpriority.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedpriority({ ...editedpriority, title: e.target.value })}
+                              autoFocus className="max-w-md" placeholder="Enter priority title" />
                           ) : (
                             <div className="flex items-center gap-3">
                               <span className="font-medium">{cat.name || <span className="text-muted-foreground italic">Untitled</span>}</span>
@@ -189,6 +203,21 @@ export default function PrioritiesManagement() {
                                 <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">New</Badge>
                               )}
                             </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {isEditing ? (
+                            <Input
+                              name="esclationHrs"
+                              value={editedpriority.esclationHrs}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEditedpriority({ ...editedpriority, esclationHrs: e.target.value })
+                              }
+                              className="max-w-md"
+                              placeholder="Enter escalation hours"
+                            />
+                          ) : (
+                            <span>{cat.esclationHrs || "N/A"}</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
@@ -205,27 +234,33 @@ export default function PrioritiesManagement() {
           )}
 
           <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filtered.length} of {categories.length} categories
+            Showing {filtered.length} of {priorities.length} priorities
           </div>
         </CardContent>
       </Card>
 
-      {/* Add Category Dialog */}
+      {/* Add priority Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="p-4">
           <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>Enter the title of the category to add it to the list.</DialogDescription>
+            <DialogTitle>Add New priority</DialogTitle>
+            <DialogDescription>Enter the title of the priority to add it to the list.</DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder="Category title"
-            value={newCategoryTitle}
-            onChange={e => setNewCategoryTitle(e.target.value)}
-            autoFocus
-          />
+          <div className="flex flex-row gap-4">
+            <Input
+              placeholder="priority title"
+              value={newpriorityTitle}
+              onChange={e => setNewpriorityTitle(e.target.value)}
+              autoFocus
+            />
+            <Input
+              placeholder="escalation hours "
+              onChange={e => setNewprioritySla(e.target.value)}
+            />
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
-            <Button onClick={handleAddCategorySubmit} disabled={isSubmitting}>
+            <Button onClick={handleAddprioritySubmit} disabled={isSubmitting}>
               {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
             </Button>
           </DialogFooter>

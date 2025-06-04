@@ -55,7 +55,7 @@ const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispat
       />
 
       {files.length > 0 ? (
-        <div className="mt-2 text-sm text-gray-600">
+        <div className="mt-2 text-sm text-gray-600 flex flex-row gap-2">
           {files.map((file, index) => (
             <div key={index} className="relative w-16 h-16">
               <img
@@ -220,26 +220,8 @@ export default function ResolveTicket() {
           <div className="mt-4">
             <h4 className="text-sm font-medium mb-2">Selected Files</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {files.map((file, index) => (
-                <div key={index} className="relative w-fit">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Selected file ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded-lg border hover:scale-105 transition-transform duration-200 cursor-pointer "
-                    onClick={() => setSelectedImage(URL.createObjectURL(file))}
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
-                    onClick={() => {
-                      const updatedFiles = files.filter((_, i) => i !== index);
-                      setFiles(updatedFiles);
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+              
+
               {selectedImage && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                   <img
@@ -254,7 +236,9 @@ export default function ResolveTicket() {
                     &times;
                   </button>
                 </div>
+
               )}
+
             </div>
           </div>
         )}

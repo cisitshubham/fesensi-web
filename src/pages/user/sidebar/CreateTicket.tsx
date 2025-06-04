@@ -243,13 +243,23 @@ const UserCreateTicketForm = () => {
             {/* Show selected files */}
             <div className="mt-2 text-sm text-gray-600 flex flex-row gap-2">
               {files.map((file, index) => (
-                <div key={index} className="relative w-16 h-16 " >
+                <div key={index} className="relative w-16 h-16 group">
                   <img
                     src={URL.createObjectURL(file)}
                     alt="Selected File"
                     className="w-full h-full object-cover rounded-lg border cursor-pointer"
                     onClick={() => setSelectedImage(URL.createObjectURL(file))}
                   />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFiles(files.filter((_, i) => i !== index));
+                    }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center  hover:bg-red-600"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -273,8 +283,9 @@ const UserCreateTicketForm = () => {
 
             <div className="flex gap-2 mt-4">
               <Button
+                variant={'default'}
                 type="submit"
-                className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white  py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
+                // className="ml-auto w-40 bg-gradient-to-r from-blue-700 to-blue-500 text-white  py-2 px-4 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
                 disabled={
                   loading ||
                   !title.trim() ||

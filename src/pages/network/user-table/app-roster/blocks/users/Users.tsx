@@ -217,7 +217,6 @@ const Users = () => {
         description: `Selected row IDs: ${selectedRowIds}`,
         action: {
           label: 'Undo',
-          onClick: () => console.log('Undo')
         }
       });
     }

@@ -68,8 +68,7 @@ export default function BulkReassign() {
     };
 
     const handleDialogClose = () => {
-        setIsDialogOpen(false);
-        setSelectedReason('');
+        handleSubmit();
     };
 
 
@@ -83,6 +82,7 @@ export default function BulkReassign() {
         formData.append('AgentreAssign', selectedReason);
         formData.append('AgentreAssignComment', description);
 
+
         const response = await requestReassign(formData);
         if (response) {
             toast.success('Tickets reassigned successfully.', { position: "top-center" });
@@ -91,13 +91,11 @@ export default function BulkReassign() {
             setdescription('');
             setTimeout(() => {
                 navigate('/agent/mytickets');
-            }, 2000);
+            }, 1000);
         } else {
             toast.error('Failed to reassign tickets. Please try again.', { position: "top-center" });
         }
-        setIsDialogOpen(false);
-        setSelectedReason('');
-        setdescription('');
+
 
 
     };
