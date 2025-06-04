@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback, useRef } from 'react';
+import { Fragment, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
 import { fetchUser, clearChartDataCache } from '@/api/api';
@@ -240,15 +240,19 @@ export default function DashboardPage() {
 
   const isDropdownReadonly = roles.length === 1;
 
-  // Direct calculations without useMemo
-  const ticketCounts = !chartData ? {
-    resolved: 0,
-    inProgress: 0,
-    open: 0,
-    closed: 0,
-    total: 0,
-    hasData: false
-  } : (() => {
+  // Memoize the ticket counts calculation
+  const ticketCounts = useMemo(() => {
+    if (!chartData) {
+      return {
+        resolved: 0,
+        inProgress: 0,
+        open: 0,
+        closed: 0,
+        total: 0,
+        hasData: false
+      };
+    }
+
     const statusMap = chartData.statusLabels.reduce((acc, label, index) => {
       acc[label] = chartData.statusData[index];
       return acc;
@@ -263,14 +267,15 @@ export default function DashboardPage() {
       total: total,
       hasData: total > 0
     };
-  })();
+  }, [chartData]);
 
-  const percentages = {
+  // Memoize the percentages calculation
+  const percentages = useMemo(() => ({
     resolvedPercentage: ticketCounts.hasData ? (ticketCounts.resolved / ticketCounts.total) * 100 : 0,
     inProgressPercentage: ticketCounts.hasData ? (ticketCounts.inProgress / ticketCounts.total) * 100 : 0,
     openPercentage: ticketCounts.hasData ? (ticketCounts.open / ticketCounts.total) * 100 : 0,
     hasData: ticketCounts.hasData
-  };
+  }), [ticketCounts]);
 
   const isAdminOrAgent = selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT');
   const isCustomer = selectedRoles.includes('CUSTOMER');
@@ -294,6 +299,7 @@ export default function DashboardPage() {
                 onValueChange={(value) => {
                   handleRoleToggle(value);
                 }}
+                key={`role-select-${selectedRoles.join('-')}`}
               >
                 <SelectTrigger className="px-4 py-2 rounded-md hover:bg-primary/90 transition">
                   <SelectValue
@@ -329,13 +335,14 @@ export default function DashboardPage() {
           selectedButton={tenureState.selectedButton}
           onChange={setTenureState}
           isLoading={isLoading}
+          key={`tenure-${tenureState.fromDate}-${tenureState.toDate}`}
         />
 
         {!isLoading && (
           <>
             <div className="flex flex-col lg:flex-row gap-6">
               {(isAdminOrAgent || isCustomer) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 w-full lg:w-5/12 gap-4">
+                <div className="grid grid-cols-2 w-full lg:w-5/12 gap-4">
                   <TicketStatusCards 
                     ticketCounts={ticketCounts} 
                     key={`status-cards-${JSON.stringify(ticketCounts)}`}
@@ -354,7 +361,7 @@ export default function DashboardPage() {
                     categories={chartData.ticketsbyCategory.counts}
                     key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
                     renderCategory={(category, index) => (
-                      <div key={index} className="flex items-center justify-between">
+                      <div key={`category-${category.category}-${index}`} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <span className="text-base text-gray-500">
                             <i className={`icon-${category.category.toLowerCase()}`}></i>
@@ -379,9 +386,9 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-12 sm:mt-16">
               {isAdminOrAgent && chartData && (
-                <div className="w-full h-[350px]">
+                <div className="w-full min-h-[400px] h-[450px]">
                   <LineChart
                     series={chartData.ticketVolumeData}
                     labels={chartData.ticketVolumeLabels}
@@ -390,7 +397,7 @@ export default function DashboardPage() {
                 </div>
               )}
               {chartData && (
-                <div className="w-full h-[350px]">
+                <div className="w-full min-h-[400px] h-[450px]">
                   <Donut
                     series={chartData.statusData}
                     labels={chartData.statusLabels}
@@ -399,7 +406,7 @@ export default function DashboardPage() {
                 </div>
               )}
               {chartData && (
-                <div className="w-full h-[350px]">
+                <div className="w-full min-h-[400px] h-[450px]">
                   <Pie
                     series={chartData.priorityData}
                     labels={chartData.priorityLabels}
@@ -408,7 +415,7 @@ export default function DashboardPage() {
                 </div>
               )}
               {isAdminOrAgent && chartData && (
-                <div className="w-full h-[350px]">
+                <div className="w-full min-h-[400px] h-[450px]">
                   <BarChart
                     resolved={chartData.categoryDataresolved}
                     inprogress={chartData.categoryDataInprogress}

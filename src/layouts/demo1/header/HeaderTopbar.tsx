@@ -97,15 +97,15 @@ const HeaderTopbar = () => {
         Back
       </Button>
 
-      <button
+      {/* <button
         onClick={handleOpen}
         className="btn btn-icon btn-icon-lg size-9 rounded-full hover:bg-primary-light hover:text-primary text-gray-500"
       >
         <KeenIcon icon="magnifier" />
       </button>
-      <ModalSearch open={searchModalOpen} onOpenChange={handleClose} />
+      <ModalSearch open={searchModalOpen} onOpenChange={handleClose} /> */}
 
-      <Menu>
+      {/* <Menu>
         <MenuItem
           ref={itemChatRef}
           onShow={handleShow}
@@ -129,9 +129,9 @@ const HeaderTopbar = () => {
 
           {DropdownChat({ menuTtemRef: itemChatRef })}
         </MenuItem>
-      </Menu>
+      </Menu> */}
 
-      <Menu>
+      {/* <Menu>
         <MenuItem
           ref={itemAppsRef}
           toggle="dropdown"
@@ -153,7 +153,7 @@ const HeaderTopbar = () => {
           </MenuToggle>
           {DropdownApps()}
         </MenuItem>
-      </Menu>
+      </Menu> */}
 
       <Menu>
         <MenuItem
