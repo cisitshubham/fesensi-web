@@ -4,6 +4,7 @@ import {MyTickets} from  '@/api/api'
 import { useEffect, useState } from 'react'
 import SearchbarFilters from '@/pages/global-components/searchbar_filters';
 import { NoTicketsPage } from '@/errors/no-ticketspage';
+import MyTicketsSkeleton from '@/components/skeletons/MyTicketsSkeleton';
 
 export default function AgentTickets() {
 
@@ -44,7 +45,7 @@ export default function AgentTickets() {
     <div className="space-y-4 px-6">
       <SearchbarFilters onFiltersChange={handleFiltersChange} />
       {loading ? (
-        <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">Loading tickets...</div>
+        <MyTicketsSkeleton />
       ) : error ? (
         <div className="flex flex-col items-center justify-center min-h-[200px] text-destructive">
           <span>{error}</span>

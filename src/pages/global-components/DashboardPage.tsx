@@ -81,28 +81,30 @@ export default function DashboardPage() {
     localStorage.setItem('selectedRole', role);
     window.dispatchEvent(new Event('storage'));
     
-    
-    // Fetch new data immediately after role change
-    setIsLoading(true);
-    try {
-      const response = await fetchDashboardData(
-        tenureState.fromDate,
-        tenureState.todate,
-        role
-      );
-      if (response) {
-        setChartData(response as ChartData);
+    // Only fetch new data if not in initial load
+    if (!isInitialLoad) {
+      setIsLoading(true);
+      try {
+        const response = await fetchDashboardData(
+          tenureState.fromDate,
+          tenureState.todate,
+          role
+        );
+        if (response) {
+          setChartData(response as ChartData);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [selectedRoles, setSelectedRoles, tenureState.fromDate, tenureState.todate]);
+  }, [selectedRoles, setSelectedRoles, tenureState.fromDate, tenureState.todate, isInitialLoad]);
 
   // Combined initial data fetch
   useEffect(() => {
     const initializeData = async () => {
+      if (!isInitialLoad) return; // Prevent multiple initial loads
       setIsLoading(true);
       try {
         const userData = await fetchUser();
@@ -123,12 +125,12 @@ export default function DashboardPage() {
         if (parsedRoles.length > 0) {
           newRoles = parsedRoles;
         } else {
-          if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-            newRoles = ['AGENT'];
-            localStorage.setItem('selectedRole', 'AGENT');
-          } else if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+          if (roles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
             newRoles = ['ADMIN'];
             localStorage.setItem('selectedRole', 'ADMIN');
+          } else if (roles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+            newRoles = ['AGENT'];
+            localStorage.setItem('selectedRole', 'AGENT');
           } else if (
             roles.length === 1 &&
             (roles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER') ||
@@ -168,7 +170,7 @@ export default function DashboardPage() {
 
   // Fetch dashboard data when roles and dates change (after initial load)
   useEffect(() => {
-    if (!selectedRoles.length || !tenureState.fromDate || !tenureState.todate) return;
+    if (!selectedRoles.length || !tenureState.fromDate || !tenureState.todate || isInitialLoad) return;
     
     const fetchData = async () => {
       setIsLoading(true);
@@ -189,7 +191,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [selectedRoles, tenureState.fromDate, tenureState.todate]);
+  }, [selectedRoles, tenureState.fromDate, tenureState.todate, isInitialLoad]);
 
   // Add a ref to track previous roles
   const prevRolesRef = useRef(selectedRoles);
@@ -315,7 +317,6 @@ export default function DashboardPage() {
                 ticketCounts={ticketCounts} 
                 dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.todate }}
                 key={`status-cards-${JSON.stringify(ticketCounts)}`}
-                isLoading={isLoading}
               />
             </div>
           )}
@@ -330,7 +331,6 @@ export default function DashboardPage() {
                 openPercentage={percentages.openPercentage}
                 categories={chartData.ticketsbyCategory.counts}
                 key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
-                isLoading={isLoading}
                 renderCategory={(category, index) => (
                   <div key={`category-${category.category}-${index}`} className="flex items-center justify-between">
                     <div className="flex items-center">

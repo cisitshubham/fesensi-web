@@ -1,6 +1,8 @@
-export { DashboardSkeleton } from './DashboardSkeleton';
-export { TicketSkeleton } from './TicketSkeleton';
-export { SupportListSkeleton } from './SupportListSkeleton';
-export { SLAStatusSkeleton } from './SLAStatusSkeleton';
-export { RateUsSkeleton } from './RateUsSkeleton';
-export { AnnouncementSkeleton } from './AnnouncementSkeleton'; 
+export * from './AnnouncementSkeleton';
+export * from './DashboardSkeleton';
+export * from './MyTicketsSkeleton';
+export * from './RateUsSkeleton';
+export * from './SLAStatusSkeleton';
+export * from './SupportListSkeleton';
+export * from './TicketSkeleton';
+export * from './RequestedReassignmentSkeleton'; 

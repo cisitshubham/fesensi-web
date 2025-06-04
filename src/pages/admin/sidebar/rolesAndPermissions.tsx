@@ -9,22 +9,21 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
-	CardDescription,
 	CardFooter
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import {
-	Search,
 	Save,
 	Shield,
 	Users,
 	CheckCircle2,
 	XCircle,
 	ChevronRight,
-	AlertCircle,
-	ChevronDown
+	ChevronDown,
+	Loader2,
+	AlertCircle
 } from 'lucide-react';
 import { GetPermissionsList, UpdatePermissions, deletePermissions } from '@/api/api';
 import { useMasterDropdown } from '@/pages/global-components/master-dropdown-context';
@@ -227,7 +226,7 @@ export default function RolesAndPermissions({
 				setSelectedPermissions(initialState);
 			} catch (error) {
 				console.error('Error fetching permissions:', error);
-				toast.error('Failed to fetch permissions');
+				toast.error('Failed to fetch permissions',{position:"top-center"});
 			} finally {
 				setIsLoading(false);
 			}
@@ -237,7 +236,7 @@ export default function RolesAndPermissions({
 	}, [initialSelectedPermissions, activeRoleId]);
 
 	const handleRoleChange = (roleId: string) => {
-		if (!masterdropdown.dropdownData || !masterdropdown.dropdownData.roles) {
+		if (!masterdropdown.dropdownData?.roles) {
 			console.error('Dropdown data or roles are null');
 			return;
 		}
@@ -302,14 +301,14 @@ export default function RolesAndPermissions({
 
 		try {
 			await UpdatePermissions(formData);
-			toast.success('Permissions updated successfully');
+			toast.success('Permissions updated successfully',{position:"top-center"});
 
 			// Set the real state to the updated state
 			setInitialSelectedPermissions(Object.keys(selectedPermissions).filter((key) => selectedPermissions[key]));
 			setHasChanges(false);
 			setRemovedPermissions([]);
 		} catch (error) {
-			toast.error('Failed to update permissions');
+			toast.error('Failed to update permissions',{position:"top-center"});
 			console.error(error);
 		}
 	};
@@ -324,7 +323,7 @@ export default function RolesAndPermissions({
 		try {
 			const response = await deletePermissions(formData);
 			if (response.success) {
-				toast.success('Permissions removed successfully');
+				toast.success('Permissions removed successfully',{position:"top-center"});
 
 				const newSelected = { ...selectedPermissions };
 				removedPermissions.forEach((id) => {
@@ -335,7 +334,7 @@ export default function RolesAndPermissions({
 				});
 			}
 		} catch (error) {
-			toast.error('Failed to remove permissions');
+			toast.error('Failed to remove permissions',{position:"top-center"});
 			console.error(error);
 		}
 	};
@@ -353,9 +352,6 @@ export default function RolesAndPermissions({
 		setRemovedPermissions([]);
 		setHasChanges(false);
 	};
-
-
-
 
 	// Add a toggle function to switch between Select All and Deselect All
 	const handleToggleSelectAll = () => {
@@ -383,7 +379,21 @@ export default function RolesAndPermissions({
 						<p className="text-2xl font-bold">Roles & Permissions</p>
 					</CardContent>
 				</Card>
-				{!selectedRole ? (
+				{isLoading ? (
+					<Card className="flex items-center justify-center p-8">
+						<div className="flex items-center gap-2">
+							<Loader2 className="h-6 w-6 animate-spin" />
+							<span>Loading...</span>
+						</div>
+					</Card>
+				) : !masterdropdown.dropdownData?.roles ? (
+					<Card className="flex items-center justify-center p-8">
+						<div className="flex items-center gap-2 text-destructive">
+							<AlertCircle className="h-6 w-6" />
+							<span>Failed to load roles data</span>
+						</div>
+					</Card>
+				) : !selectedRole ? (
 					<RoleSelector roles={masterdropdown.dropdownData.roles} onRoleSelect={handleRoleChange} />
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -453,7 +463,6 @@ export default function RolesAndPermissions({
 											>
 												<Save className="h-4 w-4 mr-1" /> Add Permissions
 											</Button>
-									
 											<Button
 												variant="default"
 												onClick={handleToggleSelectAll}

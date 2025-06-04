@@ -32,7 +32,7 @@ export default function SupportPageAgent() {
     }
     if (!email) {
        if (dateTime.date && dateTime.time) {
-      const combinedDateTime = `${dateTime.date}T${dateTime.time}`;
+      const combinedDateTime = `${dateTime.date},${dateTime.time}`;
       formData.set("calling_time", combinedDateTime);
     }
 

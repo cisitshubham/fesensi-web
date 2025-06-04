@@ -3,16 +3,29 @@ import { useEffect, useState } from "react";
 import { getEscalatedTicketsAdmin } from "@/api/api";
 import { Tickettype } from "@/types";
 import { NoTicketsPage } from '@/errors/no-ticketspage';
+import { TicketListSkeleton } from '@/components/skeletons';
 
 export default function RequestedReassignmentAdminPending() {
     const [tickets, setTickets] = useState<Tickettype[]>([]);
-
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getEscalatedTicketsAdmin().then((res) => {
-            setTickets(res.data);
-        })
-    }, [])
+        setLoading(true);
+        getEscalatedTicketsAdmin()
+            .then((res) => {
+                setTickets(res.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching tickets:', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) {
+        return <TicketListSkeleton />;
+    }
 
     return (
         <div className="px-8 space-y-4">
@@ -24,5 +37,5 @@ export default function RequestedReassignmentAdminPending() {
                 ))
             )}
         </div>
-    )
+    );
 }
