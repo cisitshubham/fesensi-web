@@ -11,11 +11,12 @@ export default function FilteredTicketsUser(){
     // You may want to get status from props, context, or route. For now, use a hardcoded example:
     const location = useLocation();
     const status = location.state?.status 
+    const dateRange = location.state?.dateRange;
 
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const response = await getFilterredTickets(status);
+                const response = await getFilterredTickets(status,dateRange.fromDate, dateRange.todate);
                 setTickets(response.data);
                 setLoading(false);
             } catch (error) {

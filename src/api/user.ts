@@ -138,9 +138,9 @@ export const GetSkippedFeedback = async () => {
 }
 
 
-export const getFilterredTickets = async (status: string) => {
+export const getFilterredTickets = async (status: string,fromDate?: string, todate?: string) => {
   try {
-    const response = await axiosInstance.get(`/tickets/ticket-status/${status}`);
+    const response = await axiosInstance.get(`/tickets/ticket-status/${status}?fromDate=${fromDate}&todate=${todate}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching filtered tickets:', error);

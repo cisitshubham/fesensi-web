@@ -25,9 +25,11 @@ export const MyTickets = async (filters: any) => {
     throw new Error('Failed to fetch tickets. Please try again later.');
   }
 };
-export const FilteredMyTickets = async (status:string) => {
+export const FilteredMyTickets = async (status: string, fromDate?: string, todate?: string) => {
   try {
-    const response = await axiosInstance.get(`/agent/dashboard/${status}`);
+    const response = await axiosInstance.get(`/agent/dashboard/${status}?fromDate=${fromDate}&todate=${todate}`, {
+  
+    });
     
     return response;
   } catch (error: any) {

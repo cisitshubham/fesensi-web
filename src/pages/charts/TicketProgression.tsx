@@ -3,6 +3,7 @@ import { ChartsResponse } from '@/types';
 import { getStatusBadge, GetStatusColor } from '@/pages/global-components/GetStatusColor';
 import { TicketStatus } from '@/types';
 import { memo } from 'react';
+import { clsx } from 'clsx';
 
 interface TicketProgressionProps {
   ticketStatusTotal: number;
@@ -12,6 +13,7 @@ interface TicketProgressionProps {
   openPercentage: number;
   categories: ChartsResponse['data']['TicketsByCategory']['counts'];
   renderCategory: (category: ChartsResponse['data']['TicketsByCategory']['counts'][0], index: number) => JSX.Element;
+  isLoading?: boolean;
 }
 
 const TicketProgression = memo(function TicketProgression({
@@ -21,10 +23,19 @@ const TicketProgression = memo(function TicketProgression({
   inProgressPercentage,
   openPercentage,
   categories,
-  renderCategory
+  renderCategory,
+  isLoading
 }: TicketProgressionProps) {
   return (
-    <Card className="card-body flex flex-col gap-1 p-6 lg:p-8 lg:pt-5">
+    <Card className={clsx(
+      "card-body flex flex-col gap-1 p-6 lg:p-8 lg:pt-5",
+      isLoading && "relative"
+    )}>
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-gray-600">Ticket Progression</span>
         <div className="flex items-center gap-3">

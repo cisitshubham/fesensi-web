@@ -18,6 +18,7 @@ interface TicketStatusCardsProps {
     fromDate: string;
     todate: string;
   };
+  isLoading?: boolean;
 }
 
 const statusConfig = [
@@ -57,7 +58,7 @@ const getRouteByRole = (role: string) => {
   }
 };
 
-const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts, dateRange }: TicketStatusCardsProps) {
+const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts, dateRange, isLoading }: TicketStatusCardsProps) {
   const { selectedRoles } = useRole();
   const currentRole = selectedRoles[0] || 'USER';
 
@@ -72,7 +73,10 @@ const TicketStatusCards = memo(function TicketStatusCards({ ticketCounts, dateRa
             key={key}
             to={linkTo}
             state={{ status, dateRange }}
-            className="block h-full"
+            className={clsx(
+              "block h-full",
+              isLoading && "pointer-events-none opacity-50"
+            )}
           >
             <Card className={clsx(
               "p-2 flex flex-col justify-between h-full overflow-auto transition-all duration-200 hover:shadow-lg",

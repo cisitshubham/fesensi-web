@@ -81,7 +81,6 @@ export default function DashboardPage() {
     localStorage.setItem('selectedRole', role);
     window.dispatchEvent(new Event('storage'));
     
-    // Clear chart data cache when switching roles
     
     // Fetch new data immediately after role change
     setIsLoading(true);
@@ -249,7 +248,7 @@ export default function DashboardPage() {
   const isAdminOrAgent = selectedRoles.includes('ADMIN') || selectedRoles.includes('AGENT');
   const isCustomer = selectedRoles.includes('CUSTOMER');
 
-  if (isLoading) {
+  if (isLoading && isInitialLoad) {
     return <DashboardSkeleton />;
   }
 
@@ -309,96 +308,94 @@ export default function DashboardPage() {
           key={`tenure-${tenureState.fromDate}-${tenureState.todate}`}
         />
 
-        {!isLoading && (
-          <>
-            <div className="flex flex-col lg:flex-row gap-6">
-              {(isAdminOrAgent || isCustomer) && (
-                <div className="grid grid-cols-2 w-full lg:w-5/12 gap-4">
-                  <TicketStatusCards 
-                    ticketCounts={ticketCounts} 
-                    dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.todate }}
-                    key={`status-cards-${JSON.stringify(ticketCounts)}`}
-                  />
-                </div>
-              )}
-
-              {isAdminOrAgent && chartData && chartData.ticketsbyCategory && (
-                <div className="w-full">
-                  <TicketProgression
-                    ticketStatusTotal={chartData.ticketsbyCategory.totalTicketCount}
-                    ticketStatusTotalPercentage={parseFloat(chartData.ticketsbyCategory.overallPercentageChange)}
-                    resolvedPercentage={percentages.resolvedPercentage}
-                    inProgressPercentage={percentages.inProgressPercentage}
-                    openPercentage={percentages.openPercentage}
-                    categories={chartData.ticketsbyCategory.counts}
-                    key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
-                    renderCategory={(category, index) => (
-                      <div key={`category-${category.category}-${index}`} className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="text-base text-gray-500">
-                            <i className={`icon-${category.category.toLowerCase()}`}></i>
-                          </span>
-                          <span className="text-sm font-normal text-gray-900">{category.category}</span>
-                        </div>
-                        <div className="flex items-center text-sm font-medium text-gray-800 gap-4">
-                          <span className="lg:text-right">{category.ticketCount}</span>
-                          <span className="lg:text-right flex items-center gap-1 justify-end">
-                            {parseFloat(category.percentageChange) >= 0 ? (
-                              <span className="text-success">▲</span>
-                            ) : (
-                              <span className="text-danger">▼</span>
-                            )}
-                            {category.percentageChange}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  />
-                </div>
-              )}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {(isAdminOrAgent || isCustomer) && (
+            <div className="grid grid-cols-2 w-full lg:w-5/12 gap-4">
+              <TicketStatusCards 
+                ticketCounts={ticketCounts} 
+                dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.todate }}
+                key={`status-cards-${JSON.stringify(ticketCounts)}`}
+                isLoading={isLoading}
+              />
             </div>
+          )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-12 sm:mt-16">
-              {isAdminOrAgent && chartData && (
-                <div className="w-full min-h-[400px] h-[450px]">
-                  <LineChart
-                    series={chartData.ticketVolumeData}
-                    labels={chartData.ticketVolumeLabels}
-                    key={`line-${JSON.stringify(chartData.ticketVolumeData)}-${JSON.stringify(chartData.ticketVolumeLabels)}`}
-                  />
-                </div>
-              )}
-              {chartData && (
-                <div className="w-full min-h-[400px] h-[450px]">
-                  <Donut
-                    series={chartData.statusData}
-                    labels={chartData.statusLabels}
-                    key={`donut-${JSON.stringify(chartData.statusData)}-${JSON.stringify(chartData.statusLabels)}`}
-                  />
-                </div>
-              )}
-              {chartData && (
-                <div className="w-full min-h-[400px] h-[450px]">
-                  <Pie
-                    series={chartData.priorityData}
-                    labels={chartData.priorityLabels}
-                    key={`pie-${JSON.stringify(chartData.priorityData)}-${JSON.stringify(chartData.priorityLabels)}`}
-                  />
-                </div>
-              )}
-              {isAdminOrAgent && chartData && (
-                <div className="w-full min-h-[400px] h-[450px]">
-                  <BarChart
-                    resolved={chartData.categoryDataresolved}
-                    inprogress={chartData.categoryDataInprogress}
-                    labels={chartData.categoryLabels}
-                    key={`bar-${JSON.stringify(chartData.categoryDataresolved)}-${JSON.stringify(chartData.categoryDataInprogress)}-${JSON.stringify(chartData.categoryLabels)}`}
-                  />
-                </div>
-              )}
+          {chartData  && (
+            <div className="w-full">
+              <TicketProgression
+                ticketStatusTotal={chartData.ticketsbyCategory.totalTicketCount}
+                ticketStatusTotalPercentage={parseFloat(chartData.ticketsbyCategory.overallPercentageChange)}
+                resolvedPercentage={percentages.resolvedPercentage}
+                inProgressPercentage={percentages.inProgressPercentage}
+                openPercentage={percentages.openPercentage}
+                categories={chartData.ticketsbyCategory.counts}
+                key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
+                isLoading={isLoading}
+                renderCategory={(category, index) => (
+                  <div key={`category-${category.category}-${index}`} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="text-base text-gray-500">
+                        <i className={`icon-${category.category.toLowerCase()}`}></i>
+                      </span>
+                      <span className="text-sm font-normal text-gray-900">{category.category}</span>
+                    </div>
+                    <div className="flex items-center text-sm font-medium text-gray-800 gap-4">
+                      <span className="lg:text-right">{category.ticketCount}</span>
+                      <span className="lg:text-right flex items-center gap-1 justify-end">
+                        {parseFloat(category.percentageChange) >= 0 ? (
+                          <span className="text-success">▲</span>
+                        ) : (
+                          <span className="text-danger">▼</span>
+                        )}
+                        {category.percentageChange}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              />
             </div>
-          </>
-        )}
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-12 sm:mt-16">
+          {isAdminOrAgent && chartData && (
+            <div className="w-full min-h-[400px] h-[450px]">
+              <LineChart
+                series={chartData.ticketVolumeData}
+                labels={chartData.ticketVolumeLabels}
+                key={`line-${JSON.stringify(chartData.ticketVolumeData)}-${JSON.stringify(chartData.ticketVolumeLabels)}`}
+              />
+            </div>
+          )}
+          {chartData && (
+            <div className="w-full min-h-[400px] h-[450px]">
+              <Donut
+                series={chartData.statusData}
+                labels={chartData.statusLabels}
+                key={`donut-${JSON.stringify(chartData.statusData)}-${JSON.stringify(chartData.statusLabels)}`}
+              />
+            </div>
+          )}
+          {chartData && (
+            <div className="w-full min-h-[400px] h-[450px]">
+              <Pie
+                series={chartData.priorityData}
+                labels={chartData.priorityLabels}
+                key={`pie-${JSON.stringify(chartData.priorityData)}-${JSON.stringify(chartData.priorityLabels)}`}
+              />
+            </div>
+          )}
+          {isAdminOrAgent && chartData && (
+            <div className="w-full min-h-[400px] h-[450px]">
+              <BarChart
+                resolved={chartData.categoryDataresolved}
+                inprogress={chartData.categoryDataInprogress}
+                labels={chartData.categoryLabels}
+                key={`bar-${JSON.stringify(chartData.categoryDataresolved)}-${JSON.stringify(chartData.categoryDataInprogress)}-${JSON.stringify(chartData.categoryLabels)}`}
+              />
+            </div>
+          )}
+        </div>
       </Container>
     </Fragment>
   );

@@ -5,18 +5,24 @@ import { FilteredMyTickets } from '@/api/agent';
 import { NoTicketsPage } from '@/errors/no-ticketspage';
 import { useLocation } from 'react-router';
 
-export default function FilteredTickets(){
+interface FilteredTicketsProps {
+    fromDate?: string;
+    toDate?: string;
+}
+
+export default function FilteredTickets({ fromDate, toDate }: FilteredTicketsProps){
     const [tickets, setTickets] = useState<Tickettype[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string|null>(null)
     // You may want to get status from props, context, or route. For now, use a hardcoded example:
     const location = useLocation();
     const status = location.state?.status 
+    const dateRange = location.state?.dateRange;
 
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const response = await FilteredMyTickets(status);
+                const response = await FilteredMyTickets(status, dateRange.fromDate, dateRange.todate);
                 setTickets(response.data.data);
                 setLoading(false);
             } catch (error) {
@@ -25,7 +31,7 @@ export default function FilteredTickets(){
             }
         };
         fetchTickets();
-    }, [status]);
+    }, [status, fromDate, toDate]);
 
     if (loading) {
         return <div>Loading tickets...</div>;
