@@ -5,13 +5,13 @@ import { cn } from '@/lib/utils';
 
 interface TenureProps {
   fromDate: string;
-  toDate: string;
+  todate: string;
   selectedButton: string;
-  onChange: (update: { fromDate: string; toDate: string; selectedButton: string }) => void;
+  onChange: (update: { fromDate: string; todate: string; selectedButton: string }) => void;
   isLoading?: boolean;
 }
 
-const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, onChange, isLoading = false }: TenureProps) {
+const Tenure = React.memo(function Tenure({ fromDate, todate, selectedButton, onChange, isLoading = false }: TenureProps) {
   // Button click handler
   const handleButtonClick = useCallback((button: string) => {
     if (isLoading) return;
@@ -33,8 +33,9 @@ const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, on
       return `${year}-${month}-${day}`;
     };
     onChange({
-      fromDate: formatDate(from),
-      toDate: formatDate(to),
+      fromDate: 
+      formatDate(from),
+      todate: formatDate(to),
       selectedButton: button,
     });
   }, [onChange, isLoading]);
@@ -42,12 +43,12 @@ const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, on
   // Date input change handler
   const handleDateChange = useCallback((type: 'from' | 'to', value: string) => {
     if (isLoading) return;
-    if (type === 'from') {
-      onChange({ fromDate: value, toDate, selectedButton });
-    } else {
-      onChange({ fromDate, toDate: value, selectedButton });
-    }
-  }, [fromDate, toDate, selectedButton, onChange, isLoading]);
+    onChange({
+      fromDate: type === 'from' ? value : fromDate,
+      todate: type === 'to' ? value : todate,
+      selectedButton
+    });
+  }, [onChange, isLoading, fromDate, todate, selectedButton]);
 
   // Memoize the buttons to prevent unnecessary re-renders
   const buttons = useMemo(() => (
@@ -99,7 +100,7 @@ const Tenure = React.memo(function Tenure({ fromDate, toDate, selectedButton, on
           To:
           <input
             type="date"
-            value={toDate}
+            value={todate}
             onChange={(e) => handleDateChange('to', e.target.value)}
             className={cn('transition-all duration-200', isLoading && 'opacity-50 cursor-not-allowed')}
             disabled={isLoading}

@@ -89,7 +89,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         setCurrentUser(data.data.user);
         localStorage.setItem('user', JSON.stringify(data.data.user));
         localStorage.setItem('role', JSON.stringify(data.data.user.role));
-debugger;
         // Handle role selection
         const userRoles = data.data.user.role;
         let selectedRole = '';
@@ -178,7 +177,6 @@ debugger;
     saveAuth(undefined);
     setCurrentUser(undefined);
     localStorage.clear();
-    console.log(sessionStorage)
   };
 
   return (

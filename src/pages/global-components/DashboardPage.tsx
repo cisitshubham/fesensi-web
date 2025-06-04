@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Container } from '@/components/container';
 import { Toolbar, ToolbarActions, ToolbarHeading } from '@/layouts/demo1/toolbar';
-import { fetchUser, clearChartDataCache } from '@/api/api';
+import { fetchUser} from '@/api/api';
 import { fetchDashboardData } from '@/pages/charts/data_manipulations';
 import { useRole } from '@/pages/global-components/role-context';
 import {
@@ -69,7 +69,7 @@ export default function DashboardPage() {
     };
     return {
       fromDate: formatDate(today),
-      toDate: formatDate(today),
+      todate: formatDate(today),
       selectedButton: 'Today',
     };
   });
@@ -82,14 +82,13 @@ export default function DashboardPage() {
     window.dispatchEvent(new Event('storage'));
     
     // Clear chart data cache when switching roles
-    clearChartDataCache();
     
     // Fetch new data immediately after role change
     setIsLoading(true);
     try {
       const response = await fetchDashboardData(
         tenureState.fromDate,
-        tenureState.toDate,
+        tenureState.todate,
         role
       );
       if (response) {
@@ -100,7 +99,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedRoles, setSelectedRoles, tenureState.fromDate, tenureState.toDate]);
+  }, [selectedRoles, setSelectedRoles, tenureState.fromDate, tenureState.todate]);
 
   // Combined initial data fetch
   useEffect(() => {
@@ -147,10 +146,10 @@ export default function DashboardPage() {
 
         setSelectedRoles(newRoles);
 
-        if (newRoles.length > 0 && tenureState.fromDate && tenureState.toDate) {
+        if (newRoles.length > 0 && tenureState.fromDate && tenureState.todate) {
           const response = await fetchDashboardData(
             tenureState.fromDate,
-            tenureState.toDate,
+            tenureState.todate,
             newRoles[0]
           );
           if (response) {
@@ -170,18 +169,14 @@ export default function DashboardPage() {
 
   // Fetch dashboard data when roles and dates change (after initial load)
   useEffect(() => {
-    if (isInitialLoad || !selectedRoles.length || !tenureState.fromDate || !tenureState.toDate) return;
+    if (!selectedRoles.length || !tenureState.fromDate || !tenureState.todate) return;
     
     const fetchData = async () => {
-      const isRoleChange = selectedRoles !== prevRolesRef.current;
-      if (isRoleChange) {
-        setIsLoading(true);
-      }
-      
+      setIsLoading(true);
       try {
         const response = await fetchDashboardData(
           tenureState.fromDate,
-          tenureState.toDate,
+          tenureState.todate,
           selectedRoles[0]
         );
         if (response) {
@@ -190,14 +185,12 @@ export default function DashboardPage() {
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
-        if (isRoleChange) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedRoles, tenureState.fromDate, tenureState.toDate, isInitialLoad]);
+  }, [selectedRoles, tenureState.fromDate, tenureState.todate]);
 
   // Add a ref to track previous roles
   const prevRolesRef = useRef(selectedRoles);
@@ -208,15 +201,7 @@ export default function DashboardPage() {
   // Add debug logs for chart data
   useEffect(() => {
     if (chartData) {
-      const debugData = {
-        statusData: chartData.statusData,
-        statusLabels: chartData.statusLabels,
-        priorityData: chartData.priorityData,
-        priorityLabels: chartData.priorityLabels,
-        categoryDataInprogress: chartData.categoryDataInprogress,
-        categoryDataresolved: chartData.categoryDataresolved,
-        categoryLabels: chartData.categoryLabels
-      };
+
     }
   }, [chartData]);
 
@@ -315,11 +300,13 @@ export default function DashboardPage() {
       <Container>
         <Tenure
           fromDate={tenureState.fromDate}
-          toDate={tenureState.toDate}
+          todate={tenureState.todate}
           selectedButton={tenureState.selectedButton}
-          onChange={setTenureState}
+          onChange={(newState) => {
+            setTenureState(newState);
+          }}
           isLoading={isLoading}
-          key={`tenure-${tenureState.fromDate}-${tenureState.toDate}`}
+          key={`tenure-${tenureState.fromDate}-${tenureState.todate}`}
         />
 
         {!isLoading && (
@@ -329,7 +316,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 w-full lg:w-5/12 gap-4">
                   <TicketStatusCards 
                     ticketCounts={ticketCounts} 
-                    dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.toDate }}
+                    dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.todate }}
                     key={`status-cards-${JSON.stringify(ticketCounts)}`}
                   />
                 </div>

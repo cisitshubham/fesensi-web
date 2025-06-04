@@ -42,7 +42,6 @@ export default function TrustPageAgent() {
     try {
       const response = await getTrustlevel()
       if (response.success) {
-        console.log(response)
         setLoading(false)
         setError(null)
         setTrustLevel(response.data)

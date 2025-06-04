@@ -1,11 +1,10 @@
 import { ChartDataAgent, ChartDataAdmin, ChartDataCustomer } from '@/api/api';
 
-export async function fetchDashboardData(fromDate: string, toDate: string, role: string) {
+export async function fetchDashboardData(fromDate: string, todate: string, role: string) {
   try {
-    
     const formData = new FormData();
     formData.append('fromDate', fromDate);
-    formData.append('todate', toDate);
+    formData.append('todate', todate);
 
     let apiResponse;
     if (role === 'ADMIN') {

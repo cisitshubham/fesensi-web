@@ -103,6 +103,7 @@ export const getTicketByStatus = async () => {
     console.error('Error fetching ticket by status:', error);
   }
 };
+
 export const getTicketByCategory = async () => {
   try {
     const response = await axiosInstance.post('/admin/tickets/dashboard/tickets/categories');
@@ -112,25 +113,9 @@ export const getTicketByCategory = async () => {
   }
 };
 
-// Simple in-memory cache for chart data
-const chartDataCache: Record<string, any> = {};
-
-// Function to clear chart data cache
-export const clearChartDataCache = () => {
-  console.log('Clearing chart data cache');
-  Object.keys(chartDataCache).forEach(key => delete chartDataCache[key]);
-};
-
 export const ChartDataAdmin = async (formData: FormData) => {
-  const cacheKey = `ADMIN-${formData.get('fromDate')}-${formData.get('toDate')}`;
-  
-  if (chartDataCache[cacheKey]) {
-    return chartDataCache[cacheKey];
-  }
-  
   try {
     const response = await axiosInstance.post('/admin/Dashboard/charts/', formData);
-    chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
     console.error('Error fetching admin chart data:', error);
@@ -431,12 +416,6 @@ export const addFeedback = async (formData: FormData) => {
 };
 
 export const ChartDataCustomer = async (formData: FormData) => {
-  const cacheKey = `CUSTOMER-${formData.get('fromDate')}-${formData.get('toDate')}`;
-  
-  if (chartDataCache[cacheKey]) {
-    return chartDataCache[cacheKey];
-  }
-  
   try {
     const response = await axiosInstance.post('/tickets/Dashboard/charts/', formData);
     return response.data;
@@ -449,18 +428,8 @@ export const ChartDataCustomer = async (formData: FormData) => {
 // agent
 
 export const ChartDataAgent = async (formData: FormData) => {
-  const cacheKey = `AGENT-${formData.get('fromDate')}-${formData.get('toDate')}`;
-  console.log('Agent cache key:', cacheKey);
-  
-  if (chartDataCache[cacheKey]) {
-    console.log('Using cached agent data');
-    return chartDataCache[cacheKey];
-  }
-  
   try {
-    console.log('Fetching fresh agent data');
     const response = await axiosInstance.post('/agent/myTickets/Dashboard/charts', formData);
-    chartDataCache[cacheKey] = response.data;
     return response.data;
   } catch (error) {
     console.error('Error fetching agent chart data:', error);

@@ -33,22 +33,16 @@ const initalLayoutProps: IDemo1LayoutProviderProps = {
   mobileMegaMenuOpen: false,
   sidebarMouseLeave: false,
   setSidebarMouseLeave: (state: boolean) => {
-    console.log(`${state}`);
   },
   setMobileMegaMenuOpen: (open: boolean) => {
-    console.log(`${open}`);
   },
   setMobileSidebarOpen: (open: boolean) => {
-    console.log(`${open}`);
   },
   setMegaMenuEnabled: (enabled: boolean) => {
-    console.log(`${enabled}`);
   },
   setSidebarCollapse: (collapse: boolean) => {
-    console.log(`${collapse}`);
   },
   setSidebarTheme: (mode: string) => {
-    console.log(`${mode}`);
   }
 };
 
