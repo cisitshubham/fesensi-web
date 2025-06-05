@@ -22,6 +22,8 @@ import LineChart from '@/pages/charts/Volume-area-chart';
 import TicketStatusCards from '@/pages/charts/TicketStatusCards';
 import TicketProgression from '@/pages/charts/TicketProgression';
 import { DashboardSkeleton } from '@/components/skeletons';
+import { TrendingUp, TrendingDown } from "lucide-react"
+
 
 type CategoryType = 'Hardware' | 'Internet/Network' | 'Cloud Technologies' | 'Software' | 'Others';
 
@@ -331,27 +333,35 @@ export default function DashboardPage() {
                 openPercentage={percentages.openPercentage}
                 categories={chartData.ticketsbyCategory.counts}
                 key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
-                renderCategory={(category, index) => (
-                  <div key={`category-${category.category}-${index}`} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="text-base text-gray-500">
-                        <i className={`icon-${category.category.toLowerCase()}`}></i>
-                      </span>
-                      <span className="text-sm font-normal text-gray-900">{category.category}</span>
-                    </div>
-                    <div className="flex items-center text-sm font-medium text-gray-800 gap-4">
-                      <span className="lg:text-right">{category.ticketCount}</span>
-                      <span className="lg:text-right flex items-center gap-1 justify-end">
-                        {parseFloat(category.percentageChange) >= 0 ? (
-                          <span className="text-success">▲</span>
-                        ) : (
-                          <span className="text-danger">▼</span>
-                        )}
-                        {category.percentageChange}
+                renderCategory={(category, index) => {
+                  const isPositive = Number.parseFloat(category.percentageChange) >= 0;
+                  return (
+                  <div
+                  key={`category-${category.category}-${index}`}
+                  className="flex items-center justify-between  rounded-md transition-colors duration-150"
+                >
+                  <div className="flex items-center">
+                 
+                    <span className="text-sm font-medium text-gray-900">{category.category}</span>
+                  </div>
+            
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-semibold text-gray-900 min-w-[2rem] text-right">{category.ticketCount}</span>
+            
+                    <div className="flex items-center gap-1 min-w-[4rem] justify-end">
+                      {isPositive ? (
+                        <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                      ) : (
+                        <TrendingDown className="w-3.5 h-3.5 text-red-500" />
+                      )}
+                      <span className={`text-sm font-medium ${isPositive ? "text-emerald-600" : "text-red-600"}`}>
+                        {Math.abs(Number.parseFloat(category.percentageChange))}%
                       </span>
                     </div>
                   </div>
-                )}
+                </div>
+                  );
+                }}
               />
             </div>
           )}

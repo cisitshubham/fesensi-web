@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Fragment, useEffect, useState } from "react"
+import {  useEffect, useState } from "react"
 import { getPriorityBadge,getStatusBadge } from "@/pages/global-components/GetStatusColor"
 
 interface Ticket {
@@ -130,6 +130,8 @@ export default function TicketsTableTemplate() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Title</TableHead>
+                    <TableHead>Ticket number </TableHead>
+
                     <TableHead>Category</TableHead>
                     <TableHead>Priority</TableHead>
                     <TableHead>Status</TableHead>
@@ -146,6 +148,8 @@ export default function TicketsTableTemplate() {
                           <div className="text-sm text-muted-foreground truncate max-w-xs">{ticket.description}</div>
                         </div>
                       </TableCell>
+
+                      <TableCell>{ticket.ticket_number}</TableCell>
                       <TableCell>{ticket.category}</TableCell>
                       <TableCell>
                         <Badge className={getPriorityBadge(ticket.priority).color}>{ticket.priority}</Badge>

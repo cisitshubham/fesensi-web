@@ -42,7 +42,7 @@ const TicketProgression = memo(function TicketProgression({
           <span className="text-3xl font-bold text-gray-900">
             Total: {ticketStatusTotal || 0}
           </span>
-          <span className="badge badge-outline badge-success badge-sm">
+          <span className={`badge badge-outline ${ticketStatusTotalPercentage>0?"badge-success":"badge-danger"} badge-sm`}>
             {ticketStatusTotalPercentage || 0}%
           </span>
         </div>
