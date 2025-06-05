@@ -87,6 +87,7 @@ const Login = () => {
         className="card-body flex flex-col gap-5 p-10"
         onSubmit={formik.handleSubmit}
         noValidate
+        autoComplete="on"
       >
         <div className="text-center text-5xl mb-16 flex items-center justify-center gap-2">
           <img
@@ -108,7 +109,7 @@ const Login = () => {
             <input
               placeholder="Email"
               type="email"
-              autoComplete="off"
+              autoComplete="email"
               {...formik.getFieldProps('email')}
               className={clsx(
                 'form-control bg-transparent',
@@ -142,7 +143,7 @@ const Login = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter Password"
-              autoComplete="off"
+              autoComplete="current-password"
               {...formik.getFieldProps('password')}
               className={clsx(
                 'form-control bg-transparent',
@@ -169,6 +170,7 @@ const Login = () => {
           <input
             className="checkbox checkbox-sm"
             type="checkbox"
+            autoComplete="off"
             {...formik.getFieldProps('remember')}
           />
           <span className="checkbox-label">Remember me</span>
