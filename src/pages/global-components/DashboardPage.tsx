@@ -309,7 +309,6 @@ export default function DashboardPage() {
             setTenureState(newState);
           }}
           isLoading={isLoading}
-          key={`tenure-${tenureState.fromDate}-${tenureState.todate}`}
         />
 
         <div className="flex flex-col lg:flex-row gap-6">
@@ -318,7 +317,6 @@ export default function DashboardPage() {
               <TicketStatusCards 
                 ticketCounts={ticketCounts} 
                 dateRange={{ fromDate: tenureState.fromDate, todate: tenureState.todate }}
-                key={`status-cards-${JSON.stringify(ticketCounts)}`}
               />
             </div>
           )}
@@ -332,7 +330,6 @@ export default function DashboardPage() {
                 inProgressPercentage={percentages.inProgressPercentage}
                 openPercentage={percentages.openPercentage}
                 categories={chartData.ticketsbyCategory.counts}
-                key={`progression-${JSON.stringify(chartData.ticketsbyCategory)}`}
                 renderCategory={(category, index) => {
                   const isPositive = Number.parseFloat(category.percentageChange) >= 0;
                   return (
@@ -370,10 +367,9 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-12 sm:mt-16">
           {isAdminOrAgent && chartData && (
             <div className="w-full min-h-[400px] h-[450px]">
-              <LineChart
+               <LineChart
                 series={chartData.ticketVolumeData}
                 labels={chartData.ticketVolumeLabels}
-                key={`line-${JSON.stringify(chartData.ticketVolumeData)}-${JSON.stringify(chartData.ticketVolumeLabels)}`}
               />
             </div>
           )}
@@ -382,7 +378,6 @@ export default function DashboardPage() {
               <Donut
                 series={chartData.statusData}
                 labels={chartData.statusLabels}
-                key={`donut-${JSON.stringify(chartData.statusData)}-${JSON.stringify(chartData.statusLabels)}`}
               />
             </div>
           )}
@@ -391,7 +386,6 @@ export default function DashboardPage() {
               <Pie
                 series={chartData.priorityData}
                 labels={chartData.priorityLabels}
-                key={`pie-${JSON.stringify(chartData.priorityData)}-${JSON.stringify(chartData.priorityLabels)}`}
               />
             </div>
           )}
@@ -401,7 +395,6 @@ export default function DashboardPage() {
                 resolved={chartData.categoryDataresolved}
                 inprogress={chartData.categoryDataInprogress}
                 labels={chartData.categoryLabels}
-                key={`bar-${JSON.stringify(chartData.categoryDataresolved)}-${JSON.stringify(chartData.categoryDataInprogress)}-${JSON.stringify(chartData.categoryLabels)}`}
               />
             </div>
           )}

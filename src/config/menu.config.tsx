@@ -27,13 +27,13 @@ export const getSidebarMenu = (type: string, role: string): TMenuConfig => [
         path: '/create-ticket'
       },
       {
-        title: 'MyTickets',
+        title: 'My Tickets',
         icon: 'document',
         path: '/user/MyTickets'
       },
 
       {
-        title: 'knowledge base',
+        title: 'knowledge Base',
         icon: 'book-open',
         path: '/user/knowledgeBase'
       },

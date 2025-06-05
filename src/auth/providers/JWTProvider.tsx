@@ -146,18 +146,19 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     email: string,
     password: string
   ) => {
-    const { data: auth } = await axios.post(REGISTER_URL, {
-      first_name,
-      email,
-      password,
-    });
-
     try {
-      const formData = new FormData();
-    }
-    catch (error) {
-      saveAuth(undefined);
-      throw new Error(`Error ${error}`);
+      const { data } = await axios.post(REGISTER_URL, {
+        first_name,
+        email,
+        password,
+      });
+      localStorage.setItem('response', JSON.stringify(data));
+      return data;
+    } catch (error: any) {
+      console.error('Register request failed:', error);
+      const errorResponse = error.response?.data || { message: 'An error occurred during registration' };
+      localStorage.setItem('response', JSON.stringify(errorResponse));
+      throw new Error(errorResponse.message || 'Registration failed');
     }
   };
 

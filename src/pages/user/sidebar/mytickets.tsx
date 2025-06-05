@@ -34,9 +34,7 @@ export default function UserTickets() {
   return (
     <div className="space-y-4 px-6">
       <div className="flex justify-between items-center">
-        <Link to={"/create-ticket"}>
-          <Button variant={'default'}>Create Ticket</Button>
-        </Link>
+       
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by status" />

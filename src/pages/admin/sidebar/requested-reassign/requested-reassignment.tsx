@@ -21,6 +21,7 @@ interface TicketProps {
 
 
 export default function Ticket({ ticket }: TicketProps) {
+  console.log(ticket)
   const statusBadge = getStatusBadge(ticket.status);
   const priorityBadge = getPriorityBadge(ticket.priority);
   return (
@@ -99,7 +100,7 @@ export default function Ticket({ ticket }: TicketProps) {
         <CardFooter className={clsx("px-5 py-3  flex justify-between items-center")}>
         <div className="flex items-center text-sm text-gray-500">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>Requested: {ticket.createdAt}</span>
+                  <span>Created at: {ticket.createdAt}</span>
                 </div>
           <div className="flex items-center text-sm text-gray-500">
             <User className="w-4 h-4 mr-1.5" />

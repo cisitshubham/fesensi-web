@@ -92,7 +92,7 @@ export default function RequestedReassignmentAdminApproved() {
               <CardFooter className={clsx("px-5 py-3 flex justify-between items-center")}>
                 <div className="flex items-center text-sm text-gray-500">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>Requested: {ticket.createdAt}</span>
+                  <span>Created At: {ticket.createdAt}</span>
                 </div>
               </CardFooter>
             </Card>

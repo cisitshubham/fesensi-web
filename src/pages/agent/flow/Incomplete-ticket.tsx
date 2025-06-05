@@ -136,8 +136,8 @@ export default function IncompleteTicket() {
             <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleSubmit} disabled={isSubmitting || !reason}>
-              {isSubmitting ? 'Submitting...' : 'Mark as Incomplete'}
+            <Button variant="default" onClick={handleSubmit} disabled={isSubmitting || !reason}>
+              {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
             </Button>
           </CardFooter>
         </Card>

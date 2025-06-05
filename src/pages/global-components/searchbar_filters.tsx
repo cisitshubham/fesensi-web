@@ -133,8 +133,8 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
     filters.priority.length +
     filters.category.length +
     (isCreatedToday ? 1 : 0) +
-    (filters.startDate ? 1 : 0) +
-    (filters.endDate ? 1 : 0);
+    (filters.startDate && !isCreatedToday ? 1 : 0) +
+    (filters.endDate && !isCreatedToday ? 1 : 0);
 
   const clearAllFilters = () => {
     setFilters({

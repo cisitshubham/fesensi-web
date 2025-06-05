@@ -13,11 +13,9 @@ import { Button } from '@/components/ui/button';
 
 const initialValues = {
   first_name: '',
-  last_name: '',
   email: '',
   password: '',
   changepassword: '',
-  acceptTerms: false
 };
 
 const signupSchema = Yup.object().shape({
@@ -25,10 +23,8 @@ const signupSchema = Yup.object().shape({
     .min(3, 'Minimum 3 characters')
     .max(50, 'Maximum 50 characters')
     .required('User name is required'),
-  last_name: Yup.string().optional().min(3, 'Minimum 3 characters').max(50, 'Maximum 50 characters'),
   email: Yup.string()
     .email('Wrong email format')
-   
     .required('Email is required'),
   password: Yup.string()
     .min(6, 'Minimum 6 characters')
@@ -39,7 +35,6 @@ const signupSchema = Yup.object().shape({
     .max(50, 'Maximum 50 characters')
     .required('Password confirmation is required')
     .oneOf([Yup.ref('password')], "Password and Confirm Password didn't match"),
-  acceptTerms: Yup.bool().required('You must accept the terms and conditions')
 });
 
 const Signup = () => {
@@ -59,14 +54,23 @@ const Signup = () => {
       try {
         if (register) {
           await register(values.first_name, values.email, values.password);
-
           setShowDialog(true); // Show the dialog
         } else {
           throw new Error('JWTProvider is required for this form.');
         }
       } catch (error) {
         console.error(error);
-        setStatus('The sign up details are incorrect');
+        const res = localStorage.getItem('response');
+        if (res) {
+          try {
+            const parsedRes = JSON.parse(res);
+            setStatus(parsedRes.message);
+          } catch (e) {
+            setStatus('An error occurred.');
+          }
+        } else {
+          setStatus('An error occurred.');
+        }
         setSubmitting(false);
         setLoading(false);
       }
@@ -126,15 +130,7 @@ const Signup = () => {
         </div>
         <h1 className="text-2xl font-semibold text-primary-active">Sign up</h1>
         <div className=" text-sm">Create an account to explore all our features </div>
-        {/* <div className="grid grid-cols-2 gap-2.5">
-          <Link to={'/auth/login'} className="btn btn-light btn-sm justify-center">
-            Sign In
-          </Link>
-
-          <Link to={'/auth/signup'} className="btn btn-sm btn-input disabled justify-center">
-            Sign Up
-          </Link>
-        </div> */}
+    
 
         {formik.status && <Alert variant="danger">{formik.status}</Alert>}
         <div className="flex flex-col gap-1">
@@ -160,28 +156,6 @@ const Signup = () => {
           )}
         </div>
 
-        {/* <div className="flex flex-col gap-1">
-          <label className="input">
-            <input
-              placeholder="Last Name"
-              type="text"
-              autoComplete="off"
-              {...formik.getFieldProps('last_name')}
-              className={clsx(
-                'form-control bg-transparent',
-                { 'is-invalid': formik.touched.last_name && formik.errors.last_name },
-                {
-                  'is-valid': formik.touched.last_name && !formik.errors.last_name
-                }
-              )}
-            />
-          </label>
-          {formik.touched.last_name && formik.errors.last_name && (
-            <span role="alert" className="text-danger text-xs mt-1">
-              {formik.errors.last_name}
-            </span>
-          )}
-        </div> */}
 
         <div className="flex flex-col gap-1">
           <label className="input">

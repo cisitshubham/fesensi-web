@@ -1,7 +1,8 @@
+// LineChart.tsx
 
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { Card, CardContent } from "@/components/ui/card";
-import { ApexOptions } from "apexcharts";
 
 interface LineChartProps {
   series: number[];
@@ -9,83 +10,86 @@ interface LineChartProps {
 }
 
 export default function LineChart({ series, labels }: LineChartProps) {
-  const options: ApexOptions = {
-    chart: {
-      height: 350,
-      type: "area",
-      animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 800,
-        animateGradually: {
-          enabled: true,
-          delay: 150
-        },
-        dynamicAnimation: {
-          enabled: true,
-          speed: 350
-        }
-      },
-      toolbar: {
-        show: true,
-      },
-      zoom: {
-        enabled: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-      width: 3,
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.3,
-        stops: [0, 90, 100]
-      }
-    },
-    colors: ["#60A5FA"],
-    grid: {
-      row: {
-        colors: ["#f3f3f3"],
-        opacity: 0.5,
-      },
-    },
-    xaxis: {
-      categories: labels,
-    },
-    yaxis: {
-      title: {
-        text: "Number of Tickets",
-      },
-    },
-    title: {
-      text: "Ticket Volume Over Time",
-      align: "center",
-      style: {
-        fontSize: "20px",
-        fontWeight: "bold",
-      },
-    },
-  };
 
-  const chartSeries = [{
-    name: "Ticket Volume",
-    data: series,
-  }];
+  const [chartState, setChartState] = React.useState({
+    series: [
+      {
+        name: "Ticket Volume",
+        data: series,
+      },
+    ],
+    options: {
+      chart: {
+        height: 350,
+       
+        type: "line" as "line", 
+        zoom: {
+          enabled: false,
+        },
+        toolbar: {
+          show: true,
+        },
+      },
+      dataLabels: {
+        enabled: false, // Disable to avoid hiding lines
+      },
+      stroke: {
+        curve: "smooth" as "smooth",
+        width: 3, // Ensure line is visible
+      },
+      colors: ["#60A5FA"], // Global line color
+      grid: {
+        row: {
+          colors: ["#f3f3f3"],
+          opacity: 0.5,
+        },
+      },
+  
+      xaxis: {
+        categories: labels,
+      },
+      yaxis: {
+        title: {
+          text: "Number of Tickets",
+        },
+      },
+      title: {
+        text: "Ticket Volume Over Time",
+        align: "center" as const,
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+        },
+      },
+    },
+  });
+
+  React.useEffect(() => {
+    setChartState((prevState) => ({
+      ...prevState,
+      series: [
+        {
+          name: "Ticket Volume",
+          data: series,
+        },
+      ],
+      options: {
+        ...prevState.options,
+        xaxis: {
+          ...prevState.options.xaxis,
+          categories: labels,
+        },
+      },
+    }));
+  }, [series, labels]);
 
   return (
     <div className="w-full">
       <Card className="w-full p-4">
         <CardContent>
           <ReactApexChart
-            options={options}
-            series={chartSeries}
+            options={chartState.options}
+            series={chartState.series}
             type="area"
             height={350}
           />

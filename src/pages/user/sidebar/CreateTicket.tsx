@@ -25,7 +25,13 @@ const UserCreateTicketForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-
+  const hasFormInput = () => {
+    return title.trim() !== '' || 
+           description.trim() !== '' || 
+           category !== '' || 
+           priority !== '' || 
+           files.length > 0;
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -137,13 +143,18 @@ const UserCreateTicketForm = () => {
           <CardTitle>Create Ticket</CardTitle>
           <Button
             type="button"
+            variant={'default'}
             onClick={() => {
               setTitle('');
               setDescription('');
               setCategory('');
               setPriority('');
+              setFiles([]);
+              setSelectedImage(null);
+              setValidationErrors({});
             }}
-            className="btn btn-sm ml-auto text-gray-500 mb-1 bg-gray-300 hover:bg-gray-200"
+            className="ml-auto w-32  font-medium"
+            disabled={!hasFormInput()}
           >
             Reset
           </Button>

@@ -49,24 +49,35 @@ const TicketProgression = memo(function TicketProgression({
       </div>
 
       <div className="flex items-center gap-1 mb-2">
-        {resolvedPercentage > 0 && (
-          <div
-            className={`${getStatusBadge(TicketStatus.Resolved).darkbg} h-2 rounded-md`}
-            style={{ width: `${resolvedPercentage}%` }}
-          ></div>
-        )}
-        {inProgressPercentage > 0 && (
-          <div
-            className={`${getStatusBadge(TicketStatus.InProgress).darkbg} h-2 rounded-md`}
-            style={{ width: `${inProgressPercentage}%` }}
-          ></div>
-        )}
-        {openPercentage > 0 && (
-          <div
-            className={`${getStatusBadge(TicketStatus.Open).darkbg} h-2 rounded-md`}
-            style={{ width: `${openPercentage}%` }}
-          ></div>
-        )}
+        <div className="w-full flex">
+          {(() => {
+            const total = resolvedPercentage + inProgressPercentage + openPercentage;
+            const normalize = (value: number) => total > 0 ? (value / total) * 100 : 0;
+            
+            return (
+              <>
+                {resolvedPercentage > 0 && (
+                  <div
+                    className={`${getStatusBadge(TicketStatus.Resolved).darkbg} h-2 rounded-md`}
+                    style={{ width: `${normalize(resolvedPercentage)}%` }}
+                  ></div>
+                )}
+                {inProgressPercentage > 0 && (
+                  <div
+                    className={`${getStatusBadge(TicketStatus.InProgress).darkbg} h-2 rounded-md`}
+                    style={{ width: `${normalize(inProgressPercentage)}%` }}
+                  ></div>
+                )}
+                {openPercentage > 0 && (
+                  <div
+                    className={`${getStatusBadge(TicketStatus.Open).darkbg} h-2 rounded-md`}
+                    style={{ width: `${normalize(openPercentage)}%` }}
+                  ></div>
+                )}
+              </>
+            );
+          })()}
+        </div>
       </div>
 
       <div className="flex items-center flex-wrap gap-5 mb-2">
