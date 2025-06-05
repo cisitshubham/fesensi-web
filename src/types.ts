@@ -117,6 +117,7 @@ export type MasterDropdownDatatype = {
     _id: string;
     name: string;
     esclationHrs: number;
+    responseHrs: number;
   }[];
   roles: {
     _id: string;

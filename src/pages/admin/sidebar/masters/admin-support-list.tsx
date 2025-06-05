@@ -13,6 +13,7 @@ import { SupportListSkeleton } from "@/components/skeletons"
 interface SupportRequest {
   _id: string
   created_by: string
+  query_type:string
   contact_number: string
   calling_time?: string
   message: string
@@ -38,6 +39,7 @@ export default function AdminSupportList() {
     try {
       const res = await getContactSupport()
       setRequests(res.data || [])
+      console.log(res.data)
     } catch (e) {
       /* error handled silently */
     }
@@ -75,6 +77,7 @@ export default function AdminSupportList() {
           <TableHeader>            <TableRow>
               <TableHead>Created By</TableHead>
               <TableHead>Calling Time</TableHead>
+              <TableHead>Query Type</TableHead>
               <TableHead className="hidden md:table-cell">Message</TableHead>
               <TableHead className="hidden md:table-cell">Created At</TableHead>
               <TableHead>Status</TableHead>
@@ -94,6 +97,7 @@ export default function AdminSupportList() {
               requests.map((item) => (
                 <TableRow key={item._id}>                  <TableCell>{item.created_by}</TableCell>
                   <TableCell>{item.calling_time || "—"}</TableCell>
+                  <TableCell>{item.query_type}</TableCell>
                   <TableCell className="hidden md:table-cell max-w-[200px] truncate">{item.message}</TableCell>
                   <TableCell className="hidden md:table-cell">{(item.createdAt)}</TableCell>
                   <TableCell>

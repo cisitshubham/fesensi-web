@@ -67,7 +67,6 @@ export default function ReassignTicketsDetailAdmin() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     const fetchAgentList = async () => {
       const response = await ReassignAgentList();

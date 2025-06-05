@@ -14,8 +14,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { getStatusBadge,getPriorityBadge } from '@/pages/global-components/GetStatusColor';
-import { Dialog, DialogContent,  } from "@/components/ui/dialog";
+import { getStatusBadge, getPriorityBadge } from '@/pages/global-components/GetStatusColor';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function UserTicketDetails() {
@@ -27,7 +27,7 @@ export default function UserTicketDetails() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [comment_text, setFeedback] = useState("");
+  const [comment_text, setFeedback] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function UserTicketDetails() {
       } catch (err) {
         console.error('Failed to fetch ticket:', err);
         setError('Failed to load ticket. Please try again.');
-        toast.error('Failed to load ticket. Please try again.', {position :"top-center"});
+        toast.error('Failed to load ticket. Please try again.', { position: 'top-center' });
         setTicket(null);
       } finally {
         setLoading(false);
@@ -55,7 +55,7 @@ export default function UserTicketDetails() {
     }
   }, [id]);
 
-  const statusBadge = getStatusBadge(ticket?.status || "")
+  const statusBadge = getStatusBadge(ticket?.status || '');
   if (loading) {
     return (
       <Card className="w-full max-w-3xl mx-auto mt-8">
@@ -89,11 +89,11 @@ export default function UserTicketDetails() {
 
     try {
       await CloseTicketUser({ ticket_id: ticket._id });
-      toast.success("Ticket resolved successfully.", { position: "top-center" });
+      toast.success('Ticket resolved successfully.', { position: 'top-center' });
       setShowDialog(true);
     } catch (err) {
-      console.error("Failed to resolve ticket:", err);
-      toast.error("Failed to resolve ticket. Please try again.", { position: "top-center" });
+      console.error('Failed to resolve ticket:', err);
+      toast.error('Failed to resolve ticket. Please try again.', { position: 'top-center' });
     }
   };
 
@@ -103,19 +103,19 @@ export default function UserTicketDetails() {
     try {
       setSubmitting(true);
       const formData = new FormData();
-      formData.append("comment_text", comment_text);
-      formData.append("ticket", String(ticket._id));
+      formData.append('comment_text', comment_text);
+      formData.append('ticket', String(ticket._id));
       await addcomment(formData);
 
-      toast.success("Query submitted successfully.", { position: "top-center" });
+      toast.success('Query submitted successfully.', { position: 'top-center' });
       setShowFeedback(false);
 
       setTimeout(() => {
-        navigate("/user/MyTickets");
+        navigate('/user/MyTickets');
       }, 1000);
     } catch (err) {
-      console.error("Failed to submit feedback:", err);
-      toast.error("Failed to submit feedback. Please try again.", { position: "top-center" });
+      console.error('Failed to submit feedback:', err);
+      toast.error('Failed to submit feedback. Please try again.', { position: 'top-center' });
     } finally {
       setSubmitting(false);
     }
@@ -130,14 +130,14 @@ export default function UserTicketDetails() {
             <p className="text-sm text-muted-foreground">{ticket.title || 'Untitled Ticket'}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-          <Badge className={`${getPriorityBadge(ticket.priority).color} flex items-center gap-1`}>
-            {getPriorityBadge(ticket.priority).icon}
-            {ticket.priority}
-          </Badge>
+            <Badge className={`${getPriorityBadge(ticket.priority).color} flex items-center gap-1`}>
+              {getPriorityBadge(ticket.priority).icon}
+              {ticket.priority}
+            </Badge>
             <Badge className={`${statusBadge.color} flex items-center gap-1`}>
-                  {statusBadge.icon}
-                  {ticket.status}
-                </Badge>
+              {statusBadge.icon}
+              {ticket.status}
+            </Badge>
           </div>
         </div>
       </CardHeader>
@@ -176,7 +176,7 @@ export default function UserTicketDetails() {
               {ticket.attachments.map((attachment: { _id?: string; file_url: any }, idx) => (
                 <img
                   key={attachment._id || idx}
-                  src={attachment.file_url }
+                  src={attachment.file_url}
                   alt={`attachment-${idx}`}
                   className="w-32 h-32 object-cover border rounded-md cursor-pointer group-hover:scale-105"
                   onClick={() => setSelectedImage(attachment.file_url)}
@@ -189,11 +189,7 @@ export default function UserTicketDetails() {
 
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <img
-            src={selectedImage}
-            alt="Selected attachment"
-            className="max-w-full max-h-full"
-          />
+          <img src={selectedImage} alt="Selected attachment" className="max-w-full max-h-full" />
           <button
             onClick={() => setSelectedImage(null)}
             className="absolute top-4 right-4 text-white text-2xl"
@@ -204,21 +200,23 @@ export default function UserTicketDetails() {
       )}
 
       {ticket.latest_agent_comment?.comment_text && (
-        <Card className='mx-6'>
+        <Card className="mx-6">
           <CardHeader className="border-b">
             <CardTitle className="text-lg font-bold">Latest Agent Comment</CardTitle>
           </CardHeader>
           <CardContent className="p-4 bg-muted rounded-md">
-            <p className="text-sm whitespace-pre-wrap">{ticket.latest_agent_comment.comment_text}</p>
-<div className="flex flex-row gap-2">
-            {ticket.latest_agent_comment.attachments?.map((attachment:any, idx) => (
+            <p className="text-sm whitespace-pre-wrap">
+              {ticket.latest_agent_comment.comment_text}
+            </p>
+            <div className="flex flex-row gap-2">
+              {ticket.latest_agent_comment.attachments?.map((attachment: any, idx) => (
                 <img
                   key={idx}
                   src={attachment.file_url}
                   alt={`attachment-${idx}`}
                   className="w-32 h-32 object-cover border rounded-md"
                 />
-            ))}
+              ))}
             </div>
           </CardContent>
           <CardContent className="pt-6 space-y-6">
@@ -240,29 +238,37 @@ export default function UserTicketDetails() {
 
       <CardFooter className="flex flex-col items-start pt-4 border-t">
         <div className="w-full">
-          <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
           <div className="flex gap-4 mb-4">
-            
-          {ticket.isCustomerTicketEdit && (
-            <Link to={`/user/ticket/update/${ticket._id}`} className="">
-              <Button variant={'default'}>Edit Ticket</Button>
-            </Link>
-          )}
-            
-            {
-              ticket.isAgentCommented && ticket.status === "IN-PROGRESS" &&
-            <><Button variant="default" className="flex items-center gap-2" onClick={handleResolve}>
-                <CheckCircle className="h-4 w-4" />
-                Yes, mark as resolved
-              </Button><Button
-                variant="outline"
-                className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
-                onClick={() => setShowFeedback(true)}
-              >
-                  <XCircle className="h-4 w-4" />
-                  No, I need more help
-                </Button></>
-            }
+            {ticket.isCustomerTicketEdit && (
+              <Link to={`/user/ticket/update/${ticket._id}`} className="">
+                <Button variant={'default'}>Edit Ticket</Button>
+              </Link>
+            )}
+
+            {ticket.isAgentCommented && ticket.status === 'IN-PROGRESS' && (
+              <div className="flex flex-col">
+                <h3 className="text-md font-semibold mb-4">Is your problem solved?</h3>
+
+                <div className=" flex flex-row gap-4">
+                  <Button
+                    variant="default"
+                    className="flex items-center gap-2"
+                    onClick={handleResolve}
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    Yes, mark as resolved
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-destructive text-destructive hover:bg-destructive/10"
+                    onClick={() => setShowFeedback(true)}
+                  >
+                    <XCircle className="h-4 w-4" />
+                    No, I need more help
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {showFeedback && (
@@ -277,8 +283,8 @@ export default function UserTicketDetails() {
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    setShowFeedback(false)
-                    setFeedback("")
+                    setShowFeedback(false);
+                    setFeedback('');
                   }}
                 >
                   Cancel
@@ -290,7 +296,7 @@ export default function UserTicketDetails() {
                   disabled={!comment_text.trim() || submitting}
                 >
                   <Send className="h-4 w-4" />
-                  {submitting ? "Submitting..." : "Submit Feedback"}
+                  {submitting ? 'Submitting...' : 'Submit Feedback'}
                 </Button>
               </div>
             </div>
@@ -308,8 +314,12 @@ export default function UserTicketDetails() {
               <p>Your ticket has been successfully resolved. Thank you for your patience!</p>
               <p className="text-gray-500">Please rate your expierence</p>
               <CardFooter className="flex flex-row justify-between items-center mt-4">
-                <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>Rate our service</Button>
-                <Button variant={"outline"} onClick={() => navigate(`/user/MyTickets/`)}>Go to My Tickets</Button>
+                <Button onClick={() => navigate(`/user/feedback/${ticket._id}`)}>
+                  Rate our service
+                </Button>
+                <Button variant={'outline'} onClick={() => navigate(`/user/MyTickets/`)}>
+                  Go to My Tickets
+                </Button>
               </CardFooter>
             </Card>
           </DialogContent>

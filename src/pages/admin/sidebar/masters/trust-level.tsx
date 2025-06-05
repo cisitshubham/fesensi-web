@@ -127,7 +127,7 @@ export default function TrustLevels() {
         <CardHeader className="flex flex-row justify-between">
 
       <CardTitle className="text-2xl font-bold flex flex-row justify-between">Trust Levels Configuration</CardTitle>
-        <Button className="w-fit">Add New</Button>
+        {/* <Button className="w-fit">Add New</Button> */}
         </CardHeader>
       <CardContent className="space-y-4">
 

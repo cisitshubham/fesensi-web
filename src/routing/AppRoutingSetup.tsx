@@ -55,7 +55,7 @@ import ReasseignTicketsDetailAdmin from '@/pages/admin/sidebar/requested-reassig
 import PrioritiesManagement from '@/pages/admin/sidebar/masters/prioritites';
 import FilteredTickets from '@/pages/agent/filteredTickets';
 import RequestedReassignmentAdminApproved from '@/pages/admin/sidebar/requested-reassign/2 tabs/requested-reassignment-approved';
-import AdminSupportList from '@/pages/admin/sidebar/admin-support-list';
+import AdminSupportList from '@/pages/admin/sidebar/masters/admin-support-list';
 import FilteredTicketsUser from '@/pages/user/filteredTickets';
 import TrustPgeAgent from '@/pages/agent/sidebar/trustAgent';
 import EscalatedTicketDetail from '@/pages/agent/sidebar/escalted-tickets/escalatedTicketDetails';

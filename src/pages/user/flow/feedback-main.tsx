@@ -30,6 +30,10 @@ export default function FeedbackPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [selectedEmojiLabel, setSelectedEmojiLabel] = useState<string>("");
 
+    const isFormValid = () => {
+        return selectedRating !== null && category !== "" ;
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -166,7 +170,7 @@ export default function FeedbackPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit" className="w-fit" disabled={isSubmitting}>
+                        <Button type="submit" className="w-fit" disabled={isSubmitting || !isFormValid()}>
                             {isSubmitting ? "Submitting..." : "Submit Feedback"}
                         </Button>
                     </CardFooter>

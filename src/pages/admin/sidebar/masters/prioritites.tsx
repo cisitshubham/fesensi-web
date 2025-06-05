@@ -22,14 +22,15 @@ import { useNavigate } from "react-router-dom"
 import { CreatePriorities, updatePriorities } from "@/api/admin"
 export default function PrioritiesManagement() {
   const { dropdownData } = useMasterDropdown()
-  const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>(dropdownData.priorities || [])
+  const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>((dropdownData?.priorities) || [])
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [editedpriority, setEditedpriority] = useState({ title: "", esclationHrs: "", _id: "" })
+  const [editedpriority, setEditedpriority] = useState({ title: "", esclationHrs: "", responseHrs: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [newpriorityTitle, setNewpriorityTitle] = useState("")
   const [newprioritySla, setNewprioritySla] = useState("")
+  const [newpriorityResponseHrs, setNewpriorityResponseHrs] = useState("")
   const navigate = useNavigate()
   const filtered = priorities.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
   const handleEdit = (index: number) => {
@@ -37,24 +38,29 @@ export default function PrioritiesManagement() {
     setEditedpriority({
       title: priorities[index].name,
       esclationHrs: priorities[index].esclationHrs?.toString() || "",
+      responseHrs: priorities[index].responseHrs?.toString() || "",
       _id: priorities[index]._id,
     })
   }
 
   const handleSave = async () => {
     if (!editedpriority.title.trim()) return toast.error("Priority title cannot be empty", { position: "top-center" })
+    if (isNaN(Number(editedpriority.esclationHrs))) return toast.error("Escalation hours must be a number", { position: "top-center" })
+    if (isNaN(Number(editedpriority.responseHrs))) return toast.error("Response hours must be a number", { position: "top-center" })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
       formData.append("title", editedpriority.title.trim())
-      formData.append("esclationHrs", editedpriority.esclationHrs.trim())
+      formData.append("esclationHrs", Number(editedpriority.esclationHrs).toString())
+      formData.append("responseHrs", Number(editedpriority.responseHrs).toString())
       const response = await updatePriorities(editedpriority._id, formData)
 
       if (response.success && editIndex !== null) {
         const updated = [...priorities]
         updated[editIndex].name = editedpriority.title.trim()
         updated[editIndex].esclationHrs = parseInt(editedpriority.esclationHrs.trim(), 10)
+        updated[editIndex].responseHrs = parseInt(editedpriority.responseHrs.trim(), 10)
         setpriorities(updated)
         setEditIndex(null)
         toast.success("Priority saved successfully", { position: "top-center" })
@@ -72,21 +78,24 @@ export default function PrioritiesManagement() {
 
   const handleAddprioritySubmit = async () => {
     if (!newpriorityTitle.trim()) return toast.error("priority title cannot be empty", { position: "top-center" })
+    if (isNaN(Number(newprioritySla))) return toast.error("Escalation hours must be a number", { position: "top-center" })
+    if (isNaN(Number(newpriorityResponseHrs))) return toast.error("Response hours must be a number", { position: "top-center" })
     setIsSubmitting(true)
 
     try {
       const formData = new FormData()
       formData.append("title", newpriorityTitle.trim())
-      formData.append("esclationHrs", newprioritySla.trim())
+      formData.append("esclationHrs", Number(newprioritySla).toString())
+      formData.append("responseHrs", Number(newpriorityResponseHrs).toString())
       const response = await CreatePriorities(formData)
 
       if (response.success) {
-
         toast.success("Priority added successfully", { position: "top-center" })
         const newPriority = {
           _id: response.data._id,
           name: newpriorityTitle.trim(),
           esclationHrs: parseInt(newprioritySla.trim(), 10),
+          responseHrs: parseInt(newpriorityResponseHrs.trim(), 10),
         }
         setpriorities(prev => [...prev, newPriority])
         setShowAddDialog(false)
@@ -183,6 +192,7 @@ export default function PrioritiesManagement() {
                   <TableRow className="bg-slate-50">
                     <TableHead className="w-[30%]">Title</TableHead>
                     <TableHead className="w-[20%]">Escalation Hours</TableHead>
+                    <TableHead className="w-[20%]">Response Hours</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -220,6 +230,21 @@ export default function PrioritiesManagement() {
                             <span>{cat.esclationHrs || "N/A"}</span>
                           )}
                         </TableCell>
+                        <TableCell>
+                          {isEditing ? (
+                            <Input
+                              name="responseHrs"
+                              value={editedpriority.responseHrs}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEditedpriority({ ...editedpriority, responseHrs: e.target.value })
+                              }
+                              className="max-w-md"
+                              placeholder="Enter response hours"
+                            />
+                          ) : (
+                            <span>{cat.responseHrs || "N/A"}</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <ActionButtons index={index} />
@@ -244,9 +269,9 @@ export default function PrioritiesManagement() {
         <DialogContent className="p-4">
           <DialogHeader>
             <DialogTitle>Add New priority</DialogTitle>
-            <DialogDescription>Enter the title of the priority to add it to the list.</DialogDescription>
+            <DialogDescription>Enter the details of the priority to add it to the list.</DialogDescription>
           </DialogHeader>
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-col gap-4">
             <Input
               placeholder="priority title"
               value={newpriorityTitle}
@@ -254,8 +279,12 @@ export default function PrioritiesManagement() {
               autoFocus
             />
             <Input
-              placeholder="escalation hours "
+              placeholder="escalation hours"
               onChange={e => setNewprioritySla(e.target.value)}
+            />
+            <Input
+              placeholder="response hours"
+              onChange={e => setNewpriorityResponseHrs(e.target.value)}
             />
           </div>
           <DialogFooter>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -35,18 +35,25 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { UpdateReassignOptions } from '@/api/admin';
 
-export default function CresteReassign() {
-  const { dropdownData } = useMasterDropdown();
+export default function CreateReassign() {
+  const { dropdownData, loading: dropdownLoading } = useMasterDropdown();
   const [reasons, setReasons] = useState<MasterDropdownDatatype['reassignOptions']>(
-    dropdownData.reassignOptions || []
+    dropdownData?.reassignOptions || []
   );
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editedReason, setEditedReason] = useState<{ title: string,_id:string }>({ title: '',_id:'' });
+  const [editedReason, setEditedReason] = useState<{ title: string, _id: string }>({ title: '', _id: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newReasonTitle, setNewReasonTitle] = useState('');
   const navigate = useNavigate();
+
+  // Update reasons when dropdownData changes
+  useEffect(() => {
+    if (dropdownData?.reassignOptions) {
+      setReasons(dropdownData.reassignOptions);
+    }
+  }, [dropdownData]);
 
   const filtered = reasons.filter(r => r.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -90,7 +97,6 @@ export default function CresteReassign() {
       const formData = new FormData();
       formData.append('title', newReasonTitle.trim());
       const response = await CreateReassignOptions(formData);
-
 
       if (response.success) {
           setShowAddDialog(false);
@@ -138,6 +144,14 @@ export default function CresteReassign() {
     );
   };
 
+  if (dropdownLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <Card className="shadow-md border-slate-200">
@@ -181,7 +195,7 @@ export default function CresteReassign() {
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
               <Filter className="h-10 w-10 text-slate-300 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-slate-700">No reasons found</h3>
-              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add Reason" to create one'}</p>
+              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add Reassign Option" to create one'}</p>
             </div>
           ) : (
             <div className="rounded-md border overflow-hidden">

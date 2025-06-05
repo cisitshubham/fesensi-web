@@ -1,4 +1,4 @@
-import type React from "react"
+import React from "react"
 import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -23,8 +23,8 @@ import { useNavigate } from "react-router-dom"
 import { updateFeedbackOptions } from "@/api/admin"
 
 export default function FeedbackOptions() {
-  const { dropdownData } = useMasterDropdown()
-  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>(dropdownData.feedbackOptions || [])
+  const { dropdownData, loading } = useMasterDropdown()
+  const [feedbackOptions, setFeedbackOptions] = useState<MasterDropdownDatatype["feedbackOptions"]>([])
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [editedOption, setEditedOption] = useState({ title: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -32,6 +32,14 @@ export default function FeedbackOptions() {
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [newOptionTitle, setNewOptionTitle] = useState("")
   const navigate = useNavigate()
+
+  // Update feedbackOptions when dropdownData changes
+  React.useEffect(() => {
+    if (dropdownData?.feedbackOptions) {
+      setFeedbackOptions(dropdownData.feedbackOptions)
+    }
+  }, [dropdownData])
+
   const filtered = feedbackOptions.filter((c: { title: string }) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const handleEdit = (index: number) => {
