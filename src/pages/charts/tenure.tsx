@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
-import { format } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import { KeenIcon } from '@/components';
 
 interface TenureProps {
@@ -31,6 +31,12 @@ const Tenure = React.memo(function Tenure({
       to: new Date(todate)
     };
   }, [fromDate, todate]);
+
+  // Calculate the minimum allowed date (6 months ago from today)
+  const minDate = useMemo(() => subMonths(new Date(), 6), []);
+  
+  // Get today's date for maximum allowed date
+  const maxDate = useMemo(() => new Date(), []);
 
   // Button click handler
   const handleButtonClick = useCallback(
@@ -165,6 +171,7 @@ const Tenure = React.memo(function Tenure({
               selected={dateRange}
               onSelect={handleDateRangeChange}
               numberOfMonths={2}
+              disabled={{ before: minDate, after: maxDate }}
             />
           </PopoverContent>
         </Popover>
