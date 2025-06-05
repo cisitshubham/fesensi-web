@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -36,16 +36,10 @@ interface SearchbarFiltersProps {
 
 export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersProps) {
   // Correct the variable name and ensure proper typing
-  const { dropdownData } = useMasterDropdown();
-  const [categories, setCategories] = useState<MasterDropdownDatatype['categories']>(
-    dropdownData?.categories || []
-  );
-  const [priorities, setPriorities] = useState<MasterDropdownDatatype['priorities']>(
-    dropdownData?.priorities || []
-  );
-  const [statuses, setStatuses] = useState<MasterDropdownDatatype['status']>(
-    dropdownData?.status || []
-  );
+  const { dropdownData, loading } = useMasterDropdown();
+  const [categories, setCategories] = useState<MasterDropdownDatatype['categories']>([]);
+  const [priorities, setPriorities] = useState<MasterDropdownDatatype['priorities']>([]);
+  const [statuses, setStatuses] = useState<MasterDropdownDatatype['status']>([]);
   const [filters, setFilters] = useState<{
     status: string[];
     priority: string[];
@@ -61,6 +55,15 @@ export default function SearchbarFilters({ onFiltersChange }: SearchbarFiltersPr
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreatedToday, setIsCreatedToday] = useState(false);
+
+  // Update state when dropdownData changes
+  useEffect(() => {
+    if (dropdownData) {
+      setCategories(dropdownData.categories || []);
+      setPriorities(dropdownData.priorities || []);
+      setStatuses(dropdownData.status || []);
+    }
+  }, [dropdownData]);
 
   const handleCheckboxChange = (filterType: keyof typeof filters, value: string) => {
     setFilters((prev) => {
@@ -171,7 +174,7 @@ console.log(transformedFilters)
         <div className="flex flex-row justify-between items-center gap-4">
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2" disabled={loading}>
                 <Filter className="h-4 w-4" />
                 <span>Filters</span>
                 {activeFiltersCount > 0 && (
@@ -186,106 +189,112 @@ console.log(transformedFilters)
                 <DialogTitle>Filter Options</DialogTitle>
               </DialogHeader>
 
-              <div className="flex flex-row gap-6 py-4">
-                <div className="space-y-3">
-                  <h4 className="font-bold text-sm">Status</h4>
-                  <div className="space-y-2">
-                    {statuses.map((status) => (
-                      <div key={status._id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`status-${status._id}`}
-                          checked={filters.status.includes(status.name)}
-                          onCheckedChange={() => handleCheckboxChange('status', status.name)}
-                        />
-                        <label
-                          htmlFor={`status-${status._id}`}
-                          className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {status.name}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
-                <Separator orientation="vertical" />
+              ) : (
+                <div className="flex flex-row gap-6 py-4">
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm">Status</h4>
+                    <div className="space-y-2">
+                      {statuses.map((status) => (
+                        <div key={status._id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`status-${status._id}`}
+                            checked={filters.status.includes(status.name)}
+                            onCheckedChange={() => handleCheckboxChange('status', status.name)}
+                          />
+                          <label
+                            htmlFor={`status-${status._id}`}
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {status.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator orientation="vertical" />
 
-                <div className="space-y-3">
-                  <h4 className="font-bold text-sm">Priority</h4>
-                  <div className="space-y-2">
-                    {priorities.map((priority) => (
-                      <div key={priority._id} className="flex items-center space-x-2">
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm">Priority</h4>
+                    <div className="space-y-2">
+                      {priorities.map((priority) => (
+                        <div key={priority._id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`priority-${priority._id}`}
+                            checked={filters.priority.includes(priority._id)}
+                            onCheckedChange={() => handleCheckboxChange('priority', priority._id)}
+                          />
+                          <label
+                            htmlFor={`priority-${priority._id}`}
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {priority.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator orientation="vertical" />
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm">Category</h4>
+                    <div className="space-y-2">
+                      {categories.map((category) => (
+                        <div key={category._id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`category-${category._id}`}
+                            checked={filters.category.includes(category._id)}
+                            onCheckedChange={() => handleCheckboxChange('category', category._id)}
+                          />
+                          <label
+                            htmlFor={`category-${category._id}`}
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {category.title}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator orientation="vertical" />
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm">Date</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
-                          id={`priority-${priority._id}`}
-                          checked={filters.priority.includes(priority._id)}
-                          onCheckedChange={() => handleCheckboxChange('priority', priority._id)}
+                          id="date-created-today"
+                          checked={isCreatedToday}
+                          onCheckedChange={() => handleCheckboxChange('startDate', 'createdToday')}
                         />
                         <label
-                          htmlFor={`priority-${priority._id}`}
+                          htmlFor="date-created-today"
                           className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {priority.name}
+                          Created Today
                         </label>
                       </div>
-                    ))}
-                  </div>
-                </div>
-                <Separator orientation="vertical" />
-                <div className="space-y-3">
-                  <h4 className="font-bold text-sm">Category</h4>
-                  <div className="space-y-2">
-                    {categories.map((category) => (
-                      <div key={category._id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`category-${category._id}`}
-                          checked={filters.category.includes(category._id)}
-                          onCheckedChange={() => handleCheckboxChange('category', category._id)}
+                      <div className="flex flex-col space-y-2">
+                        <label className="text-sm font-normal leading-none">From</label>
+                        <Input
+                          type="date"
+                          value={filters.startDate}
+                          onChange={(e) => handleDateChange('startDate', e.target.value)}
                         />
-                        <label
-                          htmlFor={`category-${category._id}`}
-                          className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {category.title}
-                        </label>
                       </div>
-                    ))}
-                  </div>
-                </div>
-                <Separator orientation="vertical" />
-                <div className="space-y-3">
-                  <h4 className="font-bold text-sm">Date</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="date-created-today"
-                        checked={isCreatedToday}
-                        onCheckedChange={() => handleCheckboxChange('startDate', 'createdToday')}
-                      />
-                      <label
-                        htmlFor="date-created-today"
-                        className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Created Today
-                      </label>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      <label className="text-sm font-normal leading-none">From</label>
-                      <Input
-                        type="date"
-                        value={filters.startDate}
-                        onChange={(e) => handleDateChange('startDate', e.target.value)}
-                      />
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      <label className="text-sm font-normal leading-none">To</label>
-                      <Input
-                        type="date"
-                        value={filters.endDate}
-                        onChange={(e) => handleDateChange('endDate', e.target.value)}
-                      />
+                      <div className="flex flex-col space-y-2">
+                        <label className="text-sm font-normal leading-none">To</label>
+                        <Input
+                          type="date"
+                          value={filters.endDate}
+                          onChange={(e) => handleDateChange('endDate', e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <DialogFooter className="flex items-center justify-between border-t pt-4">
                 <Button

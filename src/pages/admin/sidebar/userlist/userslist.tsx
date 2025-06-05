@@ -1,13 +1,10 @@
-"use client"
 
-import type React from "react"
 
 import { Makeandremoveadmin } from "@/api/admin"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, Fragment } from "react"
 import { getAllUsers, updateUser } from "@/api/api"
 import { MoreHorizontal, SearchIcon, X } from "lucide-react"
 import { deactiveateUser } from "@/api/admin"
-import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   DropdownMenu,
@@ -23,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { useMasterDropdown } from "@/pages/global-components/master-dropdown-context"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { KeenIcon } from "@/components"
+import { Container, KeenIcon } from "@/components"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -543,10 +540,11 @@ export default function AdminUsersPage() {
   }, []);
 
   return (
-    <div className="space-y-4 p-6">
-      <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <UserTable
-        users={getFilteredUsers()}
+    <Fragment>
+      <Container>
+        <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <UserTable
+          users={getFilteredUsers()}
         onEdit={(user) => {
           setSelectedUser(user);
           editDialogRef.current?.showModal();
@@ -868,7 +866,9 @@ export default function AdminUsersPage() {
           )}
         </div>
       </dialog>
-    </div>
+      </Container>
+
+    </Fragment>
   );
 }
 
