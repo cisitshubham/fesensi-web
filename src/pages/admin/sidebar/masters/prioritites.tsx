@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -20,9 +20,11 @@ import {
 } from "@/components/ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { CreatePriorities, updatePriorities } from "@/api/admin"
+
 export default function PrioritiesManagement() {
   const { dropdownData } = useMasterDropdown()
-  const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>((dropdownData?.priorities) || [])
+  const [priorities, setpriorities] = useState<MasterDropdownDatatype["priorities"]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [editedpriority, setEditedpriority] = useState({ title: "", esclationHrs: "", responseHrs: "", _id: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -32,7 +34,18 @@ export default function PrioritiesManagement() {
   const [newprioritySla, setNewprioritySla] = useState("")
   const [newpriorityResponseHrs, setNewpriorityResponseHrs] = useState("")
   const navigate = useNavigate()
-  const filtered = priorities.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
+
+  useEffect(() => {
+    if (dropdownData?.priorities) {
+      setpriorities(dropdownData.priorities)
+      setIsLoading(false)
+    }
+  }, [dropdownData?.priorities])
+
+  const filtered = priorities.filter(c => 
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   const handleEdit = (index: number) => {
     setEditIndex(index)
     setEditedpriority({
@@ -179,11 +192,22 @@ export default function PrioritiesManagement() {
             </DropdownMenu>
           </div>
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+              <Loader2 className="h-10 w-10 text-slate-300 mx-auto mb-3 animate-spin" />
+              <h3 className="text-lg font-medium text-slate-700">Loading priorities...</h3>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
               <Filter className="h-10 w-10 text-slate-300 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-slate-700">No priorities found</h3>
-              <p className="text-slate-500 mt-1">{searchQuery ? "Try a different search term" : 'Click "Add priority" to create one'}</p>
+              <p className="text-slate-500 mt-1">
+                {searchQuery 
+                  ? "Try a different search term" 
+                  : priorities.length === 0 
+                    ? 'Click "Add priority" to create one' 
+                    : 'No priorities match your search'}
+              </p>
             </div>
           ) : (
             <div className="rounded-md border overflow-hidden">
@@ -259,7 +283,7 @@ export default function PrioritiesManagement() {
           )}
 
           <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filtered.length} of {priorities.length} priorities
+            {!isLoading && `Showing ${filtered.length} of ${priorities.length} priorities`}
           </div>
         </CardContent>
       </Card>

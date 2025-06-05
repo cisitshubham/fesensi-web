@@ -75,54 +75,71 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string) =>
     await axios.post(LOGIN_URL, {
       email,
       password
     })
-      .then(({ data }) => {
-        localStorage.setItem('response', JSON.stringify(data));
-        if (data?.token) {
+      .then(async ({ data }) => {
+        try {
+          localStorage.setItem('response', JSON.stringify(data));
+          
+          // Check if we have the required data structure
+          if (!data?.data?.tokens?.access_token) {
+            console.error('Invalid response structure:', data);
+            throw new Error('Invalid response format from server');
+          }
+
+          // Store token and auth data
           localStorage.setItem('token', data.data.tokens.access_token);
-        }
-        saveAuth(data.data.tokens);
-        setCurrentUser(data.data.user);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
-        localStorage.setItem('role', JSON.stringify(data.data.user.role));
-        // Handle role selection
-        const userRoles = data.data.user.role;
-        let selectedRole = '';
+          saveAuth(data.data.tokens);
+          
+          // Store user data
+          if (data.data.user) {
+            setCurrentUser(data.data.user);
+            localStorage.setItem('user', JSON.stringify(data.data.user));
+            localStorage.setItem('role', JSON.stringify(data.data.user.role));
+            
+            // Handle role selection
+            const userRoles = data.data.user.role;
+            let selectedRole = '';
 
-        // Check for ADMIN role first
-        if (userRoles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
-          selectedRole = 'ADMIN';
-        }
-        // Then check for AGENT role
-        else if (userRoles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
-          selectedRole = 'AGENT';
-        }
-        // Finally, check for USER role
-        else if (userRoles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER')) {
-          selectedRole = 'CUSTOMER';
-        }
+            // Check for ADMIN role first
+            if (userRoles.some((role: { role_name: string }) => role.role_name === 'ADMIN')) {
+              selectedRole = 'ADMIN';
+            }
+            // Then check for AGENT role
+            else if (userRoles.some((role: { role_name: string }) => role.role_name === 'AGENT')) {
+              selectedRole = 'AGENT';
+            }
+            // Finally, check for USER role
+            else if (userRoles.some((role: { role_name: string }) => role.role_name === 'CUSTOMER')) {
+              selectedRole = 'CUSTOMER';
+            }
 
-        // Set the selected role in localStorage
-        localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
-        if (selectedRole) {
-          localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
-        }
+            // Set the selected role in localStorage
+            if (selectedRole) {
+              localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
+            }
+          }
 
-        
-        // Redirect to the same path for all roles
-        window.location.href = '/';
+          // Verify auth state before redirecting
+          await verify();
+          
+          // Redirect to home
+          window.location.href = '/';
+        } catch (error) {
+          console.error('Login error:', error);
+          throw error;
+        }
       })
       .catch((error) => {
-        const errorResponse = error.response?.data || { message: 'An error occurred' };
+        console.error('Login request failed:', error);
+        const errorResponse = error.response?.data || { message: 'An error occurred during login' };
         localStorage.setItem('response', JSON.stringify(errorResponse));
         saveAuth(undefined);
-        throw new Error(`Error ${error}`);
+        throw new Error(errorResponse.message || 'Login failed');
       });
-  };
 
   const register = async (
     first_name: string,
