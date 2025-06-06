@@ -7,7 +7,7 @@ import { getEscalatedTicketsById } from "@/api/agent"
 import { useState,useEffect } from "react"
 import { useParams } from "react-router"
 import { EscalatedTicketData } from "@/types"; // Updated import
-import { getPriorityBadge, getPriorityColor, getStatusBadge } from "@/pages/global-components/GetStatusColor"
+import { getPriorityBadge, getStatusBadge } from "@/pages/global-components/GetStatusColor"
 
 
 export default function EscalatedTicketDetail() {
@@ -50,6 +50,7 @@ export default function EscalatedTicketDetail() {
                                 <span className="flex items-center gap-1">
                                     <Clock className="h-4 w-4" />
                                     {ticketData?.createdAt}
+                                    
                                 </span>
                                 <span className="flex items-center gap-1">
                                     <Tag className="h-4 w-4" />
@@ -91,9 +92,6 @@ export default function EscalatedTicketDetail() {
                                         </div>
                                         {escalation.level_of_user}
                                     </CardTitle>
-                                    <Badge  className="text-xs">
-                                        {escalation.escalation_time}
-                                    </Badge>
                                 </div>
                             </CardHeader>
 

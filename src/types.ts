@@ -9,6 +9,7 @@ export type Tickettype = {
   isUserCommented: boolean;
   isAgentCommented: boolean;
   isAgentReAssign: boolean;
+  strtTimer?:boolean;
 
   isAgenForceResolve: boolean;
   isAgentViewButtonShow: boolean;
@@ -298,26 +299,30 @@ export type FeedbackData = {
   assigned_to: string;
 }
 
-export type EscalatedTicketData= {
+
+
+
+export type EscalatedTicketData = {
   _id: string;
-  escalation_date?: string;
-  esclated_user?: string;
   ticket_number: number;
+  created_by?: string;
   title: string;
-  description?: string;
-  escalation_reason?: string;
-  status: TicketStatus;
   priority: TicketPriority;
   category: string;
-  createdAt: string;
   assigned_to: string;
-  escalation: Array<{
-      _id: string;
-      assigned_to: string;
-      level_of_user: string;
-      escalation_time: string;
-      escalation_reason?: string;
-  }>;
-  sla?: Array<any>;
-  IsCumstomerCommneted?: boolean;
-}
+  status: TicketStatus;
+  createdAt: string;
+  description: string;
+  escalation: {
+    _id: string;
+    assigned_to: string;
+    escalation_time: string;
+    escalation_reason?: string;
+    level_of_user: string;
+  }[];
+  activity_log: {
+    action: string;
+    creator: string;
+    createdAt: string;
+  }[];
+};

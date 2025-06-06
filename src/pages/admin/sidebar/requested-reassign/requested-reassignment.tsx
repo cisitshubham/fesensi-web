@@ -72,26 +72,20 @@ export default function Ticket({ ticket }: TicketProps) {
                   <div className="flex flex-col space-y-2 items-center gap-1">
                   <Tag className="w-3.5 h-3.5" />
                   <span>{ticket.category}</span>
-                  {
-                    ticket.status === TicketStatus.InProgress && (
+                  {/* {
+                    ticket.strtTimer && (
                      <Timer
                     hours={ticket.remainingHours ?? 0}
                     minutes={ticket.remainingMinutes ?? 0}
                     seconds={ticket.remainingSeconds ?? 0}
                   />
                     )
-                  }
+                  } */}
                
                   </div>
                 </div>
 
-            
-                {ticket.status === TicketStatus.InProgress && (
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>In Progress</span>
-                  </div>
-                )}
+      
               </div>
             </div>
           </div>
