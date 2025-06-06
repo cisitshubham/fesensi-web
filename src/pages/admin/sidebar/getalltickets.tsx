@@ -16,6 +16,8 @@ interface Ticket {
   title: string
   description: string
   createdAt: string
+  assigned_to:string
+  
   status: string
   priority: string
   category: string
@@ -93,7 +95,7 @@ export default function TicketsTableTemplate() {
       setTickets(filteredTickets);
     }
   }, [searchTerm]);
-
+console.log(tickets)
   return (
       <Card className="mx-8">
         <CardHeader className="flex flex-row justify-between w-full items-center">
@@ -131,6 +133,7 @@ export default function TicketsTableTemplate() {
                   <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Ticket number </TableHead>
+                    <TableHead>Assigned To  </TableHead>
 
                     <TableHead>Category</TableHead>
                     <TableHead>Priority</TableHead>
@@ -150,6 +153,7 @@ export default function TicketsTableTemplate() {
                       </TableCell>
 
                       <TableCell>{ticket.ticket_number}</TableCell>
+                      <TableCell>{ticket.assigned_to}</TableCell>
                       <TableCell>{ticket.category}</TableCell>
                       <TableCell>
                         <Badge className={getPriorityBadge(ticket.priority).color}>{ticket.priority}</Badge>

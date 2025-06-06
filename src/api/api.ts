@@ -462,9 +462,9 @@ export const MyTicketDetails = async (TicketId: string) => {
 
 
 
-export const getEscalatedTickets = async () => {
+export const getEscalatedTickets = async (formData?: FormData) => {
   try {
-    const response = await axiosInstance.post('/agent/myTicket/escalated');
+    const response = await axiosInstance.post('/agent/myTicket/escalated', formData);
     return response.data;
   } catch (error) {
     console.error('Error fetching escalated tickets:', error);

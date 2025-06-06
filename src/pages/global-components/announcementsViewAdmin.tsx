@@ -82,6 +82,16 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
     }
 
     const handleSave = async (id: string, currentTitle: string, currentContent: string) => {
+      // Validate title and content
+      if (!currentTitle.trim()) {
+        toast.error("Title cannot be empty", { position: "top-center" });
+        return;
+      }
+      if (!currentContent.trim()) {
+        toast.error("Content cannot be empty", { position: "top-center" });
+        return;
+      }
+
       setSavingIds((prev) => new Set(prev).add(id))
       const formData = new FormData();
       formData.append('title', currentTitle);
@@ -280,6 +290,7 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
                 const isSaving = savingIds.has(id)
                 const isSuccess = successIds.has(id)
                 const timeAgo = getTimeAgo(announcement.createdAt)
+                const hasValidContent = currentTitle.trim() !== '' && currentContent.trim() !== ''
 
                 return (
                   <Card key={id} className="group">
@@ -368,7 +379,7 @@ const AnnouncementsView = forwardRef<AnnouncementsViewRef, AnnouncementsViewProp
                                   variant="default"
                                   size="sm"
                                   onClick={() => handleSave(id, currentTitle, currentContent)}
-                                  disabled={!isDirty || isSaving}
+                                  disabled={!isDirty || isSaving || !hasValidContent}
                                 >
                                   {isSaving ? (
                                     <>

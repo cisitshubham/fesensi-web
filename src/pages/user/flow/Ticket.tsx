@@ -214,7 +214,8 @@ export default function UserTicketDetails() {
                   key={idx}
                   src={attachment.file_url}
                   alt={`attachment-${idx}`}
-                  className="w-32 h-32 object-cover border rounded-md"
+                  className="w-32 h-32 object-cover border rounded-md cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => setSelectedImage(attachment.file_url)}
                 />
               ))}
             </div>

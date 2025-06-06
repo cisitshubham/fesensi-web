@@ -11,9 +11,15 @@ import { Tickettype } from '@/types';
 import { updateResolution } from '@/api/api';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
 const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispatch<React.SetStateAction<File[]>> }) => {
   const [dragging, setDragging] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="flex flex-col gap-2 mb-4">
@@ -55,19 +61,50 @@ const FileUpload = ({ files, setFiles }: { files: File[]; setFiles: React.Dispat
       />
 
       {files.length > 0 ? (
-        <div className="mt-2 text-sm text-gray-600 flex flex-row gap-2">
+        <div className="mt-2 text-sm text-gray-600 flex flex-row gap-2 flex-wrap">
           {files.map((file, index) => (
-            <div key={index} className="relative w-16 h-16">
+            <div key={index} className="relative w-16 h-16 group">
               <img
                 src={URL.createObjectURL(file)}
                 alt="Selected File"
-                className="w-full h-full object-cover rounded-lg border"
+                className="w-full h-full object-cover rounded-lg border cursor-pointer"
+                onClick={() => setSelectedImage(URL.createObjectURL(file))}
               />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFile(index);
+                }}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
       ) : (
         <p className="text-sm text-gray-500 mt-2">No files selected</p>
+      )}
+
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <img
+              src={selectedImage}
+              alt="Selected attachment"
+              className="max-w-full max-h-[90vh] object-contain"
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(null);
+              }}
+              className="absolute top-4 right-4 text-white text-2xl bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-75"
+            >
+              ×
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -81,7 +118,6 @@ export default function ResolveTicket() {
   const [status, setStatus] = useState<string>('');
   const [resolution, setResolution] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -220,25 +256,6 @@ export default function ResolveTicket() {
           <div className="mt-4">
             <h4 className="text-sm font-medium mb-2">Selected Files</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              
-
-              {selectedImage && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                  <img
-                    src={selectedImage}
-                    alt="Selected attachment"
-                    className="max-w-full max-h-full"
-                  />
-                  <button
-                    onClick={() => setSelectedImage(null)}
-                    className="absolute top-4 right-4 text-white text-2xl"
-                  >
-                    &times;
-                  </button>
-                </div>
-
-              )}
-
             </div>
           </div>
         )}

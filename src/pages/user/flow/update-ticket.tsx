@@ -22,6 +22,7 @@ const UpdateTicketForm = () => {
   const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -223,32 +224,27 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
 
           <div className="flex flex-col gap-4">
             <MenuLabel>Upload Files</MenuLabel>
-            <div className="flex flex-row justify-between items-start gap-4 border rounded-lg p-4 bg-light-light  ">
+            <div className="flex flex-row justify-between items-start gap-4 border rounded-lg p-4 bg-light-light">
               {/* Existing Attachments with Remove Option */}
               <div className="flex flex-wrap gap-2">
                 {(ticket as any)?.attachments?.length ? (
                   (ticket as any).attachments.map((file: any, index: number) => (
                     <div key={file._id} className="relative">
-                      <a
-                        href={file.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={file.file_url}
-                          alt="Attachment"
-                          className="w-16 h-16 object-cover rounded-lg border hover:opacity-80 transition"
-                        />
-                      </a>
+                      <img
+                        src={file.file_url}
+                        alt="Attachment"
+                        className="w-16 h-16 object-cover rounded-lg border hover:opacity-80 transition cursor-pointer"
+                        onClick={() => setSelectedImage(file.file_url)}
+                      />
                       <button
                         type="button"
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
-						onClick={() => {
-							handleRemoveAttachment(file._id, ticket._id);
-							const updatedAttachments = (ticket as any).attachments.filter((_: any, i: number) => i !== index);
-							setTicket({ ...ticket, attachments: updatedAttachments });
-						}}
-						>		
+                        onClick={() => {
+                          handleRemoveAttachment(file._id, ticket._id);
+                          const updatedAttachments = (ticket as any).attachments.filter((_: any, i: number) => i !== index);
+                          setTicket({ ...ticket, attachments: updatedAttachments });
+                        }}
+                      >
                         ×
                       </button>
                     </div>
@@ -294,7 +290,8 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
                       <img
                         src={URL.createObjectURL(file)}
                         alt="Selected File"
-                        className="w-full h-full object-cover rounded-lg border"
+                        className="w-full h-full object-cover rounded-lg border cursor-pointer"
+                        onClick={() => setSelectedImage(URL.createObjectURL(file))}
                       />
                       <button
                         type="button"
@@ -312,6 +309,28 @@ const handleRemoveAttachment = async (attachmentId: string ,ticket_id:string) =>
               </div>
             )}
           </div>
+
+          {/* Image Modal */}
+          {selectedImage && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+              onClick={() => setSelectedImage(null)}
+            >
+              <div className="relative max-w-4xl max-h-[90vh] p-4">
+                <img
+                  src={selectedImage}
+                  alt="Full size preview"
+                  className="max-w-full max-h-[80vh] object-contain"
+                />
+                <button
+                  className="absolute top-4 right-4 text-white bg-red-500 rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
+                  onClick={() => setSelectedImage(null)}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-2 mt-4">
             <Button
