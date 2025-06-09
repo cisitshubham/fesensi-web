@@ -1,5 +1,3 @@
-
-
 import { Makeandremoveadmin } from "@/api/admin"
 import { useEffect, useState, useRef, Fragment } from "react"
 import { getAllUsers, updateUser } from "@/api/api"
@@ -645,7 +643,9 @@ export default function AdminUsersPage() {
                         variant="outline"
                         className="w-full justify-start text-left h-auto min-h-10 py-2"
                         onClick={() => setIsLevelOpen(!isLevelOpen)}
-                      >                      {dropdownLoading ? (
+                        disabled={!Array.isArray(edited.role) || !edited.role.some((r: Role) => r.role_name === "AGENT")}
+                      >
+                        {dropdownLoading ? (
                           <span className="text-muted-foreground">Loading...</span>
                         ) : typeof edited.level === "object" && edited.level?.name ? (
                           <span>{edited.level.name}</span>
@@ -654,11 +654,15 @@ export default function AdminUsersPage() {
                             {dropdownData.levelList.find((level: { _id: string | Level | undefined }) => level._id === edited.level)?.name || "Select level"}
                           </span>
                         ) : (
-                          <span className="text-muted-foreground">Select level</span>
+                          <span className="text-muted-foreground">
+                            {Array.isArray(edited.role) && edited.role.some((r: Role) => r.role_name === "AGENT") 
+                              ? "Select level" 
+                              : "Level selection requires AGENT role"}
+                          </span>
                         )}
                       </Button>
 
-                      {isLevelOpen && (
+                      {isLevelOpen && Array.isArray(edited.role) && edited.role.some((r: Role) => r.role_name === "AGENT") && (
                         <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
                           <ScrollArea className="h-fit max-h-[200px]">
                             <div className="p-2 space-y-1">
