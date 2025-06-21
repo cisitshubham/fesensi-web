@@ -276,6 +276,7 @@ export default function AdminUsersPage() {
   const [isRolesOpen, setIsRolesOpen] = useState(false)
   const [isLevelOpen, setIsLevelOpen] = useState(false)
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
+  const [isAgentRole, setIsAgentRole] = useState(false)
   const rolesDropdownRef = useRef<HTMLDivElement>(null)
   const levelDropdownRef = useRef<HTMLDivElement>(null)
   const categoriesDropdownRef = useRef<HTMLDivElement>(null)
@@ -537,6 +538,14 @@ export default function AdminUsersPage() {
     };
   }, []);
 
+  useEffect(() => {
+    // Update isAgentRole whenever edited.role changes
+    const hasAgentRole = Array.isArray(edited.role) 
+      ? edited.role.some((r: Role) => r.role_name === "AGENT")
+      : false;
+    setIsAgentRole(hasAgentRole);
+  }, [edited.role]);
+
   return (
     <Fragment>
       <Container>
@@ -772,6 +781,7 @@ export default function AdminUsersPage() {
                         variant="outline"
                         className="w-full justify-start text-left h-auto min-h-10 py-2"
                         onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                        disabled={!isAgentRole}
                       >
                         {Array.isArray(edited.categories) && edited.categories.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
@@ -782,11 +792,13 @@ export default function AdminUsersPage() {
                             ))}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground">Select categories</span>
+                          <span className="text-muted-foreground">
+                            {isAgentRole ? "Select categories" : "Category selection requires AGENT role"}
+                          </span>
                         )}
                       </Button>
 
-                      {isCategoriesOpen && (
+                      {isCategoriesOpen && isAgentRole && (
                         <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg">
                           <ScrollArea className="h-[200px]">
                             <div className="p-2 space-y-1">
