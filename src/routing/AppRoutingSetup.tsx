@@ -62,12 +62,17 @@ import EscalatedTicketDetail from '@/pages/agent/sidebar/escalted-tickets/escala
 import GetAllTicketsAdmin from '@/pages/admin/sidebar/getalltickets';
 import TrustLevels from '@/pages/admin/sidebar/masters/trust-level';
 import FilteredTicketsAdmin from '@/pages/admin/flow/filtered-tickets';
+import DashboardAdmin from '@/pages/admin/DashboardAdmin';
+import DashboardAgent from '@/pages/agent/DashboardAgent';
+import DashboardUser from '@/pages/user/DashboardUser';
+import RoleBasedRedirect from '@/pages/global-components/RoleBasedRedirect';
+
 const AppRoutingSetup = (): ReactElement => {
   return (
     <Routes>
       <Route element={<RequireAuth />}>
         <Route element={<Demo1Layout />}>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<RoleBasedRedirect />} />
           <Route path="/dark-sidebar" element={<Demo1DarkSidebarPage />} />
           <Route path="/auth/welcome-message" element={<AuthenticationWelcomeMessagePage />} />
           <Route
@@ -101,6 +106,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/agent/Support" element={<SupportPageAgent />} />
           <Route path="/agent/tickets/filtered" element={<FilteredTickets />} />
           <Route path="/agent/Trust" element={<TrustPgeAgent/>} />
+          <Route path="/agent/dashboard" element={<DashboardAgent />} />
 
 
 
@@ -125,6 +131,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/admin/support-list" element={<AdminSupportList />} />
           <Route path="/admin/trust-levels" element={<TrustLevels />} />
           <Route path="/admin/tickets/filtered" element={<FilteredTicketsAdmin />} />
+          <Route path="/admin/dashboard" element={<DashboardAdmin />} />
 
           {/* users aadesh  */}
           <Route path="/user/MyTickets" element={<UserTickets />} />
@@ -137,6 +144,7 @@ const AppRoutingSetup = (): ReactElement => {
           <Route path="/user/rate-us" element={<RateUsUser/>} />
           <Route path="/user/Support" element={<SupportPageUser/>} />
           <Route path="/user/tickets/filtered" element={<FilteredTicketsUser />} />
+          <Route path="/user/dashboard" element={<DashboardUser />} />
 
 
         </Route>

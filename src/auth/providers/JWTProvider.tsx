@@ -119,7 +119,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
             // Set the selected role in localStorage
             if (selectedRole) {
-              localStorage.setItem('selectedRole', JSON.stringify([selectedRole]));
+              localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
             }
           }
 

@@ -49,6 +49,17 @@ export function setupAxios(axios: any) {
     },
     async (err: any) => await Promise.reject(err)
   );
+
+  // Add response interceptor for plan upgrade error
+  axios.interceptors.response.use(
+    (response: any) => response,
+    (error: any) => {
+      if (error?.response?.data?.code === 'PLAN_UPGRADE_REQUIRED') {
+        window.dispatchEvent(new CustomEvent('plan-upgrade-required'));
+      }
+      return Promise.reject(error);
+    }
+  );
 }
 
 export { AUTH_LOCAL_STORAGE_KEY, getAuth, removeAuth, setAuth };

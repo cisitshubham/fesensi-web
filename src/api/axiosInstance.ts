@@ -10,4 +10,15 @@ const axiosInstance = axios.create({
   }
 });
 
+// Add response interceptor for plan upgrade error
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.data?.code === 'PLAN_UPGRADE_REQUIRED') {
+      window.dispatchEvent(new CustomEvent('plan-upgrade-required'));
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;
